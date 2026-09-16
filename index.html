@@ -128,17 +128,20 @@
     /* Panel = hoja inferior (bottom sheet). Oculta por defecto: el mapa ocupa toda la pantalla */
     #panel{
       position:fixed;left:0;right:0;bottom:0;top:auto;width:100%;
-      height:auto;max-height:86vh;
+      height:92vh;
       border-right:0;border-top:1px solid var(--line);
       border-radius:18px 18px 0 0;
       box-shadow:0 -10px 34px rgba(0,0,0,.55);
-      transform:translateY(102%);
+      transform:translateY(100%);
       transition:transform .3s cubic-bezier(.32,.72,0,1);
-      touch-action:none;
+      overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
     }
     #panel.dragging{transition:none}
-    #panel.open{transform:translateY(0)}
-    .grab{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px 4px;cursor:grab;flex:none}
+    #panel.open{transform:translateY(54%)}            /* PEEK: ~46% visible, mapa arriba */
+    #panel.open.expanded{transform:translateY(0)}     /* EXPANDIDA: hoja completa */
+    #panel.mode-ficha .phead{display:none}            /* al ver ficha, ocultar intro/busqueda */
+    #panel.mode-home .pbody{display:none}             /* al abrir busqueda/capas, ocultar ficha */
+    .grab{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px 4px;cursor:grab;flex:none;position:sticky;top:0;background:var(--panel);z-index:3;touch-action:none;border-radius:18px 18px 0 0}
     .grab .bar{position:absolute;left:50%;transform:translateX(-50%);top:7px;width:40px;height:5px;border-radius:3px;background:#3a565b}
     .grab .gtitle{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-top:8px}
     .grab .gmin{margin-top:6px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-soft);border-radius:8px;padding:5px 11px;font-size:.72rem;cursor:pointer;font-family:inherit}
@@ -159,7 +162,7 @@
     <div class="grab" id="grab">
       <span class="bar"></span>
       <span class="gtitle" id="gtitle">Información</span>
-      <button class="gmin" id="gmin">▾ Minimizar</button>
+      <button class="gmin" id="gmin">✕ Cerrar</button>
     </div>
     <div class="phead">
       <p class="eyebrow">Prototipo · ríos y lagos reales · base OpenStreetMap</p>
@@ -294,13 +297,13 @@ function render(s){
   // doble navegación
   pbody.querySelectorAll('.chip.link').forEach(el=>el.onclick=()=>openBrowse('especies', el.dataset.species));
   pbody.querySelectorAll('.guide.link').forEach(el=>el.onclick=()=>openBrowse('guias', el.dataset.guide));
-  openSheet();
+  openSheet('ficha'); if(isMobile()) recenterForSheet(s.ll);
 }
 function infoSimple(nombre, tipo){
   currentSpot = null;
   pbody.innerHTML = `<div class="empty"><b>${esc(nombre)}</b><br><br>${esc(tipo)}.<br><br>Todavía no hay fichas de pesca cargadas acá. Así se ve un elemento real antes de que un guía o editor cargue su información.</div>`;
   setGtitle(nombre);
-  openSheet();
+  openSheet('ficha');
 }
 
 /* ---- Ríos (con filtros: búsqueda, solo fichas, exclusión interna) ---- */
@@ -386,7 +389,7 @@ function anyOverlay(){ return browseOpenNow() || sheetOpen(); }
 function topOverlay(){ return browseOpenNow() ? 'browse' : (sheetOpen() ? 'sheet' : null); }
 function domCloseOverlay(name){
   if(name==='browse'){ document.getElementById('browse').classList.remove('open'); }
-  else if(name==='sheet'){ panel.classList.remove('open'); document.body.classList.remove('sheet-shown'); }
+  else if(name==='sheet'){ panel.classList.remove('open','expanded','mode-ficha','mode-home'); document.body.classList.remove('sheet-shown'); }
 }
 let backTrapArmed=false, progBack=false;
 function armBackTrap(){ if(!backTrapArmed){ try{ history.pushState({ov:1},''); backTrapArmed=true; }catch(e){} } }
@@ -405,17 +408,35 @@ function uiClose(name){                              // cerrar por botón/arrast
   if(backTrapArmed && !anyOverlay()){ progBack=true; backTrapArmed=false; try{ history.back(); }catch(e){} }
 }
 
-function openSheet(){ panel.classList.add('open'); document.body.classList.add('sheet-shown'); overlayOpened(); }
+function openSheet(mode){
+  panel.classList.add('open'); panel.classList.remove('expanded');       // arranca en PEEK (media altura)
+  panel.classList.toggle('mode-ficha', mode==='ficha');
+  panel.classList.toggle('mode-home', mode==='home');
+  panel.scrollTop=0;
+  document.body.classList.add('sheet-shown'); overlayOpened();
+}
+function recenterForSheet(ll){                                            // deja el punto por encima de la hoja
+  if(!ll) return;
+  map.setView(ll, map.getZoom(), {animate:false});
+  const h=panel.offsetHeight||window.innerHeight*0.92;
+  map.panBy([0, Math.round(h*0.46*0.42)], {animate:true});
+}
 function closeSheet(){ uiClose('sheet'); }
 document.getElementById('gmin').onclick=()=>uiClose('sheet');
-document.getElementById('openctl').onclick=openSheet;
+document.getElementById('openctl').onclick=()=>openSheet('home');
 
-// arrastre del handle para minimizar en móvil
+// arrastre / tap del handle: alterna PEEK <-> EXPANDIDA, o cierra al bajar del todo
 (function(){
-  const grab=document.getElementById('grab'); let startY=0, dy=0, dragging=false;
-  const down=e=>{ if(!isMobile())return; dragging=true; startY=(e.touches?e.touches[0].clientY:e.clientY); panel.classList.add('dragging'); };
-  const move=e=>{ if(!dragging)return; const y=(e.touches?e.touches[0].clientY:e.clientY); dy=Math.max(0,y-startY); panel.style.transform='translateY('+dy+'px)'; };
-  const up=()=>{ if(!dragging)return; dragging=false; panel.classList.remove('dragging'); panel.style.transform=''; if(dy>90) closeSheet(); dy=0; };
+  const grab=document.getElementById('grab'); let startY=0, base=0, dy=0, dragging=false, moved=false;
+  const curBase=()=>{ const h=panel.offsetHeight; return panel.classList.contains('expanded')?0:h*0.54; };
+  const down=e=>{ if(!isMobile())return; if(e.target.closest('#gmin'))return; dragging=true; moved=false; dy=0; startY=(e.touches?e.touches[0].clientY:e.clientY); base=curBase(); panel.classList.add('dragging'); };
+  const move=e=>{ if(!dragging)return; const y=(e.touches?e.touches[0].clientY:e.clientY); dy=y-startY; if(Math.abs(dy)>4)moved=true; const h=panel.offsetHeight; let cur=Math.min(Math.max(base+dy,0),h); panel.style.transform='translateY('+cur+'px)'; };
+  const up=()=>{ if(!dragging)return; dragging=false; panel.classList.remove('dragging'); panel.style.transform=''; const h=panel.offsetHeight; const cur=base+dy;
+    if(!moved){ panel.classList.toggle('expanded'); }                        // tap = alternar altura
+    else if(cur < h*0.27){ panel.classList.add('open','expanded'); }         // arriba -> completa
+    else if(cur < h*0.80){ panel.classList.add('open'); panel.classList.remove('expanded'); } // medio -> peek
+    else { closeSheet(); }                                                   // abajo -> cerrar
+    dy=0; };
   grab.addEventListener('touchstart',down,{passive:true}); grab.addEventListener('touchmove',move,{passive:true}); grab.addEventListener('touchend',up);
   grab.addEventListener('mousedown',down); window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
 })();
