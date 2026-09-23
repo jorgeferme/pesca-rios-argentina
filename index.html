@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-<title>Fishing in Argentina · Prototipo v3.7</title>
+<title>Fishing in Argentina · Prototipo v3.8</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Libre+Franklin:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -82,6 +82,16 @@ h1.pt{font-family:"Fraunces",serif;font-weight:600;font-size:1.7rem;margin:0 0 4
 .qchips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
 .qchip{background:rgba(27,47,51,.8);border:1px solid var(--line);border-radius:20px;padding:6px 13px;font-size:.8rem;cursor:pointer;color:var(--ink-soft)}
 .qchip:hover{border-color:var(--dorado);color:var(--dorado)}
+.hero>*:not(.hvid){position:relative;z-index:2}.hero>.sbox{z-index:6}.hero svg.wave{z-index:3}
+.hvid{position:absolute;inset:0;z-index:0;overflow:hidden;background:#0E1A1E url(media/fondo-inicio.jpg) center/cover}
+.hvid video{position:absolute;object-fit:cover}
+.hvid .hbg{inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px);filter:blur(16px) brightness(.55) saturate(1.15)}
+.hvid .hfg{right:5%;top:6%;height:88%;aspect-ratio:9/16;border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.25)}
+.hvid .hshade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,26,30,.55),rgba(14,26,30,.25) 60%,rgba(14,26,30,0))}
+.hero h1,.hero p,.hero .eyebrow{text-shadow:0 2px 10px rgba(0,0,0,.6)}.hero p{color:#E7EFED}
+@media(max-width:1150px){ .hvid .hfg{display:none} }
+@media(max-width:760px){ .hvid .hbg{inset:0;width:100%;height:100%;filter:brightness(.55)} .hvid .hshade{background:linear-gradient(180deg,rgba(14,26,30,.35),rgba(14,26,30,.55))} }
+@media(prefers-reduced-motion:reduce){ .hvid video{display:none} }
 .hero svg.wave{position:absolute;left:0;right:0;bottom:-2px;width:100%;height:60px;opacity:.35}
 .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:26px}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 14px;cursor:pointer;text-align:center}
@@ -125,7 +135,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 .sb.ig{background:linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF)}
 .igprev{margin-top:10px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
 .igprev .igh{font-size:.72rem;color:#555;padding:8px 12px;border-bottom:1px solid #eee;font-family:"IBM Plex Mono",monospace}
-.igprev iframe{display:block;width:100%;height:520px;border:0}
+.igprev iframe{display:block;width:100%;height:400px;border:0}
 .igprev a{display:block;text-align:center;padding:9px;font-size:.8rem;color:#C13584;border-top:1px solid #eee}.sb.wa{background:#25D366;color:#0b2e17}.sb.wa svg path,.sb.wa svg path{stroke:#0b2e17}.sb:hover{filter:brightness(1.08)}
 /* pagos */
 #ckout{position:fixed;inset:0;z-index:5200;background:rgba(5,10,12,.72);display:none;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow-y:auto}
@@ -288,8 +298,9 @@ body.claro{--ground:#F3F8FD;--panel:#FFFFFF;--panel-2:#EAF3FB;--ink:#0E2A47;--in
 body.claro header{background:linear-gradient(180deg,#74ACDF,#8FBDE6);border-bottom:3px solid #F6B40E}
 body.claro header .logo,body.claro .nav a{color:#0E2A47}body.claro .logo b{color:#fff;text-shadow:0 1px 2px rgba(14,42,71,.45)}
 body.claro .nav a:hover,body.claro .nav a.on{background:rgba(255,255,255,.55);color:#0E2A47}
-body.claro .hero{background:linear-gradient(180deg,#74ACDF 0%,#BFDDF4 42%,#FFFFFF 78%);border-bottom:1px solid var(--line)}
-body.claro .hero h1{color:#0E2A47}body.claro .hero .eyebrow{color:#0E2A47}
+body.claro .hero{background:#74ACDF;border-bottom:3px solid #F6B40E}
+body.claro .hero h1,body.claro .hero .eyebrow{color:#fff}body.claro .hero p{color:#F3F8FD}
+body.claro .hvid .hshade{background:linear-gradient(90deg,rgba(14,42,71,.55),rgba(14,42,71,.2) 60%,rgba(14,42,71,0))}
 body.claro .hero svg.wave path{fill:#74ACDF}
 body.claro .sbox input{background:#fff;border-color:#9CC3E6}
 body.claro .qchip{background:#fff;color:#0E2A47}
@@ -386,6 +397,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
 <!-- ===================== INICIO ===================== -->
 <section class="view" id="v-inicio">
   <div class="hero">
+    <div class="hvid" aria-hidden="true"><video class="hbg" muted loop playsinline preload="none" poster="media/fondo-inicio.jpg"><source src="media/fondo-inicio.mp4" type="video/mp4"></video><video class="hfg" muted loop playsinline preload="none" poster="media/fondo-inicio.jpg"><source src="media/fondo-inicio.mp4" type="video/mp4"></video><div class="hshade"></div></div>
     <p class="eyebrow">Ríos · lagos · lagunas · mar</p>
     <h1 data-i18n="hero_t">Pescá en Argentina</h1>
     <p data-i18n="hero_p">Encontrá dónde se pesca cada especie, la reglamentación de cada ambiente y guías y lodges con reputación. Todo sobre el mapa.</p>
@@ -408,7 +420,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
     <div class="sect"><h2>Ambientes <a data-go="ambientes">Ver todos →</a></h2><p class="s">Ríos, lagos, lagunas y spots de mar con ficha.</p><div class="grid" id="h-amb"></div></div>
     <div class="sect"><h2>Novedades</h2><p class="s">Aperturas de temporada, cambios de reglamento y notas (base de noticias).</p><div class="news" id="h-news"></div></div>
   </div>
-  <footer>© 2026 Fishing in Argentina · Prototipo v3.7 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo · <a href="#" data-cont="1">Panel del contador (demo)</a></footer>
+  <footer>© 2026 Fishing in Argentina · Prototipo v3.8 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo · <a href="#" data-cont="1">Panel del contador (demo)</a></footer>
 </section>
 
 <!-- ===================== MAPA ===================== -->
@@ -450,10 +462,9 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
   <h1 class="pt">Servicios</h1>
   <p class="psub">Todos los prestadores juntos. En la base se guardan por tipo; acá se muestran unificados.</p>
   <div class="fbar">
-    <select id="s-tipo"></select><select id="s-prov"></select><select id="s-mod"></select><select id="s-acc"></select><select id="s-amb"></select>
+    <select id="s-tipo"></select><select id="s-prov"></select><select id="s-mod"></select><select id="s-acc"></select><select id="s-amb"></select><select id="s-esp"></select>
     <span class="cnt" id="s-cnt"></span>
   </div>
-  <div class="sprow" id="s-esp"></div>
   <div class="note">Orden: primero los planes de mayor visibilidad (marcados como destacados), luego por reputación. La transparencia sobre lo pago es buena práctica y exigencia en la UE.</div>
   <div class="grid" id="s-list"></div>
 </div></section>
@@ -463,6 +474,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
   <p class="eyebrow">Qué pescar</p>
   <h1 class="pt">Especies</h1>
   <p class="psub">Tocá una especie para ver su descripción, cómo pescarla y dónde habita.</p>
+  <div class="fbar"><select id="e-prov"></select><select id="e-agua"></select><span class="cnt" id="e-cnt"></span></div>
   <div class="grid" id="e-list"></div>
 </div></section>
 
@@ -939,7 +951,7 @@ $('#resx').onclick=()=>{ if(R&&R.esp){ F.esp=null; renderFilters(); } R=null; $(
 /* ---------- Panel de filtros ---------- */
 function renderFilters(){
   $('#f-tipos').innerHTML=Object.entries(GRUPOS).map(([k,v])=>`<span class="tg${F.tipos[k]?' on':''}" data-ft="${k}"><span class="dot" style="background:${TIPO_COLOR[k]}"></span>${v}</span>`).join('');
-  $('#f-esp').innerHTML=`<div class="sptiles"><div class="sptile${!F.esp?' on':''}" data-fe=""><span class="fish" style="font-size:1.4rem;align-items:center;justify-content:center">🎣</span>Todas</div></div>`+AGUA_GRP.map(([k,t])=>{ const l=ESPECIES.filter(e=>aguaKey(e)===k); return `<div class="aguasub">${t}</div><div class="sptiles">`+l.map(e=>`<div class="sptile${F.esp===e.id?' on':''}" data-fe="${e.id}">${fishBadge(e)}${esc(espName(e))}</div>`).join('')+'</div>'; }).join('');
+  $('#f-esp').innerHTML=`<div class="sptiles"><div class="sptile${!F.esp?' on':''}" data-fe=""><span class="fish" style="font-size:1.4rem;align-items:center;justify-content:center">🎣</span>Todas</div>`+ESPECIES.map(e=>`<div class="sptile${F.esp===e.id?' on':''}" data-fe="${e.id}">${fishBadge(e)}${esc(espName(e))}</div>`).join('')+'</div>';
   $('#f-capas').innerHTML=`<span class="tg${F.srv?' on':''}" data-fc="srv">Servicios con reserva directa</span><span class="tg${F.soloFichas?' on':''}" data-fc="soloFichas">Solo con ficha</span>`;
   const n=Object.values(F.tipos).filter(x=>!x).length+(F.esp?1:0)+(F.soloFichas?1:0);
   $('#fbtnn').style.display=n?'inline':'none'; $('#fbtnn').textContent=n;
@@ -1080,7 +1092,9 @@ function ovPush(n){
 }
 window.addEventListener('popstate',()=>{ if(skipPop){skipPop--;return;} if(ov.length){ const n=ov.pop(); domClose(n); if(n==='drawer'&&cur==='mapa') resetMap(); } });
 function ovClose(n){ domClose(n); const i=ov.indexOf(n); if(i<0) return; ov.splice(i,1); skipPop++; history.back(); }
-function openDrawer(html,title){ $('#dbody').innerHTML=html; $('#dtitle').textContent=title; $('#dbody').scrollTop=0; domOpen('drawer'); ovPush('drawer'); }
+function fitIg(){ $$('.igprev iframe').forEach(f=>{ const w=f.clientWidth; if(w) f.style.height=Math.round(118+w*2/3)+'px'; }); }
+addEventListener('resize',fitIg);
+function openDrawer(html,title){ $('#dbody').innerHTML=html; setTimeout(fitIg,0); $('#dtitle').textContent=title; $('#dbody').scrollTop=0; domOpen('drawer'); ovPush('drawer'); }
 function openFiltersSheet(){ domOpen('filters'); ovPush('filters'); }
 function resetMap(){ SEL=null; R=null; F=F0(); renderFilters(); $('#resbar').classList.remove('on'); if(typeof draw==='function') draw(); document.title='Fishing in Argentina'; setTimeout(()=>{ if(cur==='mapa'&&/^#\/mapa\//.test(location.hash)) try{history.replaceState(history.state,'','#/mapa');}catch(e){} },80); }
 $('#dclose').onclick=()=>{ ovClose('drawer'); if(cur==='mapa') resetMap(); };
@@ -1350,16 +1364,23 @@ function render(v){
     fillSel('#s-mod','Modalidad: todas',TECNICAS.map(m=>[m,m]));
     fillSel('#s-acc','Costa / embarcado: todos',ACCESOS.map(m=>[m,m]));
     fillSel('#s-amb','Ambiente: todos',Object.entries(GRUPOS));
-    const e=SESP;
-    $('#s-esp').innerHTML=`<span class="tg sp${!e?' on':''}" data-sesp="">Especie: todas</span>`+ESPECIES.map(x=>`<span class="tg sp${e===x.id?' on':''}" data-sesp="${x.id}" style="padding-left:4px">${fishBadge(x,'s')}${esc(espName(x))}</span>`).join('');
-    $('#s-esp').onclick=ev=>{ const c=ev.target.closest('[data-sesp]'); if(!c) return; ev.stopPropagation(); SESP=c.dataset.sesp||null; render('servicios'); };
+    fillSel('#s-esp','Especie: todas',ESPECIES.map(x=>[x.id,espName(x)]));
+    const e=$('#s-esp').value||null;
     const t=$('#s-tipo').value,m=$('#s-mod').value,p=$('#s-prov').value,ac=$('#s-acc').value,ag=$('#s-amb').value;
     const list=SRV.filter(s=>(!t||s.tipo===t)&&(!e||s.esp.includes(e))&&(!m||s.mods.includes(m))&&(!ac||s.accs.includes(ac))&&(!ag||s.grps.includes(ag))&&(!p||s.prov===p)).sort(byRank);
     $('#s-cnt').textContent=list.length+' resultado(s)';
     const html=list.map(cardSrv); if(html.length>4) html.splice(4,0,AD);
     $('#s-list').innerHTML=html.join('')||'<p class="psub">Sin resultados con esos filtros.</p>';
   }
-  if(v==='especies') $('#e-list').innerHTML=AGUA_GRP.map(([k,t])=>{ const l=ESPECIES.filter(e=>aguaKey(e)===k); return l.length?`<h2 class="agh">${t} <small>${l.length}</small></h2>`+l.map(cardEsp).join(''):''; }).join('');
+  if(v==='especies'){
+    fillSel('#e-prov','Provincia: todas',[...new Set(AMBIENTES.flatMap(a=>a.prov))].sort().map(p=>[p,p]));
+    fillSel('#e-agua','Tipo de agua: todos',[['dulce','💧 Agua dulce'],['salada','🌊 Agua salada'],['ambas','💧🌊 Dulce y salada']]);
+    const p=$('#e-prov').value, ag=$('#e-agua').value;
+    // 'Agua dulce' incluye las que viven en ambas; 'Dulce y salada' muestra solo las de los dos ambientes
+    const list=ESPECIES.filter(e=>(!p||ambOfEsp(e.id).some(a=>a.prov.includes(p)))&&(!ag||(ag==='ambas'?e.agua.length>1:e.agua.includes(ag))));
+    $('#e-cnt').textContent=list.length+' especie(s)';
+    $('#e-list').innerHTML=list.map(cardEsp).join('')||'<p class="psub">No hay especies con esos filtros.</p>';
+  }
   if(v==='ambientes'){
     fillSel('#a-tipo','Tipo: todos',Object.entries(GRUPOS));
     fillSel('#a-prov','Provincia: todas',[...new Set(AMBIENTES.flatMap(a=>a.prov))].sort().map(p=>[p,p]));
@@ -1436,6 +1457,11 @@ $('#lang').onchange=e=>{ LANG=e.target.value; const d=LANG==='en'?I18N.en:I18N_E
 function setTheme(t){ document.body.classList.toggle('claro',t==='claro'); $('#thbtn').innerHTML=t==='claro'?'🌙 <span class="tl">Oscuro</span>':'☀️ <span class="tl">Claro</span>'; try{localStorage.setItem('fia-tema',t);}catch(e){} }
 $('#thbtn').onclick=()=>setTheme(document.body.classList.contains('claro')?'oscuro':'claro');
 try{ if(localStorage.getItem('fia-tema')==='claro') setTheme('claro'); }catch(e){}
+/* Video de portada: arranca solo si no hay ahorro de datos ni 'reducir movimiento'; en celular muestra solo el de fondo */
+(function(){ const c=navigator.connection, save=c&&(c.saveData||/2g/.test(c.effectiveType||'')), rm=matchMedia('(prefers-reduced-motion:reduce)').matches; if(save||rm) return;
+  const vs=[$('.hvid .hbg')]; if(matchMedia('(min-width:1151px)').matches) vs.push($('.hvid .hfg'));
+  vs.forEach(v=>{ v.preload='auto'; v.muted=true; const p=v.play(); if(p&&p.catch) p.catch(()=>{}); });
+  if(vs.length>1) setInterval(()=>{ if(Math.abs(vs[0].currentTime-vs[1].currentTime)>.3) vs[1].currentTime=vs[0].currentTime; },3000); })();
 renderFilters(); draw(); route();
 </script>
 </body>
