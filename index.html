@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-<title>Pesca en Argentina · Prototipo v3.5</title>
+<title>Pesca en Argentina · Prototipo v3.6</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Libre+Franklin:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -116,12 +116,51 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 #map .leaflet-interactive:focus,#map path:focus{outline:none}
 #ftab{position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:1100;background:var(--panel);border:1px solid var(--line);border-left:0;border-radius:0 10px 10px 0;color:var(--ink);padding:14px 8px;cursor:pointer;writing-mode:vertical-rl;font-size:.8rem;display:none;box-shadow:4px 0 14px rgba(0,0,0,.35)}
 #v-mapa.collapsed #ftab{display:block}
-#qbar{position:absolute;top:10px;left:56px;right:10px;z-index:1150;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px}
+
+/* redes */
+.soc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.sb{display:flex;align-items:center;gap:10px;border-radius:12px;padding:9px 11px;text-decoration:none;color:#fff;border:1px solid transparent}
+.sb .si2{width:30px;height:30px;flex:none;display:flex}.sb .si2 svg{width:100%;height:100%}
+.sb b{display:block;font-size:.85rem}.sb small{display:block;font-size:.7rem;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px}
+.sb.ig{background:linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF)}.sb.fb{background:#1877F2}.sb.wa{background:#25D366;color:#0b2e17}.sb.wa svg path,.sb.wa svg path{stroke:#0b2e17}.sb:hover{filter:brightness(1.08)}
+/* pagos */
+#ckout{position:fixed;inset:0;z-index:5200;background:rgba(5,10,12,.72);display:none;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow-y:auto}
+#ckout.on{display:flex}
+.ckcard{position:relative;width:100%;max-width:560px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 20px 20px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.ckcard.wide{max-width:1100px}
+.ckx{position:absolute;top:12px;right:12px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:16px;padding:5px 11px;cursor:pointer}
+.ckt{font-family:"Fraunces",serif;font-weight:600;font-size:1.4rem;margin:2px 0 4px}
+.ckgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ckgrid label,.ckl{font-size:.74rem;color:var(--ink-faint);display:grid;gap:4px;margin-top:8px}
+.ckgrid label:first-child{grid-column:1/-1}
+.ckgrid>*{min-width:0}
+.ckgrid input,.ckgrid select,.ckl select{width:100%;min-width:0;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 10px;font-family:inherit;font-size:.88rem}
+.mets{display:grid;gap:8px}
+.met{border:1px solid var(--line);background:var(--panel-2);border-radius:11px;padding:10px 12px;cursor:pointer}
+.met b{display:block;font-size:.9rem}.met small{display:block;color:var(--ink-faint);font-size:.74rem;margin-top:2px}
+.met.on{border-color:var(--dorado);background:#2c2716}
+.cksum{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:16px 0 4px}
+.cksum div{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-size:.86rem;border-bottom:1px solid var(--line)}
+.cksum div:last-of-type{border-bottom:0}.cksum .hl b{color:var(--dorado);font-size:1.05rem}
+.cksum small{display:block;color:var(--ink-faint);font-size:.72rem;line-height:1.5;margin-top:6px}
+.okbig{width:64px;height:64px;border-radius:50%;background:var(--good);color:#0E1A1E;font-size:2rem;display:flex;align-items:center;justify-content:center;margin:4px auto 10px}
+.tblw{overflow-x:auto;margin:6px 0 10px}.ctab{min-width:980px}.ctab td,.ctab th{white-space:nowrap}
+/* mapa: buscador flotante + especies rápidas flotantes */
+#mtop{position:absolute;top:10px;left:56px;right:12px;z-index:1150;display:flex;flex-direction:column;align-items:flex-start;gap:8px;pointer-events:none}
+#mtop>*{pointer-events:auto}
+.msearch{width:min(480px,100%)}
+.msearch input{font-size:1rem;padding:13px 40px 13px 44px;border-radius:26px;background:rgba(19,34,37,.97);border:2px solid var(--dorado);box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.msearch input:focus{border-color:var(--dorado);box-shadow:0 0 0 4px rgba(224,180,92,.25),0 8px 24px rgba(0,0,0,.5)}
+#qwrap{max-width:min(660px,100%);background:rgba(19,34,37,.94);border:1px solid var(--line);border-radius:16px;padding:8px 8px 8px;box-shadow:0 6px 18px rgba(0,0,0,.45);display:flex;gap:6px;align-items:flex-start}
+#qwrap.min #qbar{display:none}
+#qwrap.min::before{content:"🐟 Especies rápidas";font-size:.8rem;color:var(--ink-soft);padding:4px 6px}
+#qtog{flex:none;background:var(--panel-2);border:1px solid var(--line);color:var(--ink-soft);border-radius:10px;padding:4px 9px;cursor:pointer;font-size:.8rem}
+#qbar{display:flex;flex-wrap:wrap;gap:7px}
 #qbar::-webkit-scrollbar{display:none}
 .qb{flex:none;user-select:none;display:flex;align-items:center;gap:6px;background:rgba(19,34,37,.95);border:1px solid var(--line);border-radius:22px;padding:3px 13px 3px 3px;font-size:.82rem;white-space:nowrap;cursor:pointer;color:var(--ink);box-shadow:0 3px 10px rgba(0,0,0,.4)}
 .qb .fish{width:30px;height:30px}.qb .em{width:30px;height:30px;border-radius:50%;background:#F4F1EA;display:flex;align-items:center;justify-content:center;font-size:1rem}
 .qb.on{border-color:var(--dorado);background:#2c2716}.qb.near{border-color:#2F80ED}
-#resbar{position:absolute;top:60px;left:56px;z-index:1100;background:rgba(19,34,37,.96);border:1px solid var(--sel);border-radius:22px;padding:7px 8px 7px 14px;font-size:.82rem;display:none;align-items:center;gap:10px;box-shadow:0 6px 18px rgba(0,0,0,.45);white-space:nowrap;max-width:92%}
+#resbar{position:static;z-index:1100;background:rgba(19,34,37,.96);border:1px solid var(--sel);border-radius:22px;padding:7px 8px 7px 14px;font-size:.82rem;display:none;align-items:center;gap:10px;box-shadow:0 6px 18px rgba(0,0,0,.45);white-space:nowrap;max-width:92%}
 #resbar.on{display:flex}
 #resbar span{overflow:hidden;text-overflow:ellipsis}
 #resbar button{background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:4px 10px;cursor:pointer;font-size:.74rem}
@@ -253,7 +292,14 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
   #fbtn .n{background:var(--dorado);color:#0E1A1E;border-radius:10px;padding:0 6px;font-size:.7rem;font-weight:700}
   body.sheet-shown #fbtn{display:none}
   .szbtn{display:inline-block;margin-left:auto;margin-right:6px}
-  #resbar{top:58px}
+  .msearch{display:none}
+  #mtop{right:0}
+  #qwrap{background:none;border:0;padding:0;box-shadow:none;max-width:none;width:100%}
+  #qtog{display:none}
+  #qbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:2px 10px 6px 2px}
+  .ckgrid{grid-template-columns:1fr}
+  #ckout{padding:0}
+  .ckcard{border-radius:0;min-height:100%}
   /* hojas inferiores: filtros y detalle usan el MISMO esquema */
   .sheet{position:fixed!important;left:0;right:0;bottom:var(--tb)!important;top:auto!important;width:100%!important;height:calc(100vh - var(--hh) - var(--tb))!important;height:calc(100dvh - var(--hh) - var(--tb))!important;border:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;box-shadow:0 -10px 34px rgba(0,0,0,.55);transform:translateY(100%)!important;transition:transform .3s cubic-bezier(.32,.72,0,1);z-index:2600;visibility:visible!important;display:flex;flex-direction:column;overflow:hidden}
   .sheet.dragging{transition:none}
@@ -272,7 +318,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
   .plans,.two{grid-template-columns:1fr}
   .wrap{padding:20px 14px 50px}
 }
-@media(min-width:761px){ .fhead .bar{display:none} }
+@media(min-width:761px){ .fhead .bar{display:none} body[data-view=mapa] header .hsearch{visibility:hidden} }
 </style>
 </head>
 <body data-view="inicio">
@@ -317,7 +363,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
     <div class="sect"><h2>Ambientes <a data-go="ambientes">Ver todos →</a></h2><p class="s">Ríos, lagos, lagunas y spots de mar con ficha.</p><div class="grid" id="h-amb"></div></div>
     <div class="sect"><h2>Novedades</h2><p class="s">Aperturas de temporada, cambios de reglamento y notas (base de noticias).</p><div class="news" id="h-news"></div></div>
   </div>
-  <footer>© 2026 PescaAR (nombre provisorio) · Prototipo v3.5 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo</footer>
+  <footer>© 2026 PescaAR (nombre provisorio) · Prototipo v3.6 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo · <a href="#" data-cont="1">Panel del contador (demo)</a></footer>
 </section>
 
 <!-- ===================== MAPA ===================== -->
@@ -337,8 +383,11 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
   <div class="mapbox">
     <div id="map"></div>
     <button id="ftab">Filtros ▶</button>
-    <div id="qbar"></div>
-    <div id="resbar"><span id="restx"></span><button id="resx">✕ Limpiar</button></div>
+    <div id="mtop">
+      <div class="sbox msearch" id="ms"><span class="si">🔍</span><input type="text" placeholder="Buscar especie, río, provincia, guía…" autocomplete="off"><span class="sx">✕</span><div class="sdrop"></div></div>
+      <div id="qwrap"><div id="qbar"></div><button id="qtog" title="Ocultar / mostrar">▴</button></div>
+      <div id="resbar"><span id="restx"></span><button id="resx">✕ Limpiar</button></div>
+    </div>
     <button id="fbtn">⚙ Filtros <span class="n" id="fbtnn" style="display:none"></span></button>
     <div class="legend">
       <div class="row"><span class="sw" style="background:#1E90A8"></span> Río</div>
@@ -413,6 +462,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
   <a data-go="servicios"><span class="ni" data-ico="servicios"></span>Guías</a>
 </nav>
 
+<div id="ckout"><div class="ckcard"><button class="ckx">✕</button><div class="ckbody"></div></div></div>
 <div id="lbox"><button class="x">✕ Cerrar</button><img alt=""><b></b><small></small></div>
 <!-- Panel de detalle: derecha en PC, hoja inferior en celular -->
 <aside id="drawer" class="sheetable">
@@ -579,7 +629,7 @@ const GUIAS = [
  {id:'g6',n:'Nahuel Charters',ext:[{p:'Google',u:'https://www.google.com/maps'}],loc:'Bariloche, Río Negro',ll:[-41.13,-71.30],nivel:2,rat:4.7,nr:19,pres:'Trolling y spinning embarcado en el Nahuel Huapí.',esp:['trucha_m','trucha_a','salmon'],of:[{s:'Trolling día completo',mod:['Trolling'],acc:['Embarcado a motor'],amb:'nahuel',costo:'USD 380'}],res:[]},
  {id:'g7',n:'Diego Sánchez',loc:'Ciudad de Neuquén, Neuquén',ll:[-38.95,-68.06],nivel:1,rat:4.0,nr:3,pres:'Guía de mosca, salidas al Limay inferior.',esp:['trucha_a','perca'],of:[{s:'Vadeo medio día',mod:['Fly fishing'],acc:['Vadeo'],amb:'limay',costo:'USD 220'}],res:[]},
  {id:'g8',n:'Pejerreyes Chascomús',loc:'Chascomús, Buenos Aires',ll:[-35.58,-58.01],nivel:2,rat:4.4,nr:15,pres:'Salidas embarcadas de pejerrey con equipo incluido.',esp:['pejerrey'],of:[{s:'Salida embarcada (4 h)',mod:['Carnada'],acc:['Embarcado a motor'],amb:'chascomus',costo:'USD 90'}],res:[]},
- {id:'g10',n:'Tomás',loc:'Paso de la Patria, Corrientes',ll:[-27.305,-58.575],nivel:3,rat:4.8,nr:14,pres:'Guía de pesca en Paso de la Patria, sobre el Alto Paraná. Salidas embarcadas de dorado y surubí, con devolución. (datos de ejemplo: completar)',esp:['dorado','surubi','pacu'],of:[{s:'Día completo embarcado (2 pescadores)',mod:['Carnada','Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 330'},{s:'Media jornada',mod:['Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 190'}],res:[]},
+ {id:'g10',n:'Tomás',soc:{ig:'tomas.pesca.ejemplo',fb:'tomas.pesca.ejemplo',wa:'5493790000000',demo:1},loc:'Paso de la Patria, Corrientes',ll:[-27.305,-58.575],nivel:3,rat:4.8,nr:14,pres:'Guía de pesca en Paso de la Patria, sobre el Alto Paraná. Salidas embarcadas de dorado y surubí, con devolución. (datos de ejemplo: completar)',esp:['dorado','surubi','pacu'],of:[{s:'Día completo embarcado (2 pescadores)',mod:['Carnada','Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 330'},{s:'Media jornada',mod:['Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 190'}],res:[]},
  {id:'g9',n:'Costa Sur Pesca',loc:'Bahía San Blas, Buenos Aires',ll:[-40.55,-62.25],nivel:3,rat:4.6,nr:17,pres:'Variada de mar embarcada y tiburón con devolución.',esp:['corvina','escalandrun','pescadilla'],of:[{s:'Variada embarcada',mod:['Carnada'],acc:['Embarcado a motor'],amb:'sanblas',costo:'USD 300'},{s:'Tiburón (captura y devolución)',mod:['Carnada'],acc:['Embarcado a motor'],amb:'sanblas',costo:'USD 420'}],res:[]}
 ];
 const LODGES = [
@@ -851,7 +901,8 @@ function renderQbar(){ $('#qbar').innerHTML=QB.map(([k,id])=>k==='cerca'?`<span 
 $('#qbar').addEventListener('click',e=>{ const b=e.target.closest('[data-qb]'); if(!b) return; const [k,id]=b.dataset.qb.split(':');
   if(b.classList.contains('on')){ $('#resx').click(); return; }
   if(k==='cerca') return nearMe(); F=F0(); R=null; renderFilters(); setResults({kind:k,id}); });
-L.DomEvent.disableClickPropagation($('#qbar')); L.DomEvent.disableScrollPropagation($('#qbar'));
+L.DomEvent.disableClickPropagation($('#mtop')); L.DomEvent.disableScrollPropagation($('#mtop'));
+$('#qtog').onclick=()=>{ const w=$('#qwrap'); w.classList.toggle('min'); $('#qtog').textContent=w.classList.contains('min')?'▾':'▴'; };
 /* CERCA MÍO: usa la ubicación del teléfono/PC (el navegador pide permiso). Muestra lo más cercano y marca los de reserva directa. */
 function kmTo(a,b){ const r=Math.PI/180, dLa=(b[0]-a[0])*r, dLo=(b[1]-a[1])*r, x=Math.sin(dLa/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dLo/2)**2; return 12742*Math.asin(Math.sqrt(x)); }
 function nearMe(){
@@ -942,13 +993,14 @@ function detSrv(s){
   ${s.cap?`<dl class="kv"><dt>Capacidad</dt><dd>${esc(s.cap)}</dd></dl>`:''}
   <h3>Servicios que ofrece</h3>
   <table class="otab"><tr><th>Servicio</th><th>Ambiente</th><th>Costo</th></tr>${s.of.map(o=>`<tr><td>${esc(o.s)}<br><small style="color:var(--ink-faint)">${[...o.mod,...o.acc].map(esc).join(' · ')}</small></td><td><span class="lnk" data-amb="${o.amb}">${esc(AMB_BY[o.amb].n)}</span></td><td class="mono">${esc(o.costo)}</td></tr>`).join('')}</table>
+  ${socBlock(s)}
   ${s.esp.length?`<h3>Especies</h3>${espChips(s.esp)}`:''}
   ${gallery('srv:'+s.id)}
   <h3>Reseñas · ${s.nr}</h3>${revSummary(s)}
   ${s.ext&&s.ext.length?`<div class="psub" style="margin:10px 0 0">También podés ver sus reseñas en:</div><div class="ext">${s.ext.map(x=>`<a href="${x.u}" target="_blank" rel="noopener">${esc(x.p)} ↗</a>`).join('')}</div>`:''}
   <div id="revlist">${s.res.map(revHTML).join('')||'<p class="psub">Todavía no hay reseñas escritas.</p>'}</div>
   <div class="rform" data-rform="${s.id}"><b style="font-size:.84rem">Calificá este servicio</b><div class="st" data-st="0">${'<span>★</span>'.repeat(5)}</div><textarea rows="2" placeholder="Contá cómo fue tu salida…"></textarea><button class="btn" style="margin-top:8px" data-sendrev="${s.id}">Publicar reseña</button><div class="psub" style="margin:6px 0 0;font-size:.7rem">Las reseñas se moderan. Si reservaste por PescaAR, la tuya lleva el sello "Reserva verificada".</div></div>
-  ${L4?`<button class="btn gold">Reservar salida con seña<small>Seña online · resto al guía el día de la salida · reembolso si no se sale</small></button>`:`<button class="btn">✉ Contactar${s.nivel>=2?' (WhatsApp / email)':' (formulario)'}</button>`}
+  ${L4?`<button class="btn gold" data-book="${s.id}">Reservar salida con seña<small>Seña online · resto al guía el día de la salida · reembolso si no se sale</small></button>`:`<button class="btn">✉ Contactar${s.nivel>=2?' (WhatsApp / email)':' (formulario)'}</button>`}
   <button class="btn" data-mapsrv="${s.id}">🗺 Ver en el mapa</button>
   <div class="demo">🛈 Nivel: <b>${NIVELES[s.nivel].n}</b>. ${s.nivel<3?'Con este nivel no aparece como ícono en el mapa: se lista al elegir el ambiente'+(s.nivel===2?', debajo de los de reserva directa.':', al final.'):'Aparece como ícono en el mapa y en la portada.'}</div></div>`;
 }
@@ -1077,6 +1129,148 @@ document.addEventListener('click',e=>{
 $('#burger').onclick=e=>{ e.stopPropagation(); $('#nav').classList.toggle('open'); };
 document.addEventListener('click',e=>{ if(!e.target.closest('#nav,#burger')) $('#nav').classList.remove('open'); });
 
+/* (redes y pagos) */
+/* =====================================================================
+   REDES SOCIALES + WHATSAPP del prestador
+   ===================================================================== */
+function socBlock(s){
+  const S=s.soc; if(!S) return '';
+  const msg=(LANG==='en'?`Hi ${s.n}! I found you on PescaAR and I'd like to ask about a fishing trip.`:`Hola ${s.n}, te encontré en PescaAR y quiero consultarte por una salida de pesca.`);
+  const L=[];
+  if(S.ig) L.push(['ig','Instagram',`https://www.instagram.com/${S.ig}/`,'@'+S.ig]);
+  if(S.fb) L.push(['fb','Facebook',`https://www.facebook.com/${S.fb}`,S.fb]);
+  if(S.wa&&s.nivel>=2) L.push(['wa','WhatsApp',`https://wa.me/${S.wa}?text=${encodeURIComponent(msg)}`,'+'+S.wa]);
+  return `<h3>Redes y contacto</h3><div class="soc">${L.map(([k,t,u,h])=>`<a class="sb ${k}" href="${u}" target="_blank" rel="noopener"${S.demo?' data-demo="1"':''}><span class="si2">${SOC_ICO[k]}</span><span><b>${t}</b><small>${esc(h)}</small></span></a>`).join('')}</div>
+  ${S.demo?'<div class="demo" id="socnote" style="display:none"></div>':''}`;
+}
+const SOC_ICO={
+ ig:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.3" fill="#fff"/></svg>',
+ fb:'<svg viewBox="0 0 24 24"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H7.9v3h2.6V21z" fill="#fff"/></svg>',
+ wa:'<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="#fff" stroke-width="1.8"/><path d="M8.6 7.8c.2-.4.5-.4.8-.4h.5c.2 0 .4 0 .5.4l.7 1.7c.1.2 0 .4-.1.6l-.5.6c-.1.1-.1.3 0 .5.5.9 1.4 1.8 2.4 2.3.2.1.4.1.5 0l.6-.7c.2-.2.4-.2.6-.1l1.6.8c.2.1.3.3.3.5 0 .9-.7 1.7-1.6 1.8-1 .1-2.5-.3-4.2-1.8-1.6-1.4-2.4-3-2.5-4-.1-.8.2-1.6.4-2.2z" fill="#fff"/></svg>'};
+document.addEventListener('click',e=>{ const a=e.target.closest('a[data-demo]'); if(!a) return; e.preventDefault(); const n=$('#socnote'); if(n){ n.style.display='block'; n.innerHTML='🛈 <b>Enlace de ejemplo</b>: todavía no cargamos el perfil real. Con el dato real, este botón abre:<br><span class="mono" style="word-break:break-all">'+esc(decodeURIComponent(a.href))+'</span>'; } });
+
+/* =====================================================================
+   PAGOS — SIMULACIÓN (no se cobra nada). Seña = comisión de PescaAR; el resto se paga al guía.
+   Valores de comisiones, tipos de cambio y alícuotas: DE EJEMPLO, a validar con el contador.
+   ===================================================================== */
+const SENIA=0.20;                                     // seña = 20% del valor de la salida
+const FX={USD:1,EUR:0.92,BRL:5.4,ARS:1350,USDT:1,USDC:1};   // unidades por 1 USD (ejemplo)
+const METODOS={
+ ext:[{id:'card',n:'Tarjeta internacional',d:'Visa · Mastercard · Amex — procesa dLocal (o similar)',fee:.045,fix:0,cur:['USD','EUR','BRL']},
+      {id:'paypal',n:'PayPal',d:'Saldo PayPal o tarjeta asociada',fee:.054,fix:.30,cur:['USD','EUR','BRL']},
+      {id:'crypto',n:'Criptomonedas (stablecoins)',d:'USDT / USDC — vía proveedor registrado en CNV (PSAV)',fee:.01,fix:0,cur:['USDT','USDC']}],
+ ar:[{id:'mp',n:'Mercado Pago',d:'Dinero en cuenta, tarjetas, cuotas',fee:.0629,fix:0,cur:['ARS']},
+     {id:'qr',n:'Transferencia / QR',d:'Desde cualquier banco o billetera (Transferencias 3.0)',fee:.008,fix:0,cur:['ARS']},
+     {id:'card',n:'Tarjeta de débito / crédito',d:'Procesa Payway / Mercado Pago',fee:.035,fix:0,cur:['ARS']}]};
+const IIBB_ALIC=.035, DEBCRED=.006, IVA=.21;
+let CK=null, OPS=[], NRO={E:0,B:0};
+const money=(v,c)=>(c==='ARS'?'$ ':c+' ')+v.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const usdOf=o=>+String(o.costo).replace(/[^\d]/g,'');
+function tomorrow(){ const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10); }
+function openCk(html,wide){ const c=$('#ckout'); c.querySelector('.ckcard').classList.toggle('wide',!!wide); c.querySelector('.ckbody').innerHTML=html; c.classList.add('on'); c.querySelector('.ckcard').scrollTop=0; }
+function closeCk(){ $('#ckout').classList.remove('on'); }
+function startBooking(id){ const s=SRV_BY[id]; CK={s,of:0,date:tomorrow(),pax:2,org:'ext',met:'card',cur:'USD',name:'',country:'Estados Unidos'}; ckRender(); }
+function ckCalc(){
+  const o=CK.s.of[CK.of], usd=usdOf(o), sen=usd*SENIA, m=METODOS[CK.org].find(x=>x.id===CK.met);
+  const cur=m.cur.includes(CK.cur)?CK.cur:m.cur[0]; CK.cur=cur;
+  const amt=sen*FX[cur], ars=sen*FX.ARS;
+  const fee=(sen*m.fee+m.fix)*FX.ARS, feeIva=fee*IVA;
+  let neto, iva, iibb, tipo;
+  if(CK.org==='ext'){ tipo='E'; neto=ars; iva=0; iibb=0; }
+  else { tipo='B'; neto=ars/(1+IVA); iva=ars-neto; iibb=neto*IIBB_ALIC; }
+  const dc=ars*DEBCRED;
+  return {o,usd,sen,rest:usd-sen,m,cur,amt,ars,fee,feeIva,neto,iva,iibb,dc,tipo,queda:ars-iva-iibb-fee-feeIva-dc};
+}
+function ckRender(){
+  const s=CK.s, r=ckCalc();
+  const mets=METODOS[CK.org];
+  openCk(`<div class="eyebrow">Reserva directa con seña · SIMULACIÓN</div><h2 class="ckt">${esc(s.n)}</h2><div class="psub" style="margin:0 0 12px">${esc(s.loc)} · ${stars(s.rat,s.nr)}</div>
+  <div class="ckgrid">
+   <label>Salida<select data-ck="of">${s.of.map((o,i)=>`<option value="${i}"${i===CK.of?' selected':''}>${esc(o.s)} — ${esc(o.costo)}</option>`).join('')}</select></label>
+   <label>Fecha<input type="date" data-ck="date" value="${CK.date}"></label>
+   <label>Pescadores<input type="number" min="1" max="6" data-ck="pax" value="${CK.pax}"></label>
+   <label>Nombre<input data-ck="name" value="${esc(CK.name)}" placeholder="Nombre y apellido"></label>
+  </div>
+  <div class="flabel">¿Desde dónde pagás?</div>
+  <div class="tgs"><span class="tg${CK.org==='ext'?' on':''}" data-ckorg="ext">🌎 Del exterior</span><span class="tg${CK.org==='ar'?' on':''}" data-ckorg="ar">🇦🇷 De Argentina</span></div>
+  ${CK.org==='ext'?`<label class="ckl">País<select data-ck="country">${['Estados Unidos','Brasil','Reino Unido','Alemania','Francia','España','Uruguay','Chile','Otro'].map(p=>`<option${p===CK.country?' selected':''}>${p}</option>`).join('')}</select></label>`:''}
+  <div class="flabel">Medio de pago</div>
+  <div class="mets">${mets.map(m=>`<div class="met${m.id===CK.met?' on':''}" data-ckmet="${m.id}"><b>${m.n}</b><small>${m.d}</small><small class="mono">Comisión del procesador (ejemplo): ${(m.fee*100).toFixed(2).replace('.',',')}%${m.fix?' + USD '+m.fix.toFixed(2):''}</small></div>`).join('')}</div>
+  <div class="flabel">Moneda</div>
+  <div class="tgs">${r.m.cur.map(c=>`<span class="tg${c===r.cur?' on':''}" data-ckcur="${c}">${c}</span>`).join('')}</div>
+  <div class="cksum">
+   <div><span>Valor de la salida</span><b>USD ${r.usd.toLocaleString('es-AR')}</b></div>
+   <div class="hl"><span>Pagás ahora: seña (${SENIA*100}%)</span><b>${money(r.amt,r.cur)}</b></div>
+   <div><span>Pagás al guía el día de la salida</span><b>USD ${r.rest.toLocaleString('es-AR')}</b></div>
+   <small>${r.cur!=='USD'?`Tipo de cambio de ejemplo: 1 USD = ${FX[r.cur].toLocaleString('es-AR')} ${r.cur}. `:''}Garantía: si la salida no se hace por causas del guía o fuerza mayor, se devuelve la seña completa.</small>
+  </div>
+  <button class="btn gold" data-ckpay="1">Pagar seña (simulado)<small>No se cobra nada: es una demostración</small></button>`);
+}
+function ckPay(){
+  const r=ckCalc(), s=CK.s, t=r.tipo; NRO[t]++;
+  const nro=(t==='E'?'00002':'00001')+'-'+String(NRO[t]).padStart(8,'0');
+  const cae=String(Math.floor(7e13+Math.random()*9e12));
+  const code='PAR-'+Math.random().toString(36).slice(2,7).toUpperCase();
+  const amb=AMB_BY[r.o.amb];
+  const op={fecha:new Date().toISOString().slice(0,10),salida:CK.date,code,cliente:CK.name||(CK.org==='ext'?'Pescador del exterior':'Pescador de Argentina'),pais:CK.org==='ext'?CK.country:'Argentina',
+    prest:s.n,serv:r.o.s,jur:amb.prov[0],tipo:t==='E'?'Factura E (exportación)':'Factura B (cons. final)',nro,cae,metodo:r.m.n,moneda:r.cur,monto:r.amt,tc:FX.ARS/FX[r.cur],ars:r.ars,neto:r.neto,iva:r.iva,iibb:r.iibb,fee:r.fee,feeIva:r.feeIva,dc:r.dc,queda:r.queda,resto:r.rest};
+  OPS.push(op);
+  openCk(`<div class="okbig">✔</div><h2 class="ckt" style="text-align:center">¡Reserva confirmada! <small class="mono" style="font-size:.8rem;color:var(--dorado)">(simulación)</small></h2>
+  <p class="psub" style="text-align:center">Código <b class="mono">${code}</b> · ${esc(s.n)} · ${esc(r.o.s)} · ${op.salida}</p>
+  <div class="cksum"><div class="hl"><span>Seña pagada con ${esc(r.m.n)}</span><b>${money(r.amt,r.cur)}</b></div><div><span>Resto a pagar al guía el día de la salida</span><b>USD ${r.rest.toLocaleString('es-AR')}</b></div>
+  <small>El guía emite su propia factura por el resto. Si la salida no se realiza por causas del guía o fuerza mayor, se devuelve la seña.</small></div>
+  <div class="flabel">Comprobante emitido por PescaAR (ARCA · simulado)</div>
+  <div class="rule"><b>${op.tipo} Nº ${nro}</b><br>CAE ${cae} · ${t==='E'?'Exportación de servicios: sin IVA. Moneda '+r.cur:'IVA 21% incluido'}<br>Total: ${money(r.ars,'ARS')}${r.cur!=='ARS'?' (equivale a '+money(r.amt,r.cur)+')':''}</div>
+  <div class="flabel">Lo que queda para PescaAR de esta seña (ejemplo)</div>
+  <table class="otab">${[['Seña cobrada (en pesos)',r.ars],['− IVA débito fiscal (a pagar a ARCA)',-r.iva],['− Ingresos Brutos '+(t==='E'?'(exportación: exenta, verificar)':(IIBB_ALIC*100).toString().replace('.',',')+'% · '+op.jur),-r.iibb],['− Comisión del procesador',-r.fee],['− IVA sobre esa comisión (se recupera como crédito fiscal)',-r.feeIva],['− Impuesto a los débitos y créditos 0,6%',-r.dc],['= Neto antes de Ganancias',r.queda]].map(([k,v],i,a)=>`<tr${i===a.length-1?' style="font-weight:600"':''}><td>${k}</td><td class="mono" style="text-align:right">${money(v||0,'ARS')}</td></tr>`).join('')}</table>
+  <button class="btn" data-ckcont="1">📊 Ver panel del contador</button><button class="btn" data-ckclose="1">Volver al mapa</button>`);
+}
+function contRender(){
+  const T=k=>OPS.reduce((a,o)=>a+o[k],0);
+  openCk(`<div class="eyebrow">Solo administración · SIMULACIÓN</div><h2 class="ckt">Panel del contador</h2>
+  <p class="psub">Operaciones cobradas por PescaAR (señas). Lo que el contador descarga para liquidar IVA, Ingresos Brutos (Convenio Multilateral) y conciliar con los procesadores de pago. En producción sale de la base de datos y de ARCA; los importes y alícuotas son de ejemplo.</p>
+  ${OPS.length?`<div class="tblw"><table class="otab ctab"><tr><th>Fecha</th><th>Código</th><th>Cliente / país</th><th>Comprobante</th><th>Jurisd.</th><th>Medio</th><th>Moneda</th><th>Total $</th><th>Neto $</th><th>IVA $</th><th>IIBB $</th><th>Com. proc. $</th><th>Déb/Cré $</th><th>Neto final $</th></tr>
+  ${OPS.map(o=>`<tr><td>${o.fecha}</td><td class="mono">${o.code}</td><td>${esc(o.cliente)}<br><small>${esc(o.pais)}</small></td><td>${o.tipo}<br><small class="mono">${o.nro}</small></td><td>${esc(o.jur)}</td><td>${esc(o.metodo)}</td><td>${o.moneda} ${o.monto.toFixed(2)}</td>${['ars','neto','iva','iibb','fee','dc','queda'].map(k=>`<td class="mono">${o[k].toLocaleString('es-AR',{maximumFractionDigits:0})}</td>`).join('')}</tr>`).join('')}
+  <tr style="font-weight:600"><td colspan="7">Totales</td>${['ars','neto','iva','iibb','fee','dc','queda'].map(k=>`<td class="mono">${T(k).toLocaleString('es-AR',{maximumFractionDigits:0})}</td>`).join('')}</tr></table></div>
+  <div class="cksum"><div><span>IVA débito a declarar (ventas en el país)</span><b>${money(T('iva'),'ARS')}</b></div><div><span>Exportaciones de servicios (sin IVA)</span><b>${money(OPS.filter(o=>o.iva===0).reduce((a,o)=>a+o.ars,0),'ARS')}</b></div><div><span>Ingresos Brutos estimado</span><b>${money(T('iibb'),'ARS')}</b></div>
+  <small>Ingresos Brutos por jurisdicción (base para Convenio Multilateral): ${[...new Set(OPS.map(o=>o.jur))].map(j=>esc(j)+' '+money(OPS.filter(o=>o.jur===j).reduce((a,o)=>a+o.ars,0),'ARS')).join(' · ')}</small></div>
+  <button class="btn gold" data-csv="ops">⬇ Descargar libro de ventas (Excel / CSV)</button>
+  <button class="btn" data-csv="imp">⬇ Descargar resumen de impuestos (CSV)</button>`:'<div class="note">Todavía no hay operaciones. Reservá una salida con un servicio de "Reserva directa" o cargá dos de ejemplo.</div>'}
+  <button class="btn" data-ckdemo="1">➕ Cargar 2 operaciones de ejemplo (un extranjero y un argentino)</button>
+  <div class="demo">🛈 Los datos viven solo en esta pestaña del navegador (se borran al recargar). En producción: la factura la emite ARCA (CAE real) y el libro se exporta en el formato de "Libro IVA Digital".</div>`,true);
+}
+function csvDown(kind){
+  const n=v=>typeof v==='number'?v.toFixed(2).replace('.',','):'"'+String(v).replace(/"/g,'""')+'"';
+  let rows;
+  if(kind==='ops'){ rows=[['Fecha cobro','Fecha salida','Código reserva','Cliente','País','Prestador','Servicio','Jurisdicción (provincia)','Comprobante','Número','CAE','Medio de pago','Moneda','Importe moneda','Tipo de cambio','Total ARS','Neto gravado / exportación ARS','IVA ARS','IIBB estimado ARS','Comisión procesador ARS','IVA s/comisión ARS','Imp. déb/créd ARS','Neto final ARS','Resto a pagar al guía USD']]
+    .concat(OPS.map(o=>[o.fecha,o.salida,o.code,o.cliente,o.pais,o.prest,o.serv,o.jur,o.tipo,o.nro,o.cae,o.metodo,o.moneda,o.monto,o.tc,o.ars,o.neto,o.iva,o.iibb,o.fee,o.feeIva,o.dc,o.queda,o.resto])); }
+  else { const T=k=>OPS.reduce((a,o)=>a+o[k],0); rows=[['Concepto','Importe ARS'],['Ventas gravadas (neto)',OPS.filter(o=>o.iva>0).reduce((a,o)=>a+o.neto,0)],['IVA débito fiscal',T('iva')],['Exportaciones de servicios',OPS.filter(o=>o.iva===0).reduce((a,o)=>a+o.ars,0)],['IVA crédito fiscal (comisiones de procesadores)',T('feeIva')],['IVA a pagar (débito − crédito)',T('iva')-T('feeIva')],['Ingresos Brutos estimado',T('iibb')],['Impuesto a los débitos y créditos',T('dc')],['Comisiones de procesadores',T('fee')]]
+    .concat([...new Set(OPS.map(o=>o.jur))].map(j=>['Base IIBB '+j,OPS.filter(o=>o.jur===j).reduce((a,o)=>a+o.ars,0)])); }
+  const csv='﻿'+rows.map(r=>r.map(n).join(';')).join('\r\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download=(kind==='ops'?'pescaar_libro_ventas_':'pescaar_resumen_impuestos_')+new Date().toISOString().slice(0,10)+'.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+function demoOps(){
+  const g=SRV_BY.g10||SRV.find(x=>x.nivel===3);
+  CK={s:g,of:0,date:tomorrow(),pax:2,org:'ext',met:'card',cur:'USD',name:'John Miller',country:'Estados Unidos'}; ckPay();
+  CK={s:g,of:1,date:tomorrow(),pax:1,org:'ar',met:'mp',cur:'ARS',name:'Lucía Romero',country:'Argentina'}; ckPay();
+  contRender();
+}
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const b=t.closest('[data-book]'); if(b){ startBooking(b.dataset.book); return; }
+  if(t.closest('[data-cont]')){ e.preventDefault(); contRender(); return; }
+  if(!t.closest('#ckout')) return;
+  if(t.closest('.ckx')||t.closest('[data-ckclose]')||t.id==='ckout'){ closeCk(); return; }
+  const o=t.closest('[data-ckorg]'); if(o){ CK.org=o.dataset.ckorg; CK.met=METODOS[CK.org][0].id; CK.cur=METODOS[CK.org][0].cur[0]; ckRender(); return; }
+  const m=t.closest('[data-ckmet]'); if(m){ CK.met=m.dataset.ckmet; ckRender(); return; }
+  const c=t.closest('[data-ckcur]'); if(c){ CK.cur=c.dataset.ckcur; ckRender(); return; }
+  if(t.closest('[data-ckpay]')){ ckPay(); return; }
+  if(t.closest('[data-ckcont]')){ contRender(); return; }
+  if(t.closest('[data-ckdemo]')){ demoOps(); return; }
+  const d=t.closest('[data-csv]'); if(d){ csvDown(d.dataset.csv); return; }
+});
+document.addEventListener('change',e=>{ const f=e.target.closest('[data-ck]'); if(!f||!CK) return; const k=f.dataset.ck; CK[k]=k==='of'||k==='pax'?+f.value:f.value; if(k==='of') ckRender(); });
+
 /* =====================================================================
    VISTAS DE TARJETAS
    ===================================================================== */
@@ -1171,7 +1365,7 @@ function attachSearch(box){
   x.onclick=()=>{ inp.value=''; show(); inp.focus(); };
   document.addEventListener('click',e=>{ if(!box.contains(e.target)) drop.classList.remove('open'); });
 }
-attachSearch($('#hs')); attachSearch($('#heros'));
+attachSearch($('#hs')); attachSearch($('#heros')); attachSearch($('#ms'));
 // búsqueda de un río sin ficha
 const _applyMap=applyMap;
 applyMap=function(o){ if(o.geo){ const fs=[...RIVERS.features,...LAKES.features].filter(f=>f.properties.name===o.geo); if(fs.length){ selectGeo(fs[0]); SEL.keys=new Set(fs.map(f=>f.properties._k)); draw(); const pts=[]; fs.forEach(f=>L.geoJSON(f).eachLayer(l=>{const b=l.getBounds();pts.push(b.getSouthWest(),b.getNorthEast());})); fitLatLngs(pts,8);} return; } _applyMap(o); };
