@@ -171,8 +171,6 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 .btn.gold{background:var(--dorado);color:#0E1A1E;border-color:var(--dorado)}
 .btn.gold small{display:block;font-weight:400;font-size:.7rem;margin-top:2px}
 .demo{margin-top:16px;font-size:.72rem;color:var(--ink-faint);background:var(--panel-2);border-radius:8px;padding:9px 12px;line-height:1.5}
-.fish{display:inline-flex;width:30px;height:30px;border-radius:50%;background:#F4F1EA;border:2px solid var(--c);align-items:center;justify-content:center;flex:none}
-.fish svg{width:22px;height:14px}
 /* ---------- CONTACTO ---------- */
 .form{display:grid;gap:12px;max-width:560px}
 .form label{font-size:.78rem;color:var(--ink-faint);display:grid;gap:5px}
@@ -183,6 +181,36 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 .plan ul{padding-left:18px;margin:10px 0 0;color:var(--ink-soft);font-size:.8rem;line-height:1.6}
 .plan.top{border-color:var(--dorado)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+/* logos de especie */
+.fish{display:inline-flex;width:30px;height:30px;flex:none;vertical-align:middle}
+.fish svg{width:100%;height:100%}
+.fish.s{width:22px;height:22px}
+.lg{background:#F4F1EA;border-radius:10px;height:92px;display:flex;align-items:center;justify-content:center;margin:-4px -4px 10px}
+.lg svg{height:84px;width:auto}
+.lg.big{height:130px}.lg.big svg{height:120px}
+.sptiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sptile{border:1px solid var(--line);background:var(--panel-2);border-radius:10px;padding:6px 4px 5px;text-align:center;cursor:pointer;font-size:.68rem;color:var(--ink-soft);line-height:1.2}
+.sptile .fish{width:44px;height:44px;display:flex;margin:0 auto 3px}
+.sptile.on{border-color:var(--dorado);background:#2c2716;color:var(--ink)}
+.sprow{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:-6px 0 14px}
+.sprow .tg{white-space:nowrap}
+.mk.sp{padding:0;border:0;background:none;box-shadow:none;width:40px;height:40px}.mk.sp svg{width:40px;height:40px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5))}
+.mk.sp.big svg{width:48px;height:48px}
+/* fotos */
+.gal{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+.ph{flex:none;width:150px;border-radius:10px;overflow:hidden;background:var(--panel-2);border:1px solid var(--line);font-size:.68rem;color:var(--ink-faint)}
+.ph svg,.ph img{display:block;width:150px;height:100px;object-fit:cover}
+.ph div{padding:5px 7px;line-height:1.35}
+.ph.up{display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;min-height:140px;border-style:dashed;color:var(--river-lite);font-size:.78rem}
+/* reseñas */
+.ext{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.ext a{border:1px solid var(--line);background:var(--panel-2);border-radius:18px;padding:5px 12px;font-size:.78rem;text-decoration:none;color:var(--ink)}
+.rform{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:10px}
+.rform .st{font-size:1.4rem;color:#4a5f63;cursor:pointer;letter-spacing:2px}.rform .st b{color:var(--dorado)}
+.rform textarea{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:8px;font-family:inherit;margin-top:6px}
+.rbar{display:grid;grid-template-columns:28px 1fr 26px;gap:6px;align-items:center;font-size:.7rem;color:var(--ink-faint)}
+.rbar i{display:block;height:6px;border-radius:3px;background:var(--dorado)}
+.szbtn{display:none}
 /* ===================== CELULAR ===================== */
 @media(max-width:760px){
   :root{--hh:104px}
@@ -201,6 +229,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
   #fbtn{display:flex;position:absolute;left:12px;bottom:18px;z-index:1100;background:rgba(19,34,37,.96);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:11px 15px;font-size:.86rem;box-shadow:0 4px 16px rgba(0,0,0,.45);cursor:pointer;gap:8px;align-items:center}
   #fbtn .n{background:var(--dorado);color:#0E1A1E;border-radius:10px;padding:0 6px;font-size:.7rem;font-weight:700}
   body.sheet-shown #fbtn{display:none}
+  .szbtn{display:inline-block;margin-left:auto;margin-right:6px}
   #resbar{top:10px}
   /* hojas inferiores: filtros y detalle usan el MISMO esquema */
   .sheet{position:fixed!important;left:0;right:0;bottom:0;top:auto!important;width:100%!important;height:88vh;border:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;box-shadow:0 -10px 34px rgba(0,0,0,.55);transform:translateY(100%)!important;transition:transform .3s cubic-bezier(.32,.72,0,1);z-index:2600;visibility:visible!important;display:flex;flex-direction:column;overflow:hidden}
@@ -229,7 +258,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
     <a data-go="ambientes" data-i18n="nav_ambientes">Ambientes</a>
     <a data-go="contacto" data-i18n="nav_contacto">Contacto</a>
   </nav>
-  <div class="hsearch sbox" id="hs"><span class="si">🔍</span><input type="search" placeholder="Buscar especie, río, lago, guía, lodge…" data-i18n-ph="ph" autocomplete="off"><span class="sx">✕</span><div class="sdrop"></div></div>
+  <div class="hsearch sbox" id="hs"><span class="si">🔍</span><input type="text" placeholder="Buscar especie, río, lago, guía, lodge…" data-i18n-ph="ph" autocomplete="off"><span class="sx">✕</span><div class="sdrop"></div></div>
   <select class="lang" id="lang" title="Idioma"><option value="es">ES</option><option value="en">EN</option></select>
   <button class="burger" id="burger">☰</button>
 </header>
@@ -241,7 +270,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
     <p class="eyebrow">Ríos · lagos · lagunas · mar</p>
     <h1 data-i18n="hero_t">Pescá en Argentina</h1>
     <p data-i18n="hero_p">Encontrá dónde se pesca cada especie, la reglamentación de cada ambiente y guías y lodges con reputación. Todo sobre el mapa.</p>
-    <div class="sbox" id="heros"><span class="si">🔍</span><input type="search" placeholder="Probá: dorado, Paraná, trucha, lodge…" autocomplete="off"><span class="sx">✕</span><div class="sdrop"></div></div>
+    <div class="sbox" id="heros"><span class="si">🔍</span><input type="text" placeholder="Probá: dorado, Paraná, trucha, lodge…" autocomplete="off"><span class="sx">✕</span><div class="sdrop"></div></div>
     <div class="qchips" id="qchips"></div>
     <svg class="wave" viewBox="0 0 1200 60" preserveAspectRatio="none"><path d="M0 30 Q150 0 300 30 T600 30 T900 30 T1200 30 V60 H0Z" fill="#1E90A8"/></svg>
   </div>
@@ -266,7 +295,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 <!-- ===================== MAPA ===================== -->
 <section class="view" id="v-mapa">
   <aside id="filters">
-    <div class="fhead" id="fgrab"><span class="bar"></span><b>Filtros del mapa</b><button class="iconbtn" id="fmin" title="Minimizar panel">◀ Ocultar</button></div>
+    <div class="fhead" id="fgrab"><span class="bar"></span><b>Filtros del mapa</b><button class="iconbtn szbtn" data-size="filters">▲ Ampliar</button><button class="iconbtn" id="fmin" title="Minimizar panel">◀ Ocultar</button></div>
     <div class="fbody">
       <div class="flabel">Tipo de ambiente</div>
       <div class="tgs" id="f-tipos"></div>
@@ -287,7 +316,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
       <div class="row"><span class="lk"></span> Lago / laguna</div>
       <div class="row"><span class="pt" style="background:var(--sea)"></span> Spot de mar</div>
       <div class="row"><span class="sw" style="background:var(--sel);height:5px"></span> Seleccionado</div>
-      <div class="row"><span class="pt" style="background:var(--dorado)"></span> Guía · <span class="pt" style="background:#5FBB90"></span> Lodge</div>
+      <div class="row"><span class="pt" style="background:var(--dorado)"></span> Guía · <span class="pt" style="background:#5FBB90"></span> Lodge (reserva directa)</div>
     </div>
   </div>
 </section>
@@ -298,9 +327,10 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
   <h1 class="pt">Servicios</h1>
   <p class="psub">Todos los prestadores juntos. En la base se guardan por tipo; acá se muestran unificados.</p>
   <div class="fbar">
-    <select id="s-tipo"></select><select id="s-esp"></select><select id="s-mod"></select><select id="s-prov"></select>
+    <select id="s-tipo"></select><select id="s-prov"></select><select id="s-mod"></select><select id="s-acc"></select><select id="s-amb"></select>
     <span class="cnt" id="s-cnt"></span>
   </div>
+  <div class="sprow" id="s-esp"></div>
   <div class="note">Orden: primero los planes de mayor visibilidad (marcados como destacados), luego por reputación. La transparencia sobre lo pago es buena práctica y exigencia en la UE.</div>
   <div class="grid" id="s-list"></div>
 </div></section>
@@ -348,7 +378,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 
 <!-- Panel de detalle: derecha en PC, hoja inferior en celular -->
 <aside id="drawer" class="sheetable">
-  <div class="grab" id="dgrab"><span class="bar"></span><span class="gt" id="dtitle">Detalle</span><button class="iconbtn" id="dclose">✕ Cerrar</button></div>
+  <div class="grab" id="dgrab"><span class="bar"></span><span class="gt" id="dtitle">Detalle</span><button class="iconbtn szbtn" data-size="drawer">▲ Ampliar</button><button class="iconbtn" id="dclose">✕ Cerrar</button></div>
   <div class="dbody" id="dbody"></div>
 </aside>
 
@@ -359,13 +389,105 @@ const LAKES  = {"type":"FeatureCollection","features":[{"type":"Feature","proper
 </script>
 <script>
 /* =====================================================================
+   LOGOS DE ESPECIES — dibujo vectorial (SVG) generado a partir de parámetros.
+   Cada especie guarda en la base sus parámetros (o directamente el SVG):
+   forma, colores, patrón, aletas. Del mismo dibujo salen el LOGO GRANDE
+   (tarjetas, ficha) y el ÍCONO (círculo chico para chips, listas y mapa).
+   ===================================================================== */
+const FISH_P = {
+ dorado:     {h:26,snout:'point',tail:'fork',dorsal:'tri',adipose:1,top:'#C98F1E',mid:'#E8B94A',belly:'#F7E7AE',fin:'#E0662E',pat:'lines',pc:'#7A4E10',tailband:'#2b1c08'},
+ surubi:     {h:17,snout:'flat',tail:'fork',dorsal:'tri',adipose:1,top:'#5E646C',mid:'#8D939B',belly:'#F1F1EE',fin:'#6c7178',pat:'spots',pc:'#23262b',barbels:3},
+ pacu:       {h:31,snout:'blunt',tail:'fork',dorsal:'tri',adipose:1,top:'#3F4A52',mid:'#6B7881',belly:'#E3A06A',fin:'#5a656d',pat:'none'},
+ tararira:   {h:20,snout:'blunt',tail:'round',dorsal:'round',top:'#3E5226',mid:'#6E8B3D',belly:'#D9D3A0',fin:'#5b6e35',pat:'blotch',pc:'#2a3818'},
+ boga:       {h:23,snout:'point',tail:'fork',dorsal:'tri',adipose:1,top:'#8E7B45',mid:'#C9B27A',belly:'#F3E8C4',fin:'#d98b4a',pat:'bars3',pc:'#3b3220'},
+ trucha_m:   {h:22,snout:'point',tail:'square',dorsal:'tri',adipose:1,top:'#5E4526',mid:'#9A7440',belly:'#EFD58E',fin:'#8a6a3a',pat:'redspots',pc:'#1d140a',pc2:'#C8341F'},
+ trucha_a:   {h:22,snout:'point',tail:'square',dorsal:'tri',adipose:1,top:'#4F6B5C',mid:'#9DB0A2',belly:'#F2EFE6',fin:'#8aa092',pat:'band',pc:'#E0708F',spots:'#1b2420'},
+ searun:     {h:23,snout:'point',tail:'square',dorsal:'tri',adipose:1,top:'#56687A',mid:'#B9C6D2',belly:'#F4F6F8',fin:'#8f9dab',pat:'xspots',pc:'#1b2430'},
+ perca:      {h:30,snout:'point',tail:'square',dorsal:'spiny',top:'#6E6A22',mid:'#B0A84E',belly:'#EDE7B8',fin:'#9a9440',pat:'bars5',pc:'#3a3812'},
+ salmon:     {h:24,snout:'point',tail:'square',dorsal:'tri',adipose:1,top:'#6A5A48',mid:'#C7A27A',belly:'#F4ECE0',fin:'#a88a66',pat:'xspots',pc:'#241a10'},
+ pejerrey:   {h:15,snout:'point',tail:'fork',dorsal:'double',top:'#6F8497',mid:'#C9D5E0',belly:'#F6F8FA',fin:'#9fb0c0',pat:'silverband',pc:'#8FB3D6'},
+ corvina:    {h:28,snout:'blunt',tail:'square',dorsal:'spiny',top:'#8C6A3A',mid:'#CFA66C',belly:'#F4E4C4',fin:'#b8905a',pat:'oblique',pc:'#6d5028',barbels:1},
+ escalandrun:{h:18,snout:'shark',tail:'shark',dorsal:'shark',top:'#6F7468',mid:'#9CA196',belly:'#E7E5DC',fin:'#80857a',pat:'rustspots',pc:'#8A4A2A'},
+ pescadilla: {h:19,snout:'point',tail:'square',dorsal:'double',top:'#7C8894',mid:'#C0CAD4',belly:'#F5F2E6',fin:'#b3a77a',pat:'fine',pc:'#5d6873'}
+};
+function fishLogo(id, o){
+  o=o||{}; const p=FISH_P[id]; if(!p) return '';
+  const cy=50, h=p.h, uid=(o.uid||'f')+'_'+id, S='#1B2A2E', sw=o.icon?3:2.2;
+  let seed=[...id].reduce((a,c)=>a*31+c.charCodeAt(0),7)>>>0; const rnd=()=>((seed=(seed*1103515245+12345)>>>0)%10000)/10000;
+  const x0=p.snout==='blunt'?22:p.snout==='flat'?20:14, x1=148;
+  let body;
+  if(p.snout==='shark') body=`M10 ${cy+2} C22 ${cy-h*0.95} 100 ${cy-h*1.08} ${x1} ${cy-4} L${x1} ${cy+4} C104 ${cy+h*0.85} 40 ${cy+h*0.9} 10 ${cy+2} Z`;
+  else if(p.snout==='flat') body=`M${x0} ${cy+2} C${x0} ${cy-h*0.9} ${x0+30} ${cy-h*1.05} 70 ${cy-h} C110 ${cy-h*0.95} 130 ${cy-h*0.45} ${x1} ${cy-h*0.2} L${x1} ${cy+h*0.2} C120 ${cy+h*0.7} 70 ${cy+h} ${x0+10} ${cy+h*0.7} C${x0} ${cy+h*0.5} ${x0-2} ${cy+h*0.2} ${x0} ${cy+2} Z`;
+  else { const k=p.snout==='blunt'?0.55:0; body=`M${x0} ${cy} C${x0+4} ${cy-h*(0.55+k)} ${x0+36} ${cy-h*1.08} 80 ${cy-h*1.02} C118 ${cy-h*0.96} 136 ${cy-h*0.5} ${x1} ${cy-h*0.2} L${x1} ${cy+h*0.2} C136 ${cy+h*0.5} 118 ${cy+h*0.92} 80 ${cy+h*0.98} C${x0+36} ${cy+h*1.02} ${x0+4} ${cy+h*(0.5+k)} ${x0} ${cy} Z`; }
+  const tails={
+    fork:`M${x1-3} ${cy-h*0.22} L${x1+36} ${cy-h-8} Q${x1+22} ${cy} ${x1+36} ${cy+h+8} L${x1-3} ${cy+h*0.22} Z`,
+    square:`M${x1-3} ${cy-h*0.2} L${x1+32} ${cy-h*0.85} Q${x1+27} ${cy} ${x1+32} ${cy+h*0.85} L${x1-3} ${cy+h*0.2} Z`,
+    round:`M${x1-3} ${cy-h*0.22} C${x1+34} ${cy-h*1.1} ${x1+34} ${cy+h*1.1} ${x1-3} ${cy+h*0.22} Z`,
+    shark:`M${x1-3} ${cy-4} L${x1+40} ${cy-h-16} L${x1+26} ${cy+2} L${x1+18} ${cy+h*0.6} L${x1-3} ${cy+4} Z`};
+  const dT=cy-h*0.98;
+  const dors={
+    tri:`M66 ${dT+3} L80 ${dT-15} L100 ${dT-10} L104 ${dT+3} Z`,
+    round:`M60 ${dT+3} C66 ${dT-14} 96 ${dT-14} 104 ${dT+4} Z`,
+    spiny:`M52 ${dT+4} L56 ${dT-12} L62 ${dT-2} L67 ${dT-15} L73 ${dT-3} L78 ${dT-14} L84 ${dT-2} L88 ${dT-9} L92 ${dT+2} L98 ${dT-10} L112 ${dT-6} L116 ${dT+6} Z`,
+    double:`M58 ${dT+3} L64 ${dT-10} L74 ${dT+3} Z M92 ${dT+3} L100 ${dT-11} L112 ${dT+4} Z`,
+    shark:`M62 ${dT+4} L80 ${dT-26} L96 ${dT+4} Z M112 ${cy-h*0.62} L120 ${cy-h*0.62-11} L128 ${cy-h*0.45} Z`};
+  const ad=p.adipose?`<path d="M124 ${cy-h*0.55} q6 -9 12 -2 z" fill="${p.fin}" stroke="${S}" stroke-width="${sw*0.7}"/>`:'';
+  const lower=`<path d="M44 ${cy+h*0.35} L56 ${cy+h*0.35+14} L64 ${cy+h*0.3} Z" fill="${p.fin}" stroke="${S}" stroke-width="${sw*0.8}" stroke-linejoin="round"/>`+
+              `<path d="M84 ${cy+h*0.9} L94 ${cy+h+12} L104 ${cy+h*0.88} Z" fill="${p.fin}" stroke="${S}" stroke-width="${sw*0.8}" stroke-linejoin="round"/>`+
+              `<path d="M114 ${cy+h*0.7} L122 ${cy+h*0.7+11} L132 ${cy+h*0.5} Z" fill="${p.fin}" stroke="${S}" stroke-width="${sw*0.8}" stroke-linejoin="round"/>`;
+  // patrón recortado al cuerpo
+  let pat=''; const X=(a,b)=>a+rnd()*(b-a);
+  const inBody=(x,y)=>{ const t=(x-x0)/(x1-x0); const half=h*Math.sin(Math.PI*Math.min(Math.max(t*0.92+0.04,0),1))*1.0; return Math.abs(y-cy)<half*0.92; };
+  const dots=(n,r,c,top)=>{ let s=''; for(let i=0;i<n*3&&n>0;i++){ const x=X(x0+22,x1-4), y=X(cy-h, top?cy+h*0.1:cy+h*0.6); if(inBody(x,y)){ s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r*(0.7+rnd()*0.6)).toFixed(1)}" fill="${c}"/>`; n--; } } return s; };
+  switch(p.pat){
+    case 'lines': for(let r=-0.55;r<=0.45;r+=0.25) pat+=`<path d="M${x0+26} ${cy+h*r} L${x1} ${cy+h*r*0.4}" stroke="${p.pc}" stroke-width="1.6" stroke-dasharray="3 3" opacity=".75"/>`; break;
+    case 'spots': pat=dots(22,2.4,p.pc,false)+[70,92,114].map(x=>`<path d="M${x} ${cy-h} L${x-4} ${cy+h*0.3}" stroke="${p.pc}" stroke-width="3" opacity=".55"/>`).join(''); break;
+    case 'blotch': pat=dots(9,5.5,p.pc,false); break;
+    case 'bars3': pat=[62,86,110].map(x=>`<rect x="${x}" y="${cy-h}" width="7" height="${h*1.3}" rx="3" fill="${p.pc}" opacity=".55"/>`).join(''); break;
+    case 'bars5': pat=[50,66,82,98,114].map(x=>`<rect x="${x}" y="${cy-h}" width="6" height="${h*1.5}" rx="3" fill="${p.pc}" opacity=".45"/>`).join(''); break;
+    case 'redspots': pat=dots(16,2.3,p.pc,true)+dots(7,2.4,p.pc2,false).replace(/<circle/g,'<circle stroke="#F3E6C8" stroke-width="1.2"'); break;
+    case 'band': pat=`<path d="M${x0+20} ${cy-2} C70 ${cy-6} 120 ${cy-4} ${x1} ${cy} L${x1} ${cy+6} C120 ${cy+6} 70 ${cy+6} ${x0+20} ${cy+6} Z" fill="${p.pc}" opacity=".8"/>`+dots(22,1.5,p.spots,true); break;
+    case 'xspots': for(let i=0,n=0;i<60&&n<12;i++){ const x=X(x0+30,x1-8),y=X(cy-h*0.9,cy); if(inBody(x,y)){n++; pat+=`<path d="M${x-2} ${y-2} l4 4 m0 -4 l-4 4" stroke="${p.pc}" stroke-width="1.4"/>`;} } break;
+    case 'silverband': pat=`<rect x="${x0+18}" y="${cy-3}" width="${x1-x0-18}" height="6" rx="3" fill="${p.pc}"/>`; break;
+    case 'oblique': for(let x=40;x<150;x+=9) pat+=`<path d="M${x} ${cy-h} L${x+14} ${cy+h*0.2}" stroke="${p.pc}" stroke-width="1.2" opacity=".55"/>`; break;
+    case 'rustspots': pat=dots(18,2.6,p.pc,false); break;
+    case 'fine': pat=dots(26,1.2,p.pc,true); break;
+  }
+  const ex=x0+(p.snout==='shark'?20:p.snout==='flat'?16:14), ey=cy-h*(p.snout==='flat'?0.45:0.28), er=p.snout==='flat'?2.6:Math.max(3.6,h*0.16);
+  const gill=p.snout==='shark'?[0,1,2,3].map(i=>`<path d="M${44+i*5} ${cy-h*0.35} q2 ${h*0.35} 0 ${h*0.6}" stroke="${S}" stroke-width="1.1" fill="none" opacity=".6"/>`).join('')
+           :`<path d="M${x0+28} ${cy-h*0.62} Q${x0+36} ${cy} ${x0+28} ${cy+h*0.6}" stroke="${S}" stroke-width="${sw*0.7}" fill="none" opacity=".55"/>`;
+  const barb=p.barbels?Array.from({length:p.barbels},(_,i)=>`<path d="M${x0+3} ${cy+2+i*2} q-10 ${6+i*5} -12 ${16+i*6}" stroke="${S}" stroke-width="1.5" fill="none"/>`).join(''):'';
+  const band=p.tailband?`<path d="M${x1+10} ${cy-h*0.5} L${x1+14} ${cy} L${x1+10} ${cy+h*0.5}" stroke="${p.tailband}" stroke-width="3" fill="none" opacity=".6"/>`:'';
+  const svg=`<defs><linearGradient id="gr_${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${p.top}"/><stop offset=".55" stop-color="${p.mid}"/><stop offset="1" stop-color="${p.belly}"/></linearGradient><clipPath id="cl_${uid}"><path d="${body}"/></clipPath></defs>
+<path d="${tails[p.tail]}" fill="${p.fin}" stroke="${S}" stroke-width="${sw}" stroke-linejoin="round"/>${band}
+<path d="${dors[p.dorsal]}" fill="${p.fin}" stroke="${S}" stroke-width="${sw*0.9}" stroke-linejoin="round"/>${ad}
+<path d="${body}" fill="url(#gr_${uid})"/><g clip-path="url(#cl_${uid})">${pat}</g>
+<path d="${body}" fill="none" stroke="${S}" stroke-width="${sw}" stroke-linejoin="round"/>${lower}${gill}${barb}
+<circle cx="${ex}" cy="${ey}" r="${er}" fill="#fff" stroke="${S}" stroke-width="1.2"/><circle cx="${ex-0.6}" cy="${ey}" r="${er*0.55}" fill="${S}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"${o.cls?` class="${o.cls}"`:''}>${svg}</svg>`;
+}
+/* Ícono: el mismo logo dentro de un círculo claro con borde del color de la especie */
+function fishIconSVG(id, ring, uid){
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#F4F1EA" stroke="${ring||FISH_P[id].mid}" stroke-width="7"/><svg x="6" y="25" width="88" height="50" viewBox="0 0 200 100">${fishLogo(id,{icon:1,uid:uid||'i'}).replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg></svg>`;
+}
+
+
+</script>
+<script>
+/* =====================================================================
    DATOS DE EJEMPLO — imitan las tablas del modelo v2
    (en producción vienen de la base; acá están en memoria)
    ===================================================================== */
 const EXCLUIDOS = [];   // nombres de ríos a ocultar siempre (filtro interno del admin)
 const TIPOS = {rio:'Río', lago:'Lago', laguna:'Laguna', mar:'Mar'};
+// Agrupación SOLO de pantalla: lago y laguna comparten botón (en la base siguen distintos)
+const GRUPOS = {rio:'Río', lago:'Lago / Laguna', mar:'Mar'};
+const GRP = t=>t==='laguna'||t==='embalse'?'lago':t;
+// Dos catálogos separados: técnica (modalidad) y acceso (desde dónde se pesca)
+const TECNICAS=['Carnada','Señuelo','Fly fishing','Trolling'];
+const ACCESOS=['Costa','Vadeo','Embarcado a motor','Flotada a remo'];
 const TIPO_COLOR = {rio:'#1E90A8', lago:'#26C6DA', laguna:'#26C6DA', mar:'#4C8DFF'};
-const NIVELES = {1:{n:'Gratuito'},2:{n:'Mayor visibilidad',b:'DESTACADO'},3:{n:'Visibilidad en el mapa',b:'EN EL MAPA'},4:{n:'Reserva directa',b:'RESERVA DIRECTA'}};
+const NIVELES = {1:{n:'Gratuito'},2:{n:'Mayor visibilidad',b:'DESTACADO'},3:{n:'Reserva directa + visibilidad en el mapa',b:'RESERVA DIRECTA'}};
 const TIPO_SRV = {guia:'Guía de pesca', lodge:'Lodge', alojamiento:'Alojamiento'};
 
 const ESPECIES = [
@@ -386,40 +508,48 @@ const ESPECIES = [
 ];
 const REG_PAT = {t:'Reglamento de Pesca Deportiva Continental Patagónico (temporada vigente). Tramos solo mosca y devolución obligatoria en zonas señaladas. (texto de ejemplo)',url:'#'};
 const AMBIENTES = [
- {id:'parana-pdp',n:'Río Paraná',tramo:'Paso de la Patria (Alto Paraná)',tipo:'rio',geo:'Paraná',ll:[-27.31,-58.58],prov:['Corrientes','Chaco'],d:'Uno de los destinos de dorado más famosos del mundo. Pesca embarcada con guía y devolución.',temp:['Sep–Abr (pico en verano)'],mod:['Embarcada','Spinning','Mosca'],tp:['Deportiva con devolución'],agua:'Cálida, caudalosa',regl:{t:'Dorado: devolución obligatoria. Medidas y cupos según reglamento de Corrientes. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca deportiva de Corrientes — online, por día / semana / anual. (ejemplo)',url:'#'}],esp:['dorado','surubi','pacu','boga']},
- {id:'uruguay-fed',n:'Río Uruguay',tramo:'Federación',tipo:'rio',geo:'Uruguay',ll:[-30.98,-57.90],prov:['Entre Ríos','Corrientes'],d:'Buen dorado y gran variedad. Costas accesibles y pesca embarcada.',temp:['Oct–Mar'],mod:['Costa','Embarcada','Spinning'],tp:['Deportiva','Variada'],agua:'Templada',regl:{t:'Río compartido: rige reglamento provincial y acuerdos binacionales. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Entre Ríos. (ejemplo)',url:'#'}],esp:['dorado','boga','tararira']},
- {id:'limay',n:'Río Limay',tramo:'',tipo:'rio',geo:'Limay',ll:[-40.05,-70.07],prov:['Neuquén','Río Negro'],d:'Río grande y potente, ideal para truchas grandes. Vadeo y flotadas en gomón.',temp:['Nov–Abr'],mod:['Vadeo','Flotada','Mosca'],tp:['Deportiva con devolución'],agua:'Fría',regl:REG_PAT,lic:[{t:'Licencia de Neuquén',url:'#'},{t:'Licencia de Río Negro',url:'#'}],esp:['trucha_m','trucha_a','perca']},
- {id:'chimehuin',n:'Río Chimehuín',tramo:'',tipo:'rio',geo:null,ll:[-39.95,-71.08],prov:['Neuquén'],d:'Cuna de la pesca con mosca en la Patagonia. Aguas cristalinas y truchas de porte.',temp:['Nov–Abr'],mod:['Vadeo','Mosca'],tp:['Solo mosca','Devolución'],agua:'Fría, cristalina',regl:REG_PAT,lic:[{t:'Licencia de Neuquén',url:'#'}],esp:['trucha_m','trucha_a']},
- {id:'gallegos',n:'Río Gallegos',tramo:'',tipo:'rio',geo:'Gallegos',ll:[-51.62,-69.30],prov:['Santa Cruz'],d:'Destino de trucha marrón de mar. Ejemplares grandes; pesca exigente.',temp:['Nov–Abr'],mod:['Vadeo','Mosca'],tp:['Devolución'],agua:'Fría, esteparia',regl:REG_PAT,lic:[{t:'Licencia de Santa Cruz',url:'#'}],esp:['searun']},
- {id:'riogrande',n:'Río Grande',tramo:'',tipo:'rio',geo:null,ll:[-53.78,-67.75],prov:['Tierra del Fuego'],d:'El río de sea-run más renombrado del planeta. Lodges de alta gama.',temp:['Ene–Abr (pico otoño)'],mod:['Vadeo','Mosca'],tp:['Devolución'],agua:'Fría, de marea',regl:{t:'Reglamento de Tierra del Fuego: solo mosca, devolución obligatoria. (ejemplo)',url:'#'},lic:[{t:'Licencia de Tierra del Fuego',url:'#'}],esp:['searun']},
- {id:'nahuel',n:'Lago Nahuel Huapí',tramo:'',tipo:'lago',geo:'Lago Nahuel Huapí',ll:[-40.98,-71.50],prov:['Río Negro','Neuquén'],d:'Gran lago andino. Trucha y salmón encerrado, embarcada y de costa.',temp:['Nov–Abr'],mod:['Embarcada','Trolling','Costa'],tp:['Deportiva'],agua:'Fría, profunda',regl:REG_PAT,lic:[{t:'Licencia de Parques Nacionales / provincial según sector. (ejemplo)',url:'#'}],esp:['trucha_m','trucha_a','salmon','perca']},
- {id:'ramosmexia',n:'Embalse Ezequiel Ramos Mexía',tramo:'',tipo:'lago',geo:'Embalse Ezequiel Ramos Mexia',ll:[-39.55,-69.00],prov:['Neuquén','Río Negro'],d:'Gran embalse de la estepa, con truchas de gran porte, perca y pejerrey.',temp:['Todo el año (según especie)'],mod:['Embarcada','Costa','Trolling'],tp:['Deportiva'],agua:'Fría',regl:REG_PAT,lic:[{t:'Licencia de Neuquén',url:'#'}],esp:['trucha_a','perca','pejerrey']},
- {id:'chascomus',n:'Laguna de Chascomús',tramo:'',tipo:'laguna',geo:null,ll:[-35.60,-58.02],prov:['Buenos Aires'],d:'Laguna pampeana clásica para el pejerrey, a 2 h de la Ciudad de Buenos Aires.',temp:['Abr–Oct'],mod:['Embarcada','Costa'],tp:['Deportiva','Familiar'],agua:'Templada, turbia',regl:{t:'Reglamento de pesca de Buenos Aires: cupo y medida mínima de pejerrey. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Buenos Aires',url:'#'}],esp:['pejerrey','tararira']},
- {id:'sanblas',n:'Bahía San Blas',tramo:'',tipo:'mar',geo:null,ll:[-40.56,-62.24],prov:['Buenos Aires'],d:'Capital de la pesca variada de mar: corvina, pescadilla y tiburones (con devolución).',temp:['Oct–Abr'],mod:['Costa','Embarcada'],tp:['Variada','Tiburón con devolución'],agua:'Marina',regl:{t:'Tiburones: captura y devolución obligatoria. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Buenos Aires',url:'#'}],esp:['corvina','escalandrun','pescadilla']},
- {id:'mdp',n:'Costa de Mar del Plata',tramo:'Escolleras y playas',tipo:'mar',geo:null,ll:[-38.00,-57.54],prov:['Buenos Aires'],d:'Pesca de costa en escolleras y playas, y salidas embarcadas.',temp:['Todo el año'],mod:['Costa','Embarcada'],tp:['Variada'],agua:'Marina',regl:{t:'Reglamento provincial de pesca marítima deportiva. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Buenos Aires',url:'#'}],esp:['corvina','pescadilla']}
+ {id:'parana-pdp',n:'Río Paraná',tramo:'Paso de la Patria (Alto Paraná)',tipo:'rio',geo:'Paraná',ll:[-27.31,-58.58],prov:['Corrientes','Chaco'],d:'Uno de los destinos de dorado más famosos del mundo. Pesca embarcada con guía y devolución.',temp:['Sep–Abr (pico en verano)'],mod:['Carnada','Señuelo','Fly fishing'],acc:['Embarcado a motor'],tp:['Deportiva con devolución'],agua:'Cálida, caudalosa',regl:{t:'Dorado: devolución obligatoria. Medidas y cupos según reglamento de Corrientes. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca deportiva de Corrientes — online, por día / semana / anual. (ejemplo)',url:'#'}],esp:['dorado','surubi','pacu','boga']},
+ {id:'uruguay-fed',n:'Río Uruguay',tramo:'Federación',tipo:'rio',geo:'Uruguay',ll:[-30.98,-57.90],prov:['Entre Ríos','Corrientes'],d:'Buen dorado y gran variedad. Costas accesibles y pesca embarcada.',temp:['Oct–Mar'],mod:['Carnada','Señuelo'],acc:['Costa','Embarcado a motor'],tp:['Deportiva','Variada'],agua:'Templada',regl:{t:'Río compartido: rige reglamento provincial y acuerdos binacionales. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Entre Ríos. (ejemplo)',url:'#'}],esp:['dorado','boga','tararira']},
+ {id:'limay',n:'Río Limay',tramo:'',tipo:'rio',geo:'Limay',ll:[-40.05,-70.07],prov:['Neuquén','Río Negro'],d:'Río grande y potente, ideal para truchas grandes. Vadeo y flotadas en gomón.',temp:['Nov–Abr'],mod:['Fly fishing'],acc:['Vadeo','Flotada a remo'],tp:['Deportiva con devolución'],agua:'Fría',regl:REG_PAT,lic:[{t:'Licencia de Neuquén',url:'#'},{t:'Licencia de Río Negro',url:'#'}],esp:['trucha_m','trucha_a','perca']},
+ {id:'chimehuin',n:'Río Chimehuín',tramo:'',tipo:'rio',geo:null,ll:[-39.95,-71.08],prov:['Neuquén'],d:'Cuna de la pesca con mosca en la Patagonia. Aguas cristalinas y truchas de porte.',temp:['Nov–Abr'],mod:['Fly fishing'],acc:['Vadeo'],tp:['Solo mosca','Devolución'],agua:'Fría, cristalina',regl:REG_PAT,lic:[{t:'Licencia de Neuquén',url:'#'}],esp:['trucha_m','trucha_a']},
+ {id:'gallegos',n:'Río Gallegos',tramo:'',tipo:'rio',geo:'Gallegos',ll:[-51.62,-69.30],prov:['Santa Cruz'],d:'Destino de trucha marrón de mar. Ejemplares grandes; pesca exigente.',temp:['Nov–Abr'],mod:['Fly fishing'],acc:['Vadeo'],tp:['Devolución'],agua:'Fría, esteparia',regl:REG_PAT,lic:[{t:'Licencia de Santa Cruz',url:'#'}],esp:['searun']},
+ {id:'riogrande',n:'Río Grande',tramo:'',tipo:'rio',geo:null,ll:[-53.78,-67.75],prov:['Tierra del Fuego'],d:'El río de sea-run más renombrado del planeta. Lodges de alta gama.',temp:['Ene–Abr (pico otoño)'],mod:['Fly fishing'],acc:['Vadeo'],tp:['Devolución'],agua:'Fría, de marea',regl:{t:'Reglamento de Tierra del Fuego: solo mosca, devolución obligatoria. (ejemplo)',url:'#'},lic:[{t:'Licencia de Tierra del Fuego',url:'#'}],esp:['searun']},
+ {id:'nahuel',n:'Lago Nahuel Huapí',tramo:'',tipo:'lago',geo:'Lago Nahuel Huapí',ll:[-40.98,-71.50],prov:['Río Negro','Neuquén'],d:'Gran lago andino. Trucha y salmón encerrado, embarcada y de costa.',temp:['Nov–Abr'],mod:['Trolling'],acc:['Embarcado a motor','Costa'],tp:['Deportiva'],agua:'Fría, profunda',regl:REG_PAT,lic:[{t:'Licencia de Parques Nacionales / provincial según sector. (ejemplo)',url:'#'}],esp:['trucha_m','trucha_a','salmon','perca']},
+ {id:'ramosmexia',n:'Embalse Ezequiel Ramos Mexía',tramo:'',tipo:'lago',geo:'Embalse Ezequiel Ramos Mexia',ll:[-39.55,-69.00],prov:['Neuquén','Río Negro'],d:'Gran embalse de la estepa, con truchas de gran porte, perca y pejerrey.',temp:['Todo el año (según especie)'],mod:['Carnada','Trolling'],acc:['Embarcado a motor','Costa'],tp:['Deportiva'],agua:'Fría',regl:REG_PAT,lic:[{t:'Licencia de Neuquén',url:'#'}],esp:['trucha_a','perca','pejerrey']},
+ {id:'chascomus',n:'Laguna de Chascomús',tramo:'',tipo:'laguna',geo:null,ll:[-35.60,-58.02],prov:['Buenos Aires'],d:'Laguna pampeana clásica para el pejerrey, a 2 h de la Ciudad de Buenos Aires.',temp:['Abr–Oct'],mod:['Carnada'],acc:['Embarcado a motor','Costa'],tp:['Deportiva','Familiar'],agua:'Templada, turbia',regl:{t:'Reglamento de pesca de Buenos Aires: cupo y medida mínima de pejerrey. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Buenos Aires',url:'#'}],esp:['pejerrey','tararira']},
+ {id:'sanblas',n:'Bahía San Blas',tramo:'',tipo:'mar',geo:null,ll:[-40.56,-62.24],prov:['Buenos Aires'],d:'Capital de la pesca variada de mar: corvina, pescadilla y tiburones (con devolución).',temp:['Oct–Abr'],mod:['Carnada'],acc:['Costa','Embarcado a motor'],tp:['Variada','Tiburón con devolución'],agua:'Marina',regl:{t:'Tiburones: captura y devolución obligatoria. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Buenos Aires',url:'#'}],esp:['corvina','escalandrun','pescadilla']},
+ {id:'mdp',n:'Costa de Mar del Plata',tramo:'Escolleras y playas',tipo:'mar',geo:null,ll:[-38.00,-57.54],prov:['Buenos Aires'],d:'Pesca de costa en escolleras y playas, y salidas embarcadas.',temp:['Todo el año'],mod:['Carnada'],acc:['Costa','Embarcado a motor'],tp:['Variada'],agua:'Marina',regl:{t:'Reglamento provincial de pesca marítima deportiva. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Buenos Aires',url:'#'}],esp:['corvina','pescadilla']}
 ];
 /* --- Prestadores: TABLAS SEPARADAS por tipo (como en la base) --- */
 const GUIAS = [
- {id:'g1',n:'Marcelo Ibáñez',loc:'Paso de la Patria, Corrientes',ll:[-27.33,-58.62],nivel:4,rat:4.9,nr:38,pres:'Guía de dorado con 12 años de experiencia y lancha propia. Salidas con devolución.',esp:['dorado','surubi'],of:[{s:'Día completo embarcado (2 pescadores)',mod:['Embarcada','Spinning'],amb:'parana-pdp',costo:'USD 350'},{s:'Media jornada',mod:['Embarcada','Spinning'],amb:'parana-pdp',costo:'USD 200'}],res:[{a:'John M.',p:'EE.UU.',e:5,t:'Great day, 11 dorados released. Very professional.',v:1},{a:'Lucía R.',p:'Argentina',e:5,t:'Excelente guía, puntual y con muy buen equipo.',v:1}]},
- {id:'g2',n:'Guías del Litoral',loc:'Corrientes capital',ll:[-27.47,-58.83],nivel:2,rat:4.3,nr:12,pres:'Grupo de guías con salidas de día por el Paraná.',esp:['dorado','pacu','boga'],of:[{s:'Salida de día',mod:['Embarcada','Spinning'],amb:'parana-pdp',costo:'USD 250'}],res:[{a:'Pablo G.',p:'Argentina',e:4,t:'Buena salida, algo tarde el arranque.',v:0}]},
- {id:'g3',n:'Sergio Duarte',loc:'Federación, Entre Ríos',ll:[-30.98,-57.93],nivel:1,rat:4.1,nr:6,pres:'Guía local, costa y embarcada.',esp:['dorado','boga','tararira'],of:[{s:'Salida embarcada',mod:['Embarcada'],amb:'uruguay-fed',costo:'USD 180'}],res:[]},
- {id:'g4',n:'Flotadas Limay',loc:'Piedra del Águila, Neuquén',ll:[-40.05,-70.07],nivel:3,rat:4.8,nr:21,pres:'Flotadas en gomón por el Limay medio, pesca con mosca.',esp:['trucha_m','trucha_a'],of:[{s:'Flotada día completo',mod:['Flotada','Mosca'],amb:'limay',costo:'USD 450'}],res:[{a:'Hans K.',p:'Alemania',e:5,t:'Big browns, excellent guide and lunch on the river.',v:1}]},
- {id:'g5',n:'Andrés Longo',loc:'Junín de los Andes, Neuquén',ll:[-39.95,-71.07],nivel:4,rat:5.0,nr:44,pres:'Mosquero con 15 años guiando en Chimehuín y Limay. Clínicas de lanzamiento.',esp:['trucha_m','trucha_a'],of:[{s:'Vadeo día completo',mod:['Vadeo','Mosca'],amb:'chimehuin',costo:'USD 400'},{s:'Clínica de mosca (3 h)',mod:['Mosca'],amb:'chimehuin',costo:'USD 120'},{s:'Flotada Limay',mod:['Flotada','Mosca'],amb:'limay',costo:'USD 480'}],res:[{a:'Mark T.',p:'Reino Unido',e:5,t:'Best guide I have fished with in Patagonia.',v:1}]},
- {id:'g6',n:'Nahuel Charters',loc:'Bariloche, Río Negro',ll:[-41.13,-71.30],nivel:3,rat:4.7,nr:19,pres:'Trolling y spinning embarcado en el Nahuel Huapí.',esp:['trucha_m','trucha_a','salmon'],of:[{s:'Trolling día completo',mod:['Embarcada','Trolling'],amb:'nahuel',costo:'USD 380'}],res:[]},
- {id:'g7',n:'Diego Sánchez',loc:'Neuquén capital',ll:[-38.95,-68.06],nivel:1,rat:4.0,nr:3,pres:'Guía de mosca, salidas al Limay inferior.',esp:['trucha_a','perca'],of:[{s:'Vadeo medio día',mod:['Vadeo','Mosca'],amb:'limay',costo:'USD 220'}],res:[]},
- {id:'g8',n:'Pejerreyes Chascomús',loc:'Chascomús, Buenos Aires',ll:[-35.58,-58.01],nivel:2,rat:4.4,nr:15,pres:'Salidas embarcadas de pejerrey con equipo incluido.',esp:['pejerrey'],of:[{s:'Salida embarcada (4 h)',mod:['Embarcada'],amb:'chascomus',costo:'USD 90'}],res:[]},
- {id:'g9',n:'Costa Sur Pesca',loc:'Bahía San Blas, Buenos Aires',ll:[-40.55,-62.25],nivel:3,rat:4.6,nr:17,pres:'Variada de mar embarcada y tiburón con devolución.',esp:['corvina','escalandrun','pescadilla'],of:[{s:'Variada embarcada',mod:['Embarcada'],amb:'sanblas',costo:'USD 300'},{s:'Tiburón (captura y devolución)',mod:['Embarcada'],amb:'sanblas',costo:'USD 420'}],res:[]}
+ {id:'g1',n:'Marcelo Ibáñez',loc:'Paso de la Patria, Corrientes',ll:[-27.33,-58.62],nivel:3,rat:4.9,nr:38,pres:'Guía de dorado con 12 años de experiencia y lancha propia. Salidas con devolución.',esp:['dorado','surubi'],of:[{s:'Día completo embarcado (2 pescadores)',mod:['Carnada','Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 350'},{s:'Media jornada',mod:['Carnada','Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 200'}],ext:[{p:'Google',u:'https://www.google.com/maps'},{p:'TripAdvisor',u:'https://www.tripadvisor.com'}],res:[{a:'John M.',p:'EE.UU.',e:5,t:'Great day, 11 dorados released. Very professional.',v:1},{a:'Lucía R.',p:'Argentina',e:5,t:'Excelente guía, puntual y con muy buen equipo.',v:1}]},
+ {id:'g2',n:'Guías del Litoral',loc:'Corrientes capital',ll:[-27.47,-58.83],nivel:2,rat:4.3,nr:12,pres:'Grupo de guías con salidas de día por el Paraná.',esp:['dorado','pacu','boga'],of:[{s:'Salida de día',mod:['Carnada','Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 250'}],res:[{a:'Pablo G.',p:'Argentina',e:4,t:'Buena salida, algo tarde el arranque.',v:0}]},
+ {id:'g3',n:'Sergio Duarte',loc:'Federación, Entre Ríos',ll:[-30.98,-57.93],nivel:1,rat:4.1,nr:6,pres:'Guía local, costa y embarcada.',esp:['dorado','boga','tararira'],of:[{s:'Salida embarcada',mod:['Carnada'],acc:['Embarcado a motor'],amb:'uruguay-fed',costo:'USD 180'}],res:[]},
+ {id:'g4',n:'Flotadas Limay',loc:'Piedra del Águila, Neuquén',ll:[-40.05,-70.07],nivel:2,rat:4.8,nr:21,pres:'Flotadas en gomón por el Limay medio, pesca con mosca.',esp:['trucha_m','trucha_a'],of:[{s:'Flotada día completo',mod:['Fly fishing'],acc:['Flotada a remo'],amb:'limay',costo:'USD 450'}],res:[{a:'Hans K.',p:'Alemania',e:5,t:'Big browns, excellent guide and lunch on the river.',v:1}]},
+ {id:'g5',n:'Andrés Longo',loc:'Junín de los Andes, Neuquén',ll:[-39.95,-71.07],nivel:3,rat:5.0,nr:44,pres:'Mosquero con 15 años guiando en Chimehuín y Limay. Clínicas de lanzamiento.',esp:['trucha_m','trucha_a'],of:[{s:'Vadeo día completo',mod:['Fly fishing'],acc:['Vadeo'],amb:'chimehuin',costo:'USD 400'},{s:'Clínica de mosca (3 h)',mod:['Fly fishing'],acc:[],amb:'chimehuin',costo:'USD 120'},{s:'Flotada Limay',mod:['Fly fishing'],acc:['Flotada a remo'],amb:'limay',costo:'USD 480'}],ext:[{p:'Google',u:'https://www.google.com/maps'},{p:'FishingBooker',u:'https://fishingbooker.com'}],res:[{a:'Lucas P.',p:'Argentina',e:5,t:'Paciencia infinita para enseñar a lanzar. Volvemos.',v:1},{a:'Sophie L.',p:'Francia',e:4,t:'Très bon guide, le vent était fort.',v:0},{a:'Mark T.',p:'Reino Unido',e:5,t:'Best guide I have fished with in Patagonia.',v:1}]},
+ {id:'g6',n:'Nahuel Charters',ext:[{p:'Google',u:'https://www.google.com/maps'}],loc:'Bariloche, Río Negro',ll:[-41.13,-71.30],nivel:2,rat:4.7,nr:19,pres:'Trolling y spinning embarcado en el Nahuel Huapí.',esp:['trucha_m','trucha_a','salmon'],of:[{s:'Trolling día completo',mod:['Trolling'],acc:['Embarcado a motor'],amb:'nahuel',costo:'USD 380'}],res:[]},
+ {id:'g7',n:'Diego Sánchez',loc:'Neuquén capital',ll:[-38.95,-68.06],nivel:1,rat:4.0,nr:3,pres:'Guía de mosca, salidas al Limay inferior.',esp:['trucha_a','perca'],of:[{s:'Vadeo medio día',mod:['Fly fishing'],acc:['Vadeo'],amb:'limay',costo:'USD 220'}],res:[]},
+ {id:'g8',n:'Pejerreyes Chascomús',loc:'Chascomús, Buenos Aires',ll:[-35.58,-58.01],nivel:2,rat:4.4,nr:15,pres:'Salidas embarcadas de pejerrey con equipo incluido.',esp:['pejerrey'],of:[{s:'Salida embarcada (4 h)',mod:['Carnada'],acc:['Embarcado a motor'],amb:'chascomus',costo:'USD 90'}],res:[]},
+ {id:'g9',n:'Costa Sur Pesca',loc:'Bahía San Blas, Buenos Aires',ll:[-40.55,-62.25],nivel:3,rat:4.6,nr:17,pres:'Variada de mar embarcada y tiburón con devolución.',esp:['corvina','escalandrun','pescadilla'],of:[{s:'Variada embarcada',mod:['Carnada'],acc:['Embarcado a motor'],amb:'sanblas',costo:'USD 300'},{s:'Tiburón (captura y devolución)',mod:['Carnada'],acc:['Embarcado a motor'],amb:'sanblas',costo:'USD 420'}],res:[]}
 ];
 const LODGES = [
- {id:'l1',n:'Lodge Río Dorado',loc:'Paso de la Patria, Corrientes',ll:[-27.29,-58.54],nivel:4,rat:4.9,nr:52,pres:'Lodge sobre el Paraná con guías propios. Paquetes all-inclusive.',esp:['dorado','surubi'],cap:'16 huéspedes',of:[{s:'3 noches all-inclusive (p/p)',mod:['Embarcada','Spinning','Mosca'],amb:'parana-pdp',costo:'USD 1.800'}],res:[{a:'Carlos V.',p:'Brasil',e:5,t:'Estrutura excelente, guias muito bons.',v:1}]},
- {id:'l2',n:'Patagonia Fly Lodge',loc:'Junín de los Andes, Neuquén',ll:[-39.92,-71.12],nivel:3,rat:4.8,nr:30,pres:'Lodge de mosca con acceso a Chimehuín, Malleo y Limay.',esp:['trucha_m','trucha_a'],cap:'10 huéspedes',of:[{s:'Semana de mosca (p/p)',mod:['Vadeo','Flotada','Mosca'],amb:'chimehuin',costo:'USD 3.500'}],res:[]},
- {id:'l3',n:'Estancia Sur',loc:'Río Gallegos, Santa Cruz',ll:[-51.70,-69.60],nivel:2,rat:4.6,nr:11,pres:'Estancia con costa sobre el río Gallegos.',esp:['searun'],cap:'8 huéspedes',of:[{s:'Semana sea-run (p/p)',mod:['Vadeo','Mosca'],amb:'gallegos',costo:'USD 5.200'}],res:[]},
- {id:'l4',n:'Fuegian Lodge',loc:'Río Grande, Tierra del Fuego',ll:[-53.72,-67.90],nivel:4,rat:5.0,nr:27,pres:'Lodge de alta gama sobre el río Grande.',esp:['searun'],cap:'12 huéspedes',of:[{s:'Semana all-inclusive (p/p)',mod:['Vadeo','Mosca'],amb:'riogrande',costo:'USD 7.900'}],res:[{a:'Pierre D.',p:'Francia',e:5,t:'Inoubliable. Truite de 12 kg !',v:1}]},
- {id:'l5',n:'Posada del Uruguay',loc:'Federación, Entre Ríos',ll:[-30.99,-57.91],nivel:1,rat:4.2,nr:5,pres:'Posada con guía asociado y guardería de lanchas.',esp:['dorado','boga'],cap:'20 huéspedes',of:[{s:'Alojamiento + salida (p/p)',mod:['Embarcada','Costa'],amb:'uruguay-fed',costo:'USD 160'}],res:[]}
+ {id:'l1',n:'Lodge Río Dorado',loc:'Paso de la Patria, Corrientes',ll:[-27.29,-58.54],nivel:3,rat:4.9,nr:52,pres:'Lodge sobre el Paraná con guías propios. Paquetes all-inclusive.',esp:['dorado','surubi'],cap:'16 huéspedes',of:[{s:'3 noches all-inclusive (p/p)',mod:['Carnada','Señuelo','Fly fishing'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 1.800'}],ext:[{p:'Google',u:'https://www.google.com/maps'},{p:'TripAdvisor',u:'https://www.tripadvisor.com'},{p:'Booking',u:'https://www.booking.com'}],res:[{a:'Carlos V.',p:'Brasil',e:5,t:'Estrutura excelente, guias muito bons.',v:1}]},
+ {id:'l2',n:'Patagonia Fly Lodge',loc:'Junín de los Andes, Neuquén',ll:[-39.92,-71.12],nivel:2,rat:4.8,nr:30,pres:'Lodge de mosca con acceso a Chimehuín, Malleo y Limay.',esp:['trucha_m','trucha_a'],cap:'10 huéspedes',of:[{s:'Semana de mosca (p/p)',mod:['Fly fishing'],acc:['Vadeo','Flotada a remo'],amb:'chimehuin',costo:'USD 3.500'}],res:[]},
+ {id:'l3',n:'Estancia Sur',loc:'Río Gallegos, Santa Cruz',ll:[-51.70,-69.60],nivel:2,rat:4.6,nr:11,pres:'Estancia con costa sobre el río Gallegos.',esp:['searun'],cap:'8 huéspedes',of:[{s:'Semana sea-run (p/p)',mod:['Fly fishing'],acc:['Vadeo'],amb:'gallegos',costo:'USD 5.200'}],res:[]},
+ {id:'l4',n:'Fuegian Lodge',loc:'Río Grande, Tierra del Fuego',ll:[-53.72,-67.90],nivel:3,rat:5.0,nr:27,pres:'Lodge de alta gama sobre el río Grande.',esp:['searun'],cap:'12 huéspedes',of:[{s:'Semana all-inclusive (p/p)',mod:['Fly fishing'],acc:['Vadeo'],amb:'riogrande',costo:'USD 7.900'}],ext:[{p:'TripAdvisor',u:'https://www.tripadvisor.com'}],res:[{a:'Pierre D.',p:'Francia',e:5,t:'Inoubliable. Truite de 12 kg !',v:1}]},
+ {id:'l5',n:'Posada del Uruguay',loc:'Federación, Entre Ríos',ll:[-30.99,-57.91],nivel:1,rat:4.2,nr:5,pres:'Posada con guía asociado y guardería de lanchas.',esp:['dorado','boga'],cap:'20 huéspedes',of:[{s:'Alojamiento + salida (p/p)',mod:['Carnada'],acc:['Embarcado a motor','Costa'],amb:'uruguay-fed',costo:'USD 160'}],res:[]}
 ];
 const ALOJAMIENTOS = [   // "otros servicios" que se sumen a futuro: mismo esquema
- {id:'o1',n:'Cabañas Costa Limay',loc:'Picún Leufú, Neuquén',ll:[-39.52,-69.29],nivel:1,rat:4.3,nr:9,pres:'Cabañas a 5 minutos del río. Ideal para pescadores independientes.',esp:[],of:[{s:'Cabaña 4 personas (noche)',mod:[],amb:'limay',costo:'USD 70'}],res:[]}
+ {id:'o1',n:'Cabañas Costa Limay',loc:'Picún Leufú, Neuquén',ll:[-39.52,-69.29],nivel:1,rat:4.3,nr:9,pres:'Cabañas a 5 minutos del río. Ideal para pescadores independientes.',esp:[],of:[{s:'Cabaña 4 personas (noche)',mod:[],acc:[],amb:'limay',costo:'USD 70'}],res:[]}
 ];
+const FOTOS = {   // tabla foto: (entidad, id) -> fotos. o = propia | pescador | prestador
+ 'amb:parana-pdp':[{c:'Dorado liberado en Paso de la Patria',a:'PescaAR',o:'propia',k:0},{c:'Amanecer sobre el Paraná',a:'Lucía R.',o:'pescador',k:1},{c:'Correderas del Alto Paraná',a:'John M.',o:'pescador',k:2}],
+ 'amb:limay':[{c:'Flotada en el Limay medio',a:'PescaAR',o:'propia',k:3},{c:'Marrón de 4 kg',a:'Hans K.',o:'pescador',k:4}],
+ 'amb:sanblas':[{c:'Costa de San Blas',a:'PescaAR',o:'propia',k:5}],
+ 'srv:g1':[{c:'Lancha de Marcelo',a:'Marcelo Ibáñez',o:'prestador',k:0},{c:'Cliente con dorado',a:'John M.',o:'pescador',k:2}],
+ 'srv:l1':[{c:'Vista del lodge',a:'Lodge Río Dorado',o:'prestador',k:1},{c:'Muelle propio',a:'Lodge Río Dorado',o:'prestador',k:5}],
+ 'srv:g5':[{c:'Vadeo en el Chimehuín',a:'Andrés Longo',o:'prestador',k:3}]
+};
 const NOTICIAS = [
  {f:'2026-09-15',t:'Se acerca la apertura de temporada de trucha en Patagonia',r:'Qué cambia en el reglamento y qué tramos abren primero. (ejemplo)',amb:['limay','chimehuin'],esp:['trucha_m']},
  {f:'2026-09-02',t:'Dorado: arranca la temporada fuerte en el Alto Paraná',r:'Niveles del río y recomendaciones de guías locales. (ejemplo)',amb:['parana-pdp'],esp:['dorado']},
@@ -428,8 +558,9 @@ const NOTICIAS = [
 
 /* --- VISTA UNIFICADA de servicios (equivale a un SQL VIEW con UNION de las tablas por tipo) --- */
 const SRV = [...GUIAS.map(x=>({...x,tipo:'guia'})),...LODGES.map(x=>({...x,tipo:'lodge'})),...ALOJAMIENTOS.map(x=>({...x,tipo:'alojamiento'}))];
-SRV.forEach(s=>{ s.amb=[...new Set(s.of.map(o=>o.amb))]; s.mods=[...new Set(s.of.flatMap(o=>o.mod))]; s.prov=s.loc.split(', ').pop(); });
+SRV.forEach(s=>{ s.amb=[...new Set(s.of.map(o=>o.amb))]; s.mods=[...new Set(s.of.flatMap(o=>o.mod))]; s.accs=[...new Set(s.of.flatMap(o=>o.acc))]; s.prov=s.loc.split(', ').pop(); });
 const ESP_BY={},AMB_BY={},SRV_BY={};
+setTimeout(()=>SRV.forEach(s=>s.grps=[...new Set(s.amb.map(id=>GRP(AMB_BY[id].tipo)))]));
 ESPECIES.forEach(e=>ESP_BY[e.id]=e); AMBIENTES.forEach(a=>AMB_BY[a.id]=a); SRV.forEach(s=>SRV_BY[s.id]=s);
 const srvOfAmb=id=>SRV.filter(s=>s.amb.includes(id)).sort(byRank);
 const srvOfEsp=id=>SRV.filter(s=>s.esp.includes(id)).sort(byRank);
@@ -445,15 +576,16 @@ const initials=n=>n.split(' ').filter(w=>w.length>2||w===w.toUpperCase()).map(w=
 let LANG='es';
 const espName=e=>LANG==='en'?e.en:e.n;
 const stars=(r,n)=>`<span class="stars">${'★'.repeat(Math.round(r))}${'☆'.repeat(5-Math.round(r))} ${r.toFixed(1)} <small>(${n})</small></span>`;
-const lvlBadge=s=>NIVELES[s.nivel].b?`<span class="badge${s.nivel===4?' g':''}">${NIVELES[s.nivel].b}</span>`:'';
-const fishSVG=c=>`<svg viewBox="0 0 40 24"><path d="M3 12C9 3 23 3 29 12 23 21 9 21 3 12Z" fill="${c}" stroke="#0E1A1E" stroke-width="1.4"/><path d="M29 12 38 4 35.5 12 38 20Z" fill="${c}" stroke="#0E1A1E" stroke-width="1.4"/><circle cx="10" cy="10.5" r="1.8" fill="#0E1A1E"/></svg>`;
-const fishBadge=e=>`<span class="fish" style="--c:${e.c}">${fishSVG(e.c)}</span>`;
+const lvlBadge=s=>NIVELES[s.nivel].b?`<span class="badge${s.nivel===3?' g':''}">${NIVELES[s.nivel].b}</span>`:'';
+let UIDC=0; const uid=()=>'u'+(UIDC++);
+const fishBadge=(e,cls)=>`<span class="fish${cls?' '+cls:''}">${fishIconSVG(e.id,e.c,uid())}</span>`;
+const fishBig=(e,big)=>`<div class="lg${big?' big':''}">${fishLogo(e.id,{uid:uid()})}</div>`;
 
 /* =====================================================================
    MAPA
    ===================================================================== */
 const map=L.map('map',{zoomControl:true,preferCanvas:true,renderer:L.canvas({tolerance:10})}).setView([-38.5,-63.5],4.4);
-const osm=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+const osm=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'© OpenStreetMap · © CARTO'}).addTo(map);
 const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Imágenes © Esri, Maxar, Earthstar Geographics (demo)'});
 let satOn=false;
 const SatCtl=L.Control.extend({options:{position:'topleft'},onAdd(){const d=L.DomUtil.create('div','leaflet-bar');const a=L.DomUtil.create('a','satbtn',d);a.href='#';a.textContent='🛰 Satélite';
@@ -466,20 +598,21 @@ const ambByGeo={}; AMBIENTES.forEach(a=>{ if(a.geo) ambByGeo[a.geo]=a; });
 const featAmb=f=>ambByGeo[f.properties.name];
 
 // ESTADO: F = filtros del panel izquierdo · R = resultados del buscador · SEL = elemento seleccionado
-const F={tipos:{rio:true,lago:true,laguna:true,mar:true},esp:null,soloFichas:false,srv:true};
+const F0=()=>({tipos:{rio:true,lago:true,mar:true},esp:null,soloFichas:false,srv:true});
+let F=F0();
 let R=null, SEL=null;
 const C={sel:'#FF7A59',river:'#1E90A8',sea:'#4C8DFF'};
 const ST={r:{color:'#1E90A8',weight:2.4,opacity:.95},rF:{color:'#2BA7C2',weight:3.4,opacity:1},rSel:{color:C.sel,weight:6,opacity:1},
   l:{color:'#0B6E86',weight:2,fillColor:'#26C6DA',fillOpacity:.5,opacity:.95},lSel:{color:'#D9542F',weight:3,fillColor:C.sel,fillOpacity:.65,opacity:1}};
 
 const isSelAmb=a=>SEL&&SEL.type==='amb'&&SEL.id===a.id;
-const passF=a=>F.tipos[a.tipo]&&(!F.esp||a.esp.includes(F.esp));
+const passF=a=>F.tipos[GRP(a.tipo)]&&(!F.esp||a.esp.includes(F.esp));
 const ambVisible=a=>passF(a)||(R&&R.amb.has(a.id))||isSelAmb(a);
 function featVisible(f){
   const nm=f.properties.name||''; if(EXCLUIDOS.includes(nm)) return false;
   const a=featAmb(f); if(a) return ambVisible(a);
   if(SEL&&SEL.type==='geo'&&SEL.keys.has(f.properties._k)) return true;
-  return F.tipos[f.properties._t]&&!F.esp&&!F.soloFichas;
+  return F.tipos[GRP(f.properties._t)]&&!F.esp&&!F.soloFichas;
 }
 function featSel(f){ const a=featAmb(f); return (a&&isSelAmb(a))||(SEL&&SEL.type==='geo'&&SEL.keys.has(f.properties._k)); }
 function styleF(f){ const lake=f.properties._t!=='rio', s=featSel(f); return lake?(s?ST.lSel:ST.l):(s?ST.rSel:(featAmb(f)?ST.rF:ST.r)); }
@@ -492,8 +625,8 @@ function onGeo(f,l){
   l.on('mouseout',()=>l.setStyle(styleF(f)));
   l.on('click',()=>{ featClick=true; setTimeout(()=>featClick=false,50); const a=featAmb(f); a?selectAmb(a.id,{fit:false}):selectGeo(f); });
 }
-function espIcon(e,big){ return L.divIcon({className:'ico',html:`<div class="mk${big?' big':''}" style="--c:${e.c}">${fishSVG(e.c)}</div>`,iconSize:[36,36],iconAnchor:[18,18]}); }
-function srvIcon(s,big){ return L.divIcon({className:'ico',html:`<div class="mk srv t-${s.tipo}${big?' big':''}">${esc(initials(s.n))}${s.nivel===4?'<span class="ok">✓</span>':''}</div>`,iconSize:[36,36],iconAnchor:[18,18]}); }
+function espIcon(e,big){ return L.divIcon({className:'ico',html:`<div class="mk sp${big?' big':''}">${fishIconSVG(e.id,big?'#FF7A59':e.c,uid())}</div>`,iconSize:[40,40],iconAnchor:[20,20]}); }
+function srvIcon(s,big){ return L.divIcon({className:'ico',html:`<div class="mk srv t-${s.tipo}${big?' big':''}">${esc(initials(s.n))}${s.nivel===3?'<span class="ok">✓</span>':''}</div>`,iconSize:[36,36],iconAnchor:[18,18]}); }
 function ambIcon(a,big){ return L.divIcon({className:'ico',html:`<div class="mk${big?' big':''}" style="--c:${TIPO_COLOR[a.tipo]}">${a.tipo==='mar'?'🌊':'💧'}</div>`,iconSize:[36,36],iconAnchor:[18,18]}); }
 function clickable(m,fn){ m.on('click',()=>{featClick=true;setTimeout(()=>featClick=false,50);fn();}); return m; }
 
@@ -512,7 +645,7 @@ function draw(){
   });
   // servicios con nivel "Visibilidad en el mapa" o superior
   srvLayer.clearLayers();
-  if(F.srv) SRV.filter(s=>s.nivel>=3&&(!F.esp||s.esp.includes(F.esp))&&!(R&&R.srv.has(s.id))).forEach(s=>{
+  if(F.srv) SRV.filter(s=>s.nivel===3&&(!F.esp||s.esp.includes(F.esp))&&!(R&&R.srv.has(s.id))).forEach(s=>{
     const m=L.marker(s.ll,{icon:srvIcon(s,SEL&&SEL.type==='srv'&&SEL.id===s.id)}); m.bindTooltip(s.n+' · '+TIPO_SRV[s.tipo],{className:'rtip',direction:'top',offset:[0,-16]});
     srvLayer.addLayer(clickable(m,()=>selectSrv(s.id)));
   });
@@ -552,8 +685,8 @@ function selectGeo(f){
 }
 function setResults(r){ // r = {kind:'esp'|'tipo'|'srv', id}
   SEL=null;
-  if(r.kind==='esp'){ const e=ESP_BY[r.id]; const as=ambOfEsp(r.id); R={esp:r.id,amb:new Set(as.map(a=>a.id)),srv:new Set(),label:`🐟 ${espName(e)} — ${as.length} ambiente(s). Tocá un pez para ver el ambiente y sus servicios.`}; draw(); fitLatLngs(as.map(a=>a.ll),7); }
-  else if(r.kind==='tipo'){ const as=AMBIENTES.filter(a=>a.tipo===r.id); R={amb:new Set(as.map(a=>a.id)),srv:new Set(),label:`${TIPOS[r.id]} — ${as.length} ambiente(s) con ficha`}; draw(); fitLatLngs(as.map(a=>a.ll),7); }
+  if(r.kind==='esp'){ const e=ESP_BY[r.id]; const as=ambOfEsp(r.id); R={esp:r.id,amb:new Set(as.map(a=>a.id)),srv:new Set(),label:`${espName(e)} — ${as.length} ambiente(s). Tocá un pez para ver el ambiente.`}; draw(); openDrawer(detEsp(e),espName(e)); fitLatLngs(as.map(a=>a.ll),7); }
+  else if(r.kind==='tipo'){ const as=AMBIENTES.filter(a=>GRP(a.tipo)===r.id); R={amb:new Set(as.map(a=>a.id)),srv:new Set(),label:`${GRUPOS[r.id]} — ${as.length} ambiente(s) con ficha`}; draw(); fitLatLngs(as.map(a=>a.ll),7); }
   else if(r.kind==='srv'){ const s=SRV_BY[r.id]; R={amb:new Set(),srv:new Set([r.id]),label:`${TIPO_SRV[s.tipo]}: ${s.n}`}; selectSrv(r.id,{fit:true}); }
   $('#restx').textContent=R.label; $('#resbar').classList.add('on');
 }
@@ -561,9 +694,9 @@ $('#resx').onclick=()=>{ R=null; $('#resbar').classList.remove('on'); draw(); };
 
 /* ---------- Panel de filtros ---------- */
 function renderFilters(){
-  $('#f-tipos').innerHTML=Object.entries(TIPOS).map(([k,v])=>`<span class="tg${F.tipos[k]?' on':''}" data-ft="${k}"><span class="dot" style="background:${TIPO_COLOR[k]}"></span>${v}</span>`).join('');
-  $('#f-esp').innerHTML=`<span class="tg sp${!F.esp?' on':''}" data-fe="">Todas</span>`+ESPECIES.map(e=>`<span class="tg sp${F.esp===e.id?' on':''}" data-fe="${e.id}"><span class="dot" style="background:${e.c}"></span>${esc(espName(e))}</span>`).join('');
-  $('#f-capas').innerHTML=`<span class="tg${F.srv?' on':''}" data-fc="srv">Servicios en el mapa</span><span class="tg${F.soloFichas?' on':''}" data-fc="soloFichas">Solo con ficha</span>`;
+  $('#f-tipos').innerHTML=Object.entries(GRUPOS).map(([k,v])=>`<span class="tg${F.tipos[k]?' on':''}" data-ft="${k}"><span class="dot" style="background:${TIPO_COLOR[k]}"></span>${v}</span>`).join('');
+  $('#f-esp').innerHTML=`<div class="sptiles"><div class="sptile${!F.esp?' on':''}" data-fe=""><span class="fish" style="font-size:1.4rem;align-items:center;justify-content:center">🎣</span>Todas</div>`+ESPECIES.map(e=>`<div class="sptile${F.esp===e.id?' on':''}" data-fe="${e.id}">${fishBadge(e)}${esc(espName(e))}</div>`).join('')+'</div>';
+  $('#f-capas').innerHTML=`<span class="tg${F.srv?' on':''}" data-fc="srv">Servicios con reserva directa</span><span class="tg${F.soloFichas?' on':''}" data-fc="soloFichas">Solo con ficha</span>`;
   const n=Object.values(F.tipos).filter(x=>!x).length+(F.esp?1:0)+(F.soloFichas?1:0);
   $('#fbtnn').style.display=n?'inline':'none'; $('#fbtnn').textContent=n;
 }
@@ -573,7 +706,7 @@ function updateCount(){
    (F.esp?`<br>Filtrado por especie: <b>${esc(espName(ESP_BY[F.esp]))}</b>`:'')+
    (R?`<br>Resultados de búsqueda superpuestos (no dependen de estos filtros).`:'')+
    `<br><span class="lnk" id="fclear">Limpiar filtros</span>`;
-  $('#fclear').onclick=()=>{ F.tipos={rio:true,lago:true,laguna:true,mar:true}; F.esp=null; F.soloFichas=false; F.srv=true; renderFilters(); draw(); };
+  $('#fclear').onclick=()=>{ F=F0(); renderFilters(); draw(); };
 }
 $('#filters').addEventListener('click',e=>{
   const t=e.target.closest('[data-ft],[data-fe],[data-fc]'); if(!t) return;
@@ -591,24 +724,29 @@ $('#fbtn').onclick=()=>openFiltersSheet();
 /* =====================================================================
    FICHAS DE DETALLE
    ===================================================================== */
-function espChips(ids){ return `<div class="chips">${ids.map(id=>`<span class="chip link" data-esp="${id}">${esc(espName(ESP_BY[id]))}</span>`).join('')}</div>`; }
+function espChips(ids){ return `<div class="chips">${ids.map(id=>`<span class="chip link" data-esp="${id}" style="display:inline-flex;align-items:center;gap:5px;padding-left:4px">${fishBadge(ESP_BY[id],'s')}${esc(espName(ESP_BY[id]))}</span>`).join('')}</div>`; }
+const PHC=[['#f6c177','#2d6b7a','#1c4a55'],['#f9d29d','#4e8fa0','#2a5f6c'],['#cfe3ea','#6b8f5e','#3e6b7a'],['#dfe9f0','#7a8c99','#2f5e6e'],['#e8d8b8','#8a7a5a','#35606b'],['#bcd7e8','#c8b894','#3a7390']];
+function phSVG(k){ const [sky,land,water]=PHC[k%PHC.length]; return `<svg viewBox="0 0 150 100"><rect width="150" height="100" fill="${sky}"/><path d="M0 60 L30 ${30+k*3} L55 55 L85 ${25+k*4} L115 58 L150 40 V70 H0Z" fill="${land}"/><rect y="66" width="150" height="34" fill="${water}"/><path d="M10 80 h30 M60 88 h40 M110 78 h25" stroke="#ffffff55" stroke-width="2"/></svg>`; }
+function gallery(key){ const fs=FOTOS[key]||[]; const O={propia:'Foto PescaAR',pescador:'Foto de pescador',prestador:'Foto del prestador'};
+  return `<h3>Fotos · ${fs.length}</h3><div class="gal" data-gal="${key}">${fs.map(f=>`<div class="ph">${f.src?`<img src="${f.src}">`:phSVG(f.k)}<div>${esc(f.c)}<br>📷 ${esc(f.a)} · ${O[f.o]}${f.pend?' · <b style="color:var(--dorado)">pendiente de moderación</b>':''}</div></div>`).join('')}<label class="ph up">📷<br>Subir tu foto<input type="file" accept="image/*" hidden data-up="${key}"></label></div>`; }
 function srvRows(list){ return list.length?list.map(s=>`<div class="prow" data-srv="${s.id}"><div class="av t-${s.tipo}">${esc(initials(s.n))}</div><div class="pi"><div class="pn">${esc(s.n)} ${lvlBadge(s)}</div><div class="pm">${TIPO_SRV[s.tipo]} · ${esc(s.loc)}</div></div>${stars(s.rat,s.nr)}</div>`).join(''):'<p class="psub">Todavía no hay servicios cargados en este ambiente.</p>'; }
 function newsFor(k,id){ const n=NOTICIAS.filter(x=>x[k].includes(id)); return n.length?`<h3>Novedades</h3>`+n.map(x=>`<div class="rule"><b>${esc(x.t)}</b><br><small class="mono">${x.f}</small></div>`).join(''):''; }
 function detAmb(a){
   return `<div class="det"><div class="prov">${TIPOS[a.tipo]} · ${a.prov.map(esc).join(' / ')}</div><h2>${esc(a.n)}</h2>${a.tramo?`<div class="tramo">Tramo: ${esc(a.tramo)}</div>`:''}
   <p class="desc">${esc(a.d)}</p>
-  <dl class="kv"><dt>Temporada</dt><dd>${a.temp.map(esc).join('<br>')}</dd><dt>Modalidad</dt><dd>${a.mod.map(esc).join(' · ')}</dd><dt>Tipo de pesca</dt><dd>${a.tp.map(esc).join(' · ')}</dd><dt>Agua</dt><dd>${esc(a.agua)}</dd>${a.tipo==='mar'?`<dt>Coordenadas</dt><dd class="mono">${a.ll[0].toFixed(3)}, ${a.ll[1].toFixed(3)}</dd>`:''}</dl>
+  <dl class="kv"><dt>Temporada</dt><dd>${a.temp.map(esc).join('<br>')}</dd><dt>Modalidad</dt><dd>${a.mod.map(esc).join(' · ')}</dd><dt>Costa / embarcado</dt><dd>${a.acc.map(esc).join(' · ')}</dd><dt>Tipo de pesca</dt><dd>${a.tp.map(esc).join(' · ')}</dd><dt>Agua</dt><dd>${esc(a.agua)}</dd>${a.tipo==='mar'?`<dt>Coordenadas</dt><dd class="mono">${a.ll[0].toFixed(3)}, ${a.ll[1].toFixed(3)}</dd>`:''}</dl>
   <h3>Especies</h3>${espChips(a.esp)}
   <h3>Reglamentación</h3><div class="rule">${esc(a.regl.t)} <a href="${a.regl.url}">Ver norma →</a></div>
   <h3>Licencia de pesca</h3>${a.lic.map(l=>`<div class="rule">${esc(l.t)} <a href="${l.url}">Cómo sacarla →</a></div>`).join('')}
   <h3>Servicios · ${srvOfAmb(a.id).length}</h3>${srvRows(srvOfAmb(a.id))}
+  ${gallery('amb:'+a.id)}
   ${newsFor('amb',a.id)}
   <button class="btn" data-mapamb="${a.id}">🗺 Ver mapa del ambiente</button>
   <div class="demo">🛈 Datos de ejemplo. Tocá una especie o un servicio para ir a su sección.</div></div>`;
 }
 function detEsp(e){
   const as=ambOfEsp(e.id), ss=srvOfEsp(e.id);
-  return `<div class="det"><div class="prov">Especie</div><h2 style="display:flex;gap:10px;align-items:center">${fishBadge(e)} ${esc(espName(e))}</h2>
+  return `<div class="det">${fishBig(e,true)}<div class="prov">Especie</div><h2 style="display:flex;gap:10px;align-items:center">${fishBadge(e)} ${esc(espName(e))}</h2>
   <div class="tramo">${esc(LANG==='en'?e.n:e.en)} · <i>${esc(e.sci)}</i></div>
   <p class="desc">${esc(e.d)}</p>
   <h3>Cómo pescarla</h3><p class="desc">${esc(e.como)}</p>
@@ -618,26 +756,34 @@ function detEsp(e){
   ${newsFor('esp',e.id)}</div>`;
 }
 function detSrv(s){
-  const L4=s.nivel===4;
+  const L4=s.nivel===3;
   return `<div class="det"><div class="prov">${TIPO_SRV[s.tipo]} · ${esc(s.loc)}</div><h2>${esc(s.n)}</h2>
   <div class="pills">${lvlBadge(s)} ${stars(s.rat,s.nr)}</div>
   <p class="desc">${esc(s.pres)}</p>
   ${s.cap?`<dl class="kv"><dt>Capacidad</dt><dd>${esc(s.cap)}</dd></dl>`:''}
   <h3>Servicios que ofrece</h3>
-  <table class="otab"><tr><th>Servicio</th><th>Ambiente</th><th>Costo</th></tr>${s.of.map(o=>`<tr><td>${esc(o.s)}<br><small style="color:var(--ink-faint)">${o.mod.map(esc).join(' · ')}</small></td><td><span class="lnk" data-amb="${o.amb}">${esc(AMB_BY[o.amb].n)}</span></td><td class="mono">${esc(o.costo)}</td></tr>`).join('')}</table>
+  <table class="otab"><tr><th>Servicio</th><th>Ambiente</th><th>Costo</th></tr>${s.of.map(o=>`<tr><td>${esc(o.s)}<br><small style="color:var(--ink-faint)">${[...o.mod,...o.acc].map(esc).join(' · ')}</small></td><td><span class="lnk" data-amb="${o.amb}">${esc(AMB_BY[o.amb].n)}</span></td><td class="mono">${esc(o.costo)}</td></tr>`).join('')}</table>
   ${s.esp.length?`<h3>Especies</h3>${espChips(s.esp)}`:''}
-  <h3>Reseñas · ${s.nr}</h3>${s.res.length?s.res.map(r=>`<div class="rev"><div class="rh"><span>${esc(r.a)} · ${esc(r.p)} ${r.v?'<span class="badge g">RESERVA VERIFICADA</span>':''}</span><span class="stars">${'★'.repeat(r.e)}</span></div>${esc(r.t)}</div>`).join(''):'<p class="psub">Mostrando solo el promedio en el prototipo.</p>'}
+  ${gallery('srv:'+s.id)}
+  <h3>Reseñas · ${s.nr}</h3>${revSummary(s)}
+  ${s.ext&&s.ext.length?`<div class="psub" style="margin:10px 0 0">También podés ver sus reseñas en:</div><div class="ext">${s.ext.map(x=>`<a href="${x.u}" target="_blank" rel="noopener">${esc(x.p)} ↗</a>`).join('')}</div>`:''}
+  <div id="revlist">${s.res.map(revHTML).join('')||'<p class="psub">Todavía no hay reseñas escritas.</p>'}</div>
+  <div class="rform" data-rform="${s.id}"><b style="font-size:.84rem">Calificá este servicio</b><div class="st" data-st="0">${'<span>★</span>'.repeat(5)}</div><textarea rows="2" placeholder="Contá cómo fue tu salida…"></textarea><button class="btn" style="margin-top:8px" data-sendrev="${s.id}">Publicar reseña</button><div class="psub" style="margin:6px 0 0;font-size:.7rem">Las reseñas se moderan. Si reservaste por PescaAR, la tuya lleva el sello "Reserva verificada".</div></div>
   ${L4?`<button class="btn gold">Reservar salida con seña<small>Seña online · resto al guía el día de la salida · reembolso si no se sale</small></button>`:`<button class="btn">✉ Contactar${s.nivel>=2?' (WhatsApp / email)':' (formulario)'}</button>`}
   <button class="btn" data-mapsrv="${s.id}">🗺 Ver en el mapa</button>
-  <div class="demo">🛈 Nivel: <b>${NIVELES[s.nivel].n}</b>. ${s.nivel<3?'Con este nivel no aparece como ícono en el mapa (se ven sus ambientes).':'Aparece como ícono en el mapa.'}</div></div>`;
+  <div class="demo">🛈 Nivel: <b>${NIVELES[s.nivel].n}</b>. ${s.nivel<3?'Con este nivel no aparece como ícono en el mapa: se lista al elegir el ambiente'+(s.nivel===2?', debajo de los de reserva directa.':', al final.'):'Aparece como ícono en el mapa y en la portada.'}</div></div>`;
 }
+const revHTML=r=>`<div class="rev"><div class="rh"><span>${esc(r.a)} · ${esc(r.p)} ${r.v?'<span class="badge g">RESERVA VERIFICADA</span>':''}${r.pend?' <span class="badge">PENDIENTE DE MODERACIÓN</span>':''}</span><span class="stars">${'★'.repeat(r.e)}</span></div>${esc(r.t)}</div>`;
+function revSummary(s){ // distribución estimada a partir del promedio (en producción: conteo real)
+  const d=[5,4,3,2,1].map(k=>Math.max(0,Math.round(s.nr*Math.exp(-Math.abs(k-s.rat)*1.6)))); const t=d.reduce((a,b)=>a+b,0)||1;
+  return `<div style="display:flex;gap:16px;align-items:center;margin-bottom:8px"><div style="text-align:center"><div style="font-family:Fraunces,serif;font-size:2rem">${s.rat.toFixed(1)}</div>${stars(s.rat,s.nr)}</div><div style="flex:1">${d.map((n,i)=>`<div class="rbar"><span>${5-i}★</span><span style="background:var(--panel-2);border-radius:3px"><i style="width:${n/t*100}%"></i></span><span>${n}</span></div>`).join('')}</div></div>`; }
 
 /* =====================================================================
    PANEL DETALLE + HOJAS (móvil) + botón ATRÁS de Android
    ===================================================================== */
 const drawer=$('#drawer'), filtersEl=$('#filters');
 let ov=[], skipPop=0;
-function domOpen(n){ const el=n==='drawer'?drawer:filtersEl; el.classList.add('open'); el.classList.remove('expanded'); if(isMobile()) document.body.classList.add('sheet-shown'); }
+function domOpen(n){ const el=n==='drawer'?drawer:filtersEl; el.classList.add('open'); el.classList.remove('expanded'); const b=el.querySelector('.szbtn'); if(b) b.textContent='▲ Ampliar'; if(isMobile()) document.body.classList.add('sheet-shown'); }
 function domClose(n){ const el=n==='drawer'?drawer:filtersEl; el.classList.remove('open','expanded'); if(!drawer.classList.contains('open')&&!filtersEl.classList.contains('open')) document.body.classList.remove('sheet-shown'); if(n==='menu') $('#nav').classList.remove('open'); }
 function ovPush(n){
   if(ov.includes(n)) return;
@@ -651,11 +797,11 @@ function openDrawer(html,title){ $('#dbody').innerHTML=html; $('#dtitle').textCo
 function openFiltersSheet(){ domOpen('filters'); ovPush('filters'); }
 $('#dclose').onclick=()=>ovClose('drawer');
 function sheetDrag(el,handle,name){
-  let y0=0,base=0,dy=0,drag=false,moved=false;
-  const down=e=>{ if(!isMobile()||e.target.closest('button'))return; drag=true;moved=false;dy=0;y0=(e.touches?e.touches[0]:e).clientY;base=el.classList.contains('expanded')?0:el.offsetHeight*0.5;el.classList.add('dragging'); };
+  let y0=0,base=0,dy=0,drag=false,moved=false,lastTouch=0;
+  const down=e=>{ if(!isMobile()||e.target.closest('button'))return; if(e.type==='mousedown'&&Date.now()-lastTouch<900) return; if(e.touches) lastTouch=Date.now(); drag=true;moved=false;dy=0;y0=(e.touches?e.touches[0]:e).clientY;base=el.classList.contains('expanded')?0:el.offsetHeight*0.5;el.classList.add('dragging'); };
   const move=e=>{ if(!drag)return; dy=(e.touches?e.touches[0]:e).clientY-y0; if(Math.abs(dy)>4)moved=true; el.style.setProperty('transform','translateY('+Math.min(Math.max(base+dy,0),el.offsetHeight)+'px)','important'); };
-  const up=()=>{ if(!drag)return; drag=false; el.classList.remove('dragging'); el.style.removeProperty('transform'); const h=el.offsetHeight,cur=base+dy;
-    if(!moved) el.classList.toggle('expanded'); else if(cur<h*.25) el.classList.add('expanded'); else if(cur<h*.78) el.classList.remove('expanded'); else ovClose(name); };
+  const up=e=>{ if(e&&e.type==='touchend') lastTouch=Date.now(); if(!drag)return; drag=false; el.classList.remove('dragging'); el.style.removeProperty('transform'); const h=el.offsetHeight,cur=base+dy;
+    if(!moved) el.classList.toggle('expanded'); else if(cur<h*.25) el.classList.add('expanded'); else if(cur<h*.78) el.classList.remove('expanded'); else ovClose(name); const b=el.querySelector('.szbtn'); if(b) b.textContent=el.classList.contains('expanded')?'▼ Reducir':'▲ Ampliar'; };
   handle.addEventListener('touchstart',down,{passive:true}); handle.addEventListener('touchmove',move,{passive:true}); handle.addEventListener('touchend',up);
   handle.addEventListener('mousedown',down); addEventListener('mousemove',move); addEventListener('mouseup',up);
 }
@@ -701,6 +847,14 @@ function applyFocus(v,o){
   if(v==='ambientes') openDrawer(detAmb(AMB_BY[o.id]),AMB_BY[o.id].n);
 }
 // clics globales: pestañas + doble navegación entre secciones
+document.addEventListener('change',e=>{ const up=e.target.closest('[data-up]'); if(!up||!up.files[0]) return; const k=up.dataset.up, fr=new FileReader();
+  fr.onload=()=>{ (FOTOS[k]=FOTOS[k]||[]).push({c:'Tu foto',a:'Vos',o:'pescador',src:fr.result,pend:1}); const g=up.closest('.gal'); g.outerHTML=gallery(k).replace(/^<h3>[^<]*<\/h3>/,''); }; fr.readAsDataURL(up.files[0]); });
+document.addEventListener('click',e=>{
+  const st=e.target.closest('.st span'); if(st){ const box=st.parentNode, i=[...box.children].indexOf(st)+1; box.dataset.st=i; [...box.children].forEach((x,j)=>x.innerHTML=j<i?'<b>★</b>':'★'); return; }
+  const sr=e.target.closest('[data-sendrev]'); if(sr){ const f=sr.closest('.rform'), n=+f.querySelector('.st').dataset.st, t=f.querySelector('textarea').value.trim(); if(!n){ f.querySelector('.st').style.outline='1px solid var(--sel)'; return; }
+    const r={a:'Vos',p:'—',e:n,t:t||'(sin comentario)',v:0,pend:1}; SRV_BY[sr.dataset.sendrev].res.unshift(r); $('#revlist').insertAdjacentHTML('afterbegin',revHTML(r)); f.innerHTML='<b style="font-size:.84rem">¡Gracias! Tu reseña quedó pendiente de moderación.</b>'; return; }
+  const sz=e.target.closest('[data-size]'); if(sz){ const el=sz.dataset.size==='drawer'?drawer:filtersEl; el.classList.toggle('expanded'); sz.textContent=el.classList.contains('expanded')?'▼ Reducir':'▲ Ampliar'; return; }
+});
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-go],[data-esp],[data-srv],[data-amb],[data-mapamb],[data-mapesp],[data-mapsrv],[data-q]'); if(!t) return;
   const d=t.dataset;
@@ -721,41 +875,46 @@ document.addEventListener('click',e=>{ if(!e.target.closest('#nav,#burger')) $('
    ===================================================================== */
 const cardSrv=s=>`<div class="card lvl${s.nivel}" id="card-${s.id}" data-srv="${s.id}"><div class="ct"><span class="av t-${s.tipo}" style="width:30px;height:30px;font-size:.7rem">${esc(initials(s.n))}</span>${esc(s.n)} ${lvlBadge(s)}</div>
   <div class="cm">${esc(s.pres)}</div><div class="cm">${stars(s.rat,s.nr)}</div><div class="cl">${TIPO_SRV[s.tipo].toUpperCase()} · 📍 ${esc(s.loc)}</div></div>`;
-const cardEsp=e=>`<div class="card" id="card-${e.id}" data-esp="${e.id}"><div class="ct">${fishBadge(e)} ${esc(espName(e))}</div><div class="cm">${esc(e.d)}</div><div class="cl">${esc(LANG==='en'?e.n:e.en)} · ${ambOfEsp(e.id).length} AMBIENTE(S)</div></div>`;
-const cardAmb=a=>`<div class="card" id="card-${a.id}" data-amb="${a.id}"><div class="ct"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:${TIPO_COLOR[a.tipo]}"></span>${esc(a.n)}</div>${a.tramo?`<div class="cm" style="margin-top:2px">Tramo: ${esc(a.tramo)}</div>`:''}<div class="cm">${esc(a.d)}</div><div class="cl">${TIPOS[a.tipo].toUpperCase()} · ${a.prov.map(esc).join(' / ')} · ${a.esp.length} ESPECIE(S) · ${srvOfAmb(a.id).length} SERVICIO(S)</div></div>`;
+const cardEsp=e=>`<div class="card" id="card-${e.id}" data-esp="${e.id}">${fishBig(e)}<div class="ct">${fishBadge(e,'s')} ${esc(espName(e))}</div><div class="cm">${esc(e.d)}</div><div class="cl">${esc(LANG==='en'?e.n:e.en)} · ${ambOfEsp(e.id).length} AMBIENTE(S)</div></div>`;
+const cardAmb=a=>`<div class="card" id="card-${a.id}" data-amb="${a.id}"><div class="ct"><span class="dot" style="width:10px;height:10px;border-radius:50%;background:${TIPO_COLOR[a.tipo]}"></span>${esc(a.n)}</div>${a.tramo?`<div class="cm" style="margin-top:2px">Tramo: ${esc(a.tramo)}</div>`:''}<div class="cm">${esc(a.d)}</div><div class="cl">${TIPOS[a.tipo].toUpperCase()} · ${a.acc.join(' / ').toUpperCase()} · ${a.prov.map(esc).join(' / ')} · ${a.esp.length} ESPECIE(S) · ${srvOfAmb(a.id).length} SERVICIO(S)</div></div>`;
 const AD=`<div class="ad">Anuncio<small>tarjeta patrocinada entre resultados</small></div>`;
+let SESP=null;
 function fillSel(id,label,opts){ const el=$(id); if(el.options.length) return; el.innerHTML=`<option value="">${label}</option>`+opts.map(([v,t])=>`<option value="${v}">${esc(t)}</option>`).join(''); el.onchange=()=>render(cur); }
 function render(v){
   if(v==='inicio'){
     $('#qchips').innerHTML=['Dorado','Trucha','Paraná','Lodge','Pejerrey','Mar'].map(q=>`<span class="qchip" data-q="${q}">${q}</span>`).join('');
-    $('#h-srv').innerHTML=SRV.filter(s=>s.nivel>=2).sort(byRank).slice(0,6).map(cardSrv).join('');
+    $('#h-srv').innerHTML=SRV.filter(s=>s.nivel===3).sort(byRank).map(cardSrv).join('');
     $('#h-esp').innerHTML=ESPECIES.slice(0,4).map(cardEsp).join('');
     $('#h-amb').innerHTML=AMBIENTES.slice(0,4).map(cardAmb).join('');
     $('#h-news').innerHTML=NOTICIAS.map(n=>`<div class="card"><div class="d">${n.f}</div><div class="ct" style="margin-top:6px">${esc(n.t)}</div><div class="cm">${esc(n.r)}</div><div class="cl">${n.esp.map(id=>esc(espName(ESP_BY[id]))).join(' · ')}</div></div>`).join('');
   }
   if(v==='servicios'){
     fillSel('#s-tipo','Tipo de servicio: todos',Object.entries(TIPO_SRV));
-    fillSel('#s-esp','Especie: todas',ESPECIES.map(e=>[e.id,e.n]));
-    fillSel('#s-mod','Modalidad: todas',[...new Set(SRV.flatMap(s=>s.mods))].sort().map(m=>[m,m]));
     fillSel('#s-prov','Provincia: todas',[...new Set(SRV.map(s=>s.prov))].sort().map(p=>[p,p]));
-    const t=$('#s-tipo').value,e=$('#s-esp').value,m=$('#s-mod').value,p=$('#s-prov').value;
-    const list=SRV.filter(s=>(!t||s.tipo===t)&&(!e||s.esp.includes(e))&&(!m||s.mods.includes(m))&&(!p||s.prov===p)).sort(byRank);
+    fillSel('#s-mod','Modalidad: todas',TECNICAS.map(m=>[m,m]));
+    fillSel('#s-acc','Costa / embarcado: todos',ACCESOS.map(m=>[m,m]));
+    fillSel('#s-amb','Ambiente: todos',Object.entries(GRUPOS));
+    const e=SESP;
+    $('#s-esp').innerHTML=`<span class="tg sp${!e?' on':''}" data-sesp="">Especie: todas</span>`+ESPECIES.map(x=>`<span class="tg sp${e===x.id?' on':''}" data-sesp="${x.id}" style="padding-left:4px">${fishBadge(x,'s')}${esc(espName(x))}</span>`).join('');
+    $('#s-esp').onclick=ev=>{ const c=ev.target.closest('[data-sesp]'); if(!c) return; ev.stopPropagation(); SESP=c.dataset.sesp||null; render('servicios'); };
+    const t=$('#s-tipo').value,m=$('#s-mod').value,p=$('#s-prov').value,ac=$('#s-acc').value,ag=$('#s-amb').value;
+    const list=SRV.filter(s=>(!t||s.tipo===t)&&(!e||s.esp.includes(e))&&(!m||s.mods.includes(m))&&(!ac||s.accs.includes(ac))&&(!ag||s.grps.includes(ag))&&(!p||s.prov===p)).sort(byRank);
     $('#s-cnt').textContent=list.length+' resultado(s)';
     const html=list.map(cardSrv); if(html.length>4) html.splice(4,0,AD);
     $('#s-list').innerHTML=html.join('')||'<p class="psub">Sin resultados con esos filtros.</p>';
   }
   if(v==='especies') $('#e-list').innerHTML=ESPECIES.map(cardEsp).join('');
   if(v==='ambientes'){
-    fillSel('#a-tipo','Tipo: todos',Object.entries(TIPOS));
+    fillSel('#a-tipo','Tipo: todos',Object.entries(GRUPOS));
     fillSel('#a-prov','Provincia: todas',[...new Set(AMBIENTES.flatMap(a=>a.prov))].sort().map(p=>[p,p]));
     const t=$('#a-tipo').value,p=$('#a-prov').value;
-    const list=AMBIENTES.filter(a=>(!t||a.tipo===t)&&(!p||a.prov.includes(p)));
+    const list=AMBIENTES.filter(a=>(!t||GRP(a.tipo)===t)&&(!p||a.prov.includes(p)));
     $('#a-cnt').textContent=list.length+' ambiente(s)';
     $('#a-list').innerHTML=list.map(cardAmb).join('');
   }
   if(v==='contacto'){
-    $('#plans').innerHTML=[[1,['Ficha básica','Aparece en Servicios y en sus ambientes','Contacto por formulario']],[2,['Todo lo anterior','Primero en listados + sello Destacado','Contacto directo (WhatsApp/email)']],[3,['Todo lo anterior','Ícono propio en el mapa','Aparece en búsquedas del mapa']],[4,['Todo lo anterior','Reserva directa con seña','Sello de garantía de salida']]]
-      .map(([n,b])=>`<div class="plan${n===4?' top':''}"><div class="mono" style="font-size:.62rem;color:var(--dorado)">NIVEL ${n}</div><b>${NIVELES[n].n}</b><ul>${b.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('');
+    $('#plans').innerHTML=[[1,['Ficha básica','Aparece en Servicios y en sus ambientes, al final','Contacto por formulario']],[2,['Todo lo anterior','Se lista antes que los gratuitos + sello Destacado','Contacto directo (WhatsApp/email)']],[3,['Todo lo anterior','Ícono propio en el mapa y en la portada','Primero en todos los listados','Reserva directa con seña y garantía de salida']]]
+      .map(([n,b])=>`<div class="plan${n===3?' top':''}"><div class="mono" style="font-size:.62rem;color:var(--dorado)">NIVEL ${n}</div><b>${NIVELES[n].n}</b><ul>${b.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('');
     $('#cform').onsubmit=ev=>{ev.preventDefault();$('#cok').style.display='block';};
   }
 }
@@ -766,8 +925,8 @@ function render(v){
    Ignora los filtros del panel izquierdo.
    ===================================================================== */
 const IDX=[];
-ESPECIES.forEach(e=>IDX.push({k:'esp',id:e.id,t:()=>espName(e),s:()=>(LANG==='en'?e.n:e.en)+' · '+ambOfEsp(e.id).length+' ambiente(s)',txt:[e.n,e.en,e.sci].join(' '),ic:fishBadge(e)}));
-Object.entries(TIPOS).forEach(([k,v])=>IDX.push({k:'tipo',id:k,t:()=>k==='mar'?'Spots de mar':v+'s con ficha',s:()=>'Tipo de ambiente',txt:v+' '+v+'s '+(k==='rio'?'rios':''),ic:'💧'}));
+ESPECIES.forEach(e=>IDX.push({k:'esp',id:e.id,t:()=>espName(e),s:()=>(LANG==='en'?e.n:e.en)+' · '+ambOfEsp(e.id).length+' ambiente(s)',txt:[e.n,e.en,e.sci].join(' '),get ic(){return fishBadge(e)}}));
+Object.entries(GRUPOS).forEach(([k,v])=>IDX.push({k:'tipo',id:k,t:()=>k==='mar'?'Spots de mar':k==='rio'?'Ríos con ficha':'Lagos y lagunas con ficha',s:()=>'Tipo de ambiente',txt:k==='rio'?'rio rios':k==='lago'?'lago lagos laguna lagunas embalse':'mar costa',ic:'💧'}));
 AMBIENTES.forEach(a=>IDX.push({k:'amb',id:a.id,t:()=>a.n+(a.tramo?' · '+a.tramo:''),s:()=>TIPOS[a.tipo]+' · '+a.prov.join(' / '),txt:[a.n,a.tramo,a.prov.join(' '),TIPOS[a.tipo]].join(' '),ic:a.tipo==='mar'?'🌊':'💧'}));
 SRV.forEach(s=>IDX.push({k:'srv',id:s.id,t:()=>s.n,s:()=>TIPO_SRV[s.tipo]+' · '+s.loc,txt:[s.n,TIPO_SRV[s.tipo],s.tipo,s.loc].join(' '),ic:s.tipo==='guia'?'🎣':'🏠'}));
 [...new Set([...RIVERS.features,...LAKES.features].map(f=>f.properties.name).filter(n=>n&&!ambByGeo[n]))].forEach(n=>IDX.push({k:'geo',id:n,t:()=>n,s:()=>'Sin ficha (capa de datos abiertos)',txt:n+' rio',ic:'·'}));
@@ -778,6 +937,7 @@ function searchIdx(q){
   return IDX.map(x=>{ let sc=0; for(const t of w){ if(!x.n.includes(t)) return null; sc+=(x.n.startsWith(t)||x.n.includes(' '+t))?2:1; } return {x,sc}; }).filter(Boolean).sort((a,b)=>b.sc-a.sc).map(r=>r.x);
 }
 function pick(h){
+  F=F0(); R=null; SEL=null; $('#resbar').classList.remove('on'); renderFilters();   // el buscador resetea los filtros
   if(h.k==='esp') go('mapa',{res:{kind:'esp',id:h.id}});
   else if(h.k==='tipo') go('mapa',{res:{kind:'tipo',id:h.id}});
   else if(h.k==='amb') go('mapa',{selAmb:h.id});
