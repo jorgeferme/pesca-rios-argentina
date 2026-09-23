@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-<title>Pesca en Argentina · Prototipo v3</title>
+<title>Pesca en Argentina · Prototipo v3.2</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Libre+Franklin:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -289,7 +289,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
     <div class="sect"><h2>Ambientes <a data-go="ambientes">Ver todos →</a></h2><p class="s">Ríos, lagos, lagunas y spots de mar con ficha.</p><div class="grid" id="h-amb"></div></div>
     <div class="sect"><h2>Novedades</h2><p class="s">Aperturas de temporada, cambios de reglamento y notas (base de noticias).</p><div class="news" id="h-news"></div></div>
   </div>
-  <footer>© 2026 PescaAR (nombre provisorio) · Prototipo v3 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo</footer>
+  <footer>© 2026 PescaAR (nombre provisorio) · Prototipo v3.2 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo</footer>
 </section>
 
 <!-- ===================== MAPA ===================== -->
@@ -585,11 +585,18 @@ const fishBig=(e,big)=>`<div class="lg${big?' big':''}">${fishLogo(e.id,{uid:uid
    MAPA
    ===================================================================== */
 const map=L.map('map',{zoomControl:true,preferCanvas:true,renderer:L.canvas({tolerance:10})}).setView([-38.5,-63.5],4.4);
-const osm=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'© OpenStreetMap · © CARTO'}).addTo(map);
+window.__base={cur:null};
+const osm=(function(){ // fondo: OSM en la web; si se abre desde la PC o OSM falla, pasa a Esri (sin clave)
+  const esri=()=>L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Mapa © Esri, HERE, Garmin, © OpenStreetMap'});
+  if(location.protocol==='file:') return esri();
+  const o=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}); let errs=0;
+  o.on('tileerror',()=>{ if(++errs===3&&o._map){ const m=o._map, e=esri(); m.removeLayer(o); e.addTo(m); e.bringToBack(); if(window.__base) window.__base.cur=e; } });
+  return o; })();
+osm.addTo(map); __base.cur=osm;
 const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Imágenes © Esri, Maxar, Earthstar Geographics (demo)'});
 let satOn=false;
 const SatCtl=L.Control.extend({options:{position:'topleft'},onAdd(){const d=L.DomUtil.create('div','leaflet-bar');const a=L.DomUtil.create('a','satbtn',d);a.href='#';a.textContent='🛰 Satélite';
-  L.DomEvent.on(a,'click',e=>{L.DomEvent.preventDefault(e);L.DomEvent.stopPropagation(e);satOn=!satOn;if(satOn){map.removeLayer(osm);sat.addTo(map);a.textContent='🗺 Mapa';}else{map.removeLayer(sat);osm.addTo(map);a.textContent='🛰 Satélite';}});return d;}});
+  L.DomEvent.on(a,'click',e=>{L.DomEvent.preventDefault(e);L.DomEvent.stopPropagation(e);satOn=!satOn;if(satOn){map.removeLayer(__base.cur);sat.addTo(map);a.textContent='🗺 Mapa';}else{map.removeLayer(sat);__base.cur.addTo(map);a.textContent='🛰 Satélite';}});return d;}});
 map.addControl(new SatCtl());
 
 RIVERS.features.forEach((f,i)=>{f.properties._k='r'+i;f.properties._t='rio';});
