@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover">
-<title>Pesca en Argentina · Prototipo v3.2</title>
+<title>Pesca en Argentina · Prototipo v3.3</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Libre+Franklin:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -113,7 +113,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 #map .leaflet-interactive:focus,#map path:focus{outline:none}
 #ftab{position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:1100;background:var(--panel);border:1px solid var(--line);border-left:0;border-radius:0 10px 10px 0;color:var(--ink);padding:14px 8px;cursor:pointer;writing-mode:vertical-rl;font-size:.8rem;display:none;box-shadow:4px 0 14px rgba(0,0,0,.35)}
 #v-mapa.collapsed #ftab{display:block}
-#resbar{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:1100;background:rgba(19,34,37,.96);border:1px solid var(--sel);border-radius:22px;padding:7px 8px 7px 14px;font-size:.82rem;display:none;align-items:center;gap:10px;box-shadow:0 6px 18px rgba(0,0,0,.45);white-space:nowrap;max-width:92%}
+#resbar{position:absolute;top:12px;left:56px;z-index:1100;background:rgba(19,34,37,.96);border:1px solid var(--sel);border-radius:22px;padding:7px 8px 7px 14px;font-size:.82rem;display:none;align-items:center;gap:10px;box-shadow:0 6px 18px rgba(0,0,0,.45);white-space:nowrap;max-width:92%}
 #resbar.on{display:flex}
 #resbar span{overflow:hidden;text-overflow:ellipsis}
 #resbar button{background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:4px 10px;cursor:pointer;font-size:.74rem}
@@ -289,7 +289,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
     <div class="sect"><h2>Ambientes <a data-go="ambientes">Ver todos →</a></h2><p class="s">Ríos, lagos, lagunas y spots de mar con ficha.</p><div class="grid" id="h-amb"></div></div>
     <div class="sect"><h2>Novedades</h2><p class="s">Aperturas de temporada, cambios de reglamento y notas (base de noticias).</p><div class="news" id="h-news"></div></div>
   </div>
-  <footer>© 2026 PescaAR (nombre provisorio) · Prototipo v3.2 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo</footer>
+  <footer>© 2026 PescaAR (nombre provisorio) · Prototipo v3.3 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo</footer>
 </section>
 
 <!-- ===================== MAPA ===================== -->
@@ -659,7 +659,7 @@ function draw(){
   // resultados del buscador (ignoran los filtros del panel)
   resLayer.clearLayers();
   if(R){
-    R.amb.forEach(id=>{ const a=AMB_BY[id]; const big=isSelAmb(a);
+    if(!R.esp) R.amb.forEach(id=>{ const a=AMB_BY[id]; const big=isSelAmb(a);   /* especie: sin íconos de pez, se ven los ambientes filtrados */
       const m=L.marker(a.ll,{icon:R.esp?espIcon(ESP_BY[R.esp],big):ambIcon(a,big),zIndexOffset:500});
       m.bindTooltip(a.n+(a.tramo?' · '+a.tramo:''),{className:'rtip',direction:'top',offset:[0,-16]});
       resLayer.addLayer(clickable(m,()=>selectAmb(id,{fit:false})));
@@ -692,12 +692,12 @@ function selectGeo(f){
 }
 function setResults(r){ // r = {kind:'esp'|'tipo'|'srv', id}
   SEL=null;
-  if(r.kind==='esp'){ const e=ESP_BY[r.id]; const as=ambOfEsp(r.id); R={esp:r.id,amb:new Set(as.map(a=>a.id)),srv:new Set(),label:`${espName(e)} — ${as.length} ambiente(s). Tocá un pez para ver el ambiente.`}; draw(); openDrawer(detEsp(e),espName(e)); fitLatLngs(as.map(a=>a.ll),7); }
+  if(r.kind==='esp'){ const e=ESP_BY[r.id]; const as=ambOfEsp(r.id); F.esp=r.id; renderFilters();   /* el buscador manda: el panel de filtros lo sigue */ R={esp:r.id,amb:new Set(as.map(a=>a.id)),srv:new Set(),label:`${espName(e)} — ${as.length} ambiente(s) · ${SRV.filter(x=>x.nivel===3&&x.esp.includes(r.id)).length} servicio(s) con reserva directa`}; draw(); openDrawer(detEsp(e),espName(e)); fitLatLngs(as.map(a=>a.ll),7); }
   else if(r.kind==='tipo'){ const as=AMBIENTES.filter(a=>GRP(a.tipo)===r.id); R={amb:new Set(as.map(a=>a.id)),srv:new Set(),label:`${GRUPOS[r.id]} — ${as.length} ambiente(s) con ficha`}; draw(); fitLatLngs(as.map(a=>a.ll),7); }
   else if(r.kind==='srv'){ const s=SRV_BY[r.id]; R={amb:new Set(),srv:new Set([r.id]),label:`${TIPO_SRV[s.tipo]}: ${s.n}`}; selectSrv(r.id,{fit:true}); }
   $('#restx').textContent=R.label; $('#resbar').classList.add('on');
 }
-$('#resx').onclick=()=>{ R=null; $('#resbar').classList.remove('on'); draw(); };
+$('#resx').onclick=()=>{ if(R&&R.esp){ F.esp=null; renderFilters(); } R=null; $('#resbar').classList.remove('on'); draw(); };
 
 /* ---------- Panel de filtros ---------- */
 function renderFilters(){
@@ -718,7 +718,7 @@ function updateCount(){
 $('#filters').addEventListener('click',e=>{
   const t=e.target.closest('[data-ft],[data-fe],[data-fc]'); if(!t) return;
   if(t.dataset.ft) F.tipos[t.dataset.ft]=!F.tipos[t.dataset.ft];
-  else if(t.dataset.fe!==undefined){ F.esp=t.dataset.fe||null; }
+  else if(t.dataset.fe!==undefined){ F.esp=t.dataset.fe||null; if(R&&R.esp){ R=null; $('#resbar').classList.remove('on'); } }
   else F[t.dataset.fc]=!F[t.dataset.fc];
   renderFilters(); draw();
   if(t.dataset.fe) fitLatLngs(ambOfEsp(F.esp).map(a=>a.ll),7);
@@ -842,7 +842,7 @@ function route(){
 }
 function applyMap(o){
   if(o.selAmb){ selectAmb(o.selAmb,{fit:true}); }
-  if(o.filterEsp){ F.esp=o.filterEsp; R=null; SEL=null; $('#resbar').classList.remove('on'); renderFilters(); draw(); fitLatLngs(ambOfEsp(o.filterEsp).map(a=>a.ll),7); }
+  if(o.filterEsp){ F=F0(); setResults({kind:'esp',id:o.filterEsp}); }   // mismo comportamiento que buscar la especie
   if(o.res) setResults(o.res);
 }
 function applyFocus(v,o){
