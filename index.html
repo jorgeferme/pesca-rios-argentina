@@ -1604,7 +1604,7 @@ async function enviarMail(token){
   try{ const j=await sbFn('enviar-reserva',{token}); if(el()) el().innerHTML='✉️ Te enviamos la confirmación a <b>'+esc(j.email||'tu email')+'</b>'+(j.ya?' (ya se había enviado)':'')+'. Si no la ves, revisá el correo no deseado.'; }
   catch(e){ if(el()) el().textContent='No pudimos enviar el email de confirmación todavía ('+e.message+'). Guardá el link de abajo.'; }
 }
-async function mostrarReserva(token,aviso){
+async function mostrarReserva(token,aviso,intento=0){
   clearInterval(RV_TIMER);
   let r; try{ r=(await sbRpc('mi_reserva',{p_token:token}))[0]; }catch(e){}
   if(!r){ openCk('<h2 class="ckt">Reserva no encontrada</h2><p class="psub">El link no es válido.</p>'); return; }
@@ -1621,6 +1621,8 @@ async function mostrarReserva(token,aviso){
   <div class="rule">Guardá este link para ver tu reserva: <span class="mono" style="word-break:break-all">${esc(link)}</span></div>
   <button class="btn" data-ckclose="1">Volver al mapa</button>`);
   if(ok) enviarMail(token);
+  // Vuelta del medio de pago: el aviso del procesador puede tardar unos segundos -> reintenta hasta ~40 s
+  else if(r.estado==='pendiente_pago'&&intento<13&&$('#ckout.on')) setTimeout(()=>mostrarReserva(token,'Estamos esperando la confirmación del medio de pago…',intento+1),3000);
 }
 // Vuelta desde Mercado Pago / dLocal Go / PayPal / Stripe: ?reserva=<token>&pago=ok|pendiente|error|paypal
 async function volverDePago(){
