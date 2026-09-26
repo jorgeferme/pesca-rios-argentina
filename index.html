@@ -1539,9 +1539,28 @@ function rvRender(){
   <div id="rverr"></div>
   <button class="btn gold" data-rvgo="1" ${RV.fecha&&(!rvMedio()||RV.franja)?'':'disabled'}>Reservar ${RV.fecha?fmtF(RV.fecha)+(RV.franja?' · '+FRANJA[RV.franja]:''):''}<small>El día queda retenido 15 minutos mientras pagás</small></button>`);
 }
+/* ---------- Validación de email ----------
+   1) formato; 2) errores de tipeo comunes (gmial.com -> gmail.com); 3) que el dominio exista y reciba correo
+   (consulta DNS pública de Cloudflare). La prueba definitiva es el email de confirmación que se envía al reservar. */
+const DOM_OK=['gmail.com','hotmail.com','outlook.com','yahoo.com','yahoo.com.ar','icloud.com','live.com','hotmail.com.ar','proton.me','aol.com','gmx.de','web.de','orange.fr','libero.it','uol.com.br','bol.com.br','terra.com.br','fibertel.com.ar'];
+function lev(a,b){ const m=[...Array(b.length+1).keys()]; for(let i=1;i<=a.length;i++){ let p=m[0]; m[0]=i; for(let j=1;j<=b.length;j++){ const t=m[j]; m[j]=Math.min(m[j]+1,m[j-1]+1,p+(a[i-1]===b[j-1]?0:1)); p=t; } } return m[b.length]; }
+function sugerirEmail(em){ const [u,d]=em.toLowerCase().split('@'); if(!d||DOM_OK.includes(d)) return null;
+  let best=null,bd=3; DOM_OK.forEach(x=>{ const k=lev(d,x); if(k<bd){bd=k;best=x;} }); return best?u+'@'+best:null; }
+async function dominioRecibeMail(em){
+  const d=em.split('@')[1];
+  try{ const q=async t=>{ const r=await fetch('https://cloudflare-dns.com/dns-query?name='+encodeURIComponent(d)+'&type='+t,{headers:{accept:'application/dns-json'}}); return r.json(); };
+    const mx=await q('MX'); if(mx.Status===3) return false;               // el dominio no existe
+    if((mx.Answer||[]).some(a=>a.type===15)) return true;
+    const a=await q('A'); return (a.Answer||[]).length>0;                  // sin MX pero con servidor: se acepta
+  }catch(e){ return true; }                                               // si no se puede consultar, no se bloquea
+}
 async function rvReservar(){
-  const e=$('#rverr'), o=RV.ofs[RV.of];
-  if(!RV.nombre.trim()||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(RV.email)) return e.innerHTML='<div class="note">Completá nombre y un email válido.</div>';
+  const e=$('#rverr'), o=RV.ofs[RV.of]; RV.email=RV.email.trim();
+  if(!RV.nombre.trim()||!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(RV.email)) return e.innerHTML='<div class="note">Completá nombre y un email válido.</div>';
+  const sug=sugerirEmail(RV.email);
+  if(sug&&!RV.sugIgnorada) return e.innerHTML=`<div class="note">¿Quisiste decir <b>${esc(sug)}</b>? <a href="#" data-rvsug="${esc(sug)}">Sí, corregir</a> · <a href="#" data-rvsug="">No, está bien</a></div>`;
+  e.innerHTML='<p class="psub">Verificando el email…</p>';
+  if(!(await dominioRecibeMail(RV.email))) return e.innerHTML='<div class="note">Ese email no parece existir (el dominio después de la @ no recibe correo). Revisalo: ahí te vamos a mandar la confirmación.</div>';
   if(!RV.ok) return e.innerHTML='<div class="note">Para reservar tenés que aceptar la política de privacidad.</div>';
   try{
     const r=await sbRpc('reservar',{p_servicio:o.dbid,p_fecha:RV.fecha,p_franja:RV.franja||'dia',p_personas:+RV.pax,p_nombre:RV.nombre.trim(),p_email:RV.email.trim(),p_pais:RV.pais});
@@ -1577,6 +1596,14 @@ async function rvPago(codigo){
     location.href=url;                                   // al checkout del proveedor
   }catch(err){ e.innerHTML=`<div class="note">${esc(err.message)}</div>`; }
 }
+function gcalLink(r,link){ const d=r.fecha_salida.replaceAll('-',''), n=new Date(new Date(r.fecha_salida+'T12:00:00').getTime()+864e5).toISOString().slice(0,10).replaceAll('-','');
+  const txt='🎣 Pesca con '+r.prestador+' · '+r.codigo, det=r.servicio+(r.franja!=='dia'?' ('+FRANJA[r.franja]+')':'')+'\nPagar al guía el día de la salida: '+r.moneda+' '+r.saldo_guia+'\nTu reserva: '+link;
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(txt)+'&dates='+d+'/'+n+'&details='+encodeURIComponent(det); }
+async function enviarMail(token){
+  const el=()=>$('#rvmail');
+  try{ const j=await sbFn('enviar-reserva',{token}); if(el()) el().innerHTML='✉️ Te enviamos la confirmación a <b>'+esc(j.email||'tu email')+'</b>'+(j.ya?' (ya se había enviado)':'')+'. Si no la ves, revisá el correo no deseado.'; }
+  catch(e){ if(el()) el().textContent='No pudimos enviar el email de confirmación todavía ('+e.message+'). Guardá el link de abajo.'; }
+}
 async function mostrarReserva(token,aviso){
   clearInterval(RV_TIMER);
   let r; try{ r=(await sbRpc('mi_reserva',{p_token:token}))[0]; }catch(e){}
@@ -1589,8 +1616,11 @@ async function mostrarReserva(token,aviso){
   <div class="cksum"><div class="hl"><span>Seña ${ok?'pagada':'a pagar'}</span><b>${esc(r.moneda)} ${(+r.sena).toLocaleString('es-AR',{minimumFractionDigits:2})}</b></div>
    <div><span>A pagar al guía el día de la salida</span><b>${esc(r.moneda)} ${(+r.saldo_guia).toLocaleString('es-AR',{minimumFractionDigits:2})}</b></div>
    <small>Garantía: si el guía no puede salir por fuerza mayor, te devolvemos la seña.</small></div>
+  ${ok?`<div class="flabel">Agendá tu salida</div><div class="tgs"><a class="tg" target="_blank" rel="noopener" href="${gcalLink(r,link)}">📅 Google Calendar</a><a class="tg" href="${SUPA.url}/functions/v1/ical?r=${token}">🍎 Apple / Outlook (.ics)</a></div>
+  <div id="rvmail" class="psub" style="margin:8px 0">Enviando la confirmación por email…</div>`:''}
   <div class="rule">Guardá este link para ver tu reserva: <span class="mono" style="word-break:break-all">${esc(link)}</span></div>
   <button class="btn" data-ckclose="1">Volver al mapa</button>`);
+  if(ok) enviarMail(token);
 }
 // Vuelta desde Mercado Pago / dLocal Go / PayPal / Stripe: ?reserva=<token>&pago=ok|pendiente|error|paypal
 async function volverDePago(){
@@ -1606,6 +1636,7 @@ document.addEventListener('click',e=>{
   const t=e.target, f=t.closest('[data-rvf]'); if(f){ RV.fecha=f.dataset.rvf; RV.franja=null; rvRender(); return; }
   const fr=t.closest('[data-rvfr]'); if(fr){ RV.franja=fr.dataset.rvfr; rvRender(); return; }
   if(t.closest('[data-rvgo]')){ rvReservar(); return; }
+  const sg=t.closest('[data-rvsug]'); if(sg){ e.preventDefault(); if(sg.dataset.rvsug){ RV.email=sg.dataset.rvsug; const i=$('[data-rv=email]'); if(i) i.value=RV.email; } else RV.sugIgnorada=true; rvReservar(); return; }
   const p=t.closest('[data-rvpay]'); if(p){ rvPago(p.dataset.rvpay); return; }
   if(t.closest('[data-rvback]')){ sbRpc('soltar_reserva',{p_token:RV.res.token}).catch(()=>{}); RV.paso=1; RV.res=null; rvAgenda().then(rvRender); return; }
 });
@@ -1614,7 +1645,7 @@ document.addEventListener('change',e=>{
   RV[k]=k==='ok'?x.checked:k==='of'?+x.value:x.value;
   if(k==='of'||k==='ok') rvRender();
 });
-document.addEventListener('input',e=>{ const x=e.target.closest('[data-rv]'); if(x&&RV&&['nombre','email','pax'].includes(x.dataset.rv)) RV[x.dataset.rv]=x.value; });
+document.addEventListener('input',e=>{ const x=e.target.closest('[data-rv]'); if(x&&RV&&['nombre','email','pax'].includes(x.dataset.rv)){ RV[x.dataset.rv]=x.value; if(x.dataset.rv==='email') RV.sugIgnorada=false; } });
 
 </script>
 <script>
