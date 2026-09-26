@@ -145,6 +145,16 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 .ckx{position:absolute;top:12px;right:12px;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:16px;padding:5px 11px;cursor:pointer}
 .ckt{font-family:"Fraunces",serif;font-weight:600;font-size:1.4rem;margin:2px 0 4px}
 .ckgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.agcal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:4px 0 8px}
+.agcal .agwd{font-size:.68rem;color:var(--ink-faint);text-align:center}
+.agd{border:1px solid var(--line);border-radius:8px;text-align:center;padding:6px 0 5px;font-size:.84rem;opacity:.35;line-height:1.1}
+.agd small{display:block;font-size:.6rem;text-transform:uppercase}
+.agd.lib{opacity:1;background:rgba(95,187,144,.16);border-color:#5FBB90;cursor:pointer}.agd.sel{background:var(--dorado);color:#1b1405;border-color:var(--dorado);font-weight:700}
+.met.off{opacity:.45;cursor:default}
+#cookiebar{position:fixed;left:12px;right:12px;bottom:12px;z-index:3000;max-width:720px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 12px 40px rgba(0,0,0,.45);display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:.84rem;line-height:1.45}
+#cookiebar .cb-t{flex:1 1 320px}#cookiebar .cb-b{display:flex;gap:8px;flex-wrap:wrap}#cookiebar .btn{width:auto;margin:0;padding:8px 14px}
+#envbadge{position:fixed;left:8px;top:8px;z-index:2500;background:#fff3cd;color:#7a5a00;font:600 10px/1 system-ui,sans-serif;padding:4px 7px;border-radius:10px;pointer-events:none;opacity:.9}
+
 .ckgrid label,.ckl{font-size:.74rem;color:var(--ink-faint);display:grid;gap:4px;margin-top:8px}
 .ckgrid label:first-child{grid-column:1/-1}
 .ckgrid>*{min-width:0}
@@ -375,14 +385,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
 }
 @media(min-width:761px){ .fhead .bar{display:none} body[data-view=mapa] header .hsearch{visibility:hidden} }
 </style>
-<!-- Microsoft Clarity (analítica de uso) -->
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "yntzordexf");
-</script>
+<!-- Microsoft Clarity: se carga SOLO si la persona acepta cookies (ver "AVISO DE COOKIES" al final) -->
 </head>
 <body data-view="inicio">
 <header>
@@ -428,7 +431,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
     <div class="sect"><h2>Ambientes <a data-go="ambientes">Ver todos →</a></h2><p class="s">Ríos, lagos, lagunas y spots de mar con ficha.</p><div class="grid" id="h-amb"></div></div>
     <div class="sect"><h2>Novedades</h2><p class="s">Aperturas de temporada, cambios de reglamento y notas (base de noticias).</p><div class="news" id="h-news"></div></div>
   </div>
-  <footer>© 2026 Fishing in Argentina · Prototipo v3.8 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo · <a href="#" data-cont="1">Panel del contador (demo)</a></footer>
+  <footer>© 2026 Fishing in Argentina · Prototipo v3.8 · Datos de ríos: Natural Earth (en producción: IGN Argentina) · Mapa © OpenStreetMap · Contenidos de ejemplo · <a href="#" data-cont="1">Panel del contador (demo)</a> · <a href="privacidad.html">Privacidad</a> · <a href="#" data-cookies="1">Configurar cookies</a></footer>
 </section>
 
 <!-- ===================== MAPA ===================== -->
@@ -659,7 +662,8 @@ const TIPO_AGUA={dulce:{n:'Agua dulce',en:'Freshwater',ic:'💧'},salada:{n:'Agu
 const aguaKey=e=>e.agua.length>1?'ambas':e.agua[0];
 const AGUA_GRP=[['dulce','💧 Agua dulce'],['salada','🌊 Agua salada'],['ambas','💧🌊 Agua dulce y salada']];
 const aguaTag=e=>`<span class="agua a-${aguaKey(e)}">${e.agua.map(k=>TIPO_AGUA[k].ic).join('')} ${e.agua.length>1?'Dulce y salada':e.agua[0]==='dulce'?'Agua dulce':'Agua salada'}</span>`;
-const ESPECIES = [
+let ESPECIES = [   // valores de EJEMPLO: si Supabase responde, se reemplazan (ver "CONEXIÓN CON LA BASE")
+
  {id:'dorado',agua:['dulce'],n:'Dorado',en:'Golden dorado',sci:'Salminus brasiliensis',c:'#E0B45C',d:'El "tigre de los ríos": combativo y saltador, emblema de la pesca deportiva en la Cuenca del Plata.',como:'Spinning o baitcasting con señuelos de superficie y media agua, o mosca con streamers grandes. Embarcado, recorriendo correderas y costas con palos. Líder de acero por sus dientes. Devolución según reglamento provincial.'},
  {id:'surubi',agua:['dulce'],n:'Surubí',en:'Spotted surubim',sci:'Pseudoplatystoma corruscans',c:'#9C7B5B',d:'Gran bagre de la Cuenca del Plata; puede superar los 30 kg.',como:'Fondo embarcado con carnada (morena, anguila) en pozones y canales profundos. Equipos pesados; mejor de noche o con agua turbia.'},
  {id:'pacu',agua:['dulce'],n:'Pacú',en:'Pacu',sci:'Piaractus mesopotamicus',c:'#7A8F9E',d:'Pariente de la piraña, de cuerpo alto; se alimenta de frutos y semillas.',como:'Fondo o media agua con carnadas vegetales o masas, cerca de costas con vegetación. Anzuelos fuertes.'},
@@ -676,7 +680,8 @@ const ESPECIES = [
  {id:'pescadilla',agua:['salada'],n:'Pescadilla',en:'Striped weakfish',sci:'Cynoscion guatucupa',c:'#C0CAD4',d:'Abundante en la costa bonaerense.',como:'Surf-casting y variada embarcada con filet o calamar.'}
 ];
 const REG_PAT = {t:'Reglamento de Pesca Deportiva Continental Patagónico (temporada vigente). Tramos solo mosca y devolución obligatoria en zonas señaladas. (texto de ejemplo)',url:'#'};
-const AMBIENTES = [
+let AMBIENTES = [   // valores de EJEMPLO: si Supabase responde, se reemplazan (ver "CONEXIÓN CON LA BASE")
+
  {id:'parana-pdp',n:'Río Paraná',tramo:'Paso de la Patria (Alto Paraná)',tipo:'rio',geo:'Paraná',ll:[-27.31,-58.58],prov:['Corrientes','Chaco'],d:'Uno de los destinos de dorado más famosos del mundo. Pesca embarcada con guía y devolución.',temp:['Sep–Abr (pico en verano)'],mod:['Carnada','Señuelo','Fly fishing'],acc:['Embarcado a motor'],tp:['Deportiva con devolución'],agua:'Cálida, caudalosa',regl:{t:'Dorado: devolución obligatoria. Medidas y cupos según reglamento de Corrientes. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca deportiva de Corrientes — online, por día / semana / anual. (ejemplo)',url:'#'}],esp:['dorado','surubi','pacu','boga']},
  {id:'uruguay-fed',n:'Río Uruguay',tramo:'Federación',tipo:'rio',geo:'Uruguay',ll:[-30.98,-57.90],prov:['Entre Ríos','Corrientes'],d:'Buen dorado y gran variedad. Costas accesibles y pesca embarcada.',temp:['Oct–Mar'],mod:['Carnada','Señuelo'],acc:['Costa','Embarcado a motor'],tp:['Deportiva','Variada'],agua:'Templada',regl:{t:'Río compartido: rige reglamento provincial y acuerdos binacionales. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Entre Ríos. (ejemplo)',url:'#'}],esp:['dorado','boga','tararira']},
  {id:'limay',n:'Río Limay',tramo:'',tipo:'rio',geo:'Limay',ll:[-40.05,-70.07],prov:['Neuquén','Río Negro'],d:'Río grande y potente, ideal para truchas grandes. Vadeo y flotadas en gomón.',temp:['Nov–Abr'],mod:['Fly fishing'],acc:['Vadeo','Flotada a remo'],tp:['Deportiva con devolución'],agua:'Fría',regl:REG_PAT,lic:[{t:'Licencia de Neuquén',url:'#'},{t:'Licencia de Río Negro',url:'#'}],esp:['trucha_m','trucha_a','perca']},
@@ -690,7 +695,8 @@ const AMBIENTES = [
  {id:'mdp',n:'Costa de Mar del Plata',tramo:'Escolleras y playas',tipo:'mar',geo:null,ll:[-38.00,-57.54],prov:['Buenos Aires'],d:'Pesca de costa en escolleras y playas, y salidas embarcadas.',temp:['Todo el año'],mod:['Carnada'],acc:['Costa','Embarcado a motor'],tp:['Variada'],agua:'Marina',regl:{t:'Reglamento provincial de pesca marítima deportiva. (ejemplo)',url:'#'},lic:[{t:'Licencia de pesca de Buenos Aires',url:'#'}],esp:['corvina','pescadilla']}
 ];
 /* --- Prestadores: TABLAS SEPARADAS por tipo (como en la base) --- */
-const GUIAS = [
+let GUIAS = [   // valores de EJEMPLO: si Supabase responde, se reemplazan (ver "CONEXIÓN CON LA BASE")
+
  {id:'g1',n:'Marcelo Ibáñez',loc:'Paso de la Patria, Corrientes',ll:[-27.33,-58.62],nivel:3,rat:4.9,nr:38,pres:'Guía de dorado con 12 años de experiencia y lancha propia. Salidas con devolución.',esp:['dorado','surubi'],of:[{s:'Día completo embarcado (2 pescadores)',mod:['Carnada','Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 350'},{s:'Media jornada',mod:['Carnada','Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 200'}],ext:[{p:'Google',u:'https://www.google.com/maps'},{p:'TripAdvisor',u:'https://www.tripadvisor.com'}],res:[{a:'John M.',p:'EE.UU.',e:5,t:'Great day, 11 dorados released. Very professional.',v:1},{a:'Lucía R.',p:'Argentina',e:5,t:'Excelente guía, puntual y con muy buen equipo.',v:1}]},
  {id:'g2',n:'Guías del Litoral',loc:'Ciudad de Corrientes, Corrientes',ll:[-27.47,-58.83],nivel:2,rat:4.3,nr:12,pres:'Grupo de guías con salidas de día por el Paraná.',esp:['dorado','pacu','boga'],of:[{s:'Salida de día',mod:['Carnada','Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 250'}],res:[{a:'Pablo G.',p:'Argentina',e:4,t:'Buena salida, algo tarde el arranque.',v:0}]},
  {id:'g3',n:'Sergio Duarte',loc:'Federación, Entre Ríos',ll:[-30.98,-57.93],nivel:1,rat:4.1,nr:6,pres:'Guía local, costa y embarcada.',esp:['dorado','boga','tararira'],of:[{s:'Salida embarcada',mod:['Carnada'],acc:['Embarcado a motor'],amb:'uruguay-fed',costo:'USD 180'}],res:[]},
@@ -702,14 +708,16 @@ const GUIAS = [
  {id:'g10',n:'Tomás',soc:{ig:'tomas.ferme',wa:''},loc:'Paso de la Patria, Corrientes',ll:[-27.305,-58.575],nivel:3,rat:4.8,nr:14,pres:'Guía de pesca en Paso de la Patria, sobre el Alto Paraná. Salidas embarcadas de dorado y surubí, con devolución. (datos de ejemplo: completar)',esp:['dorado','surubi','pacu'],of:[{s:'Día completo embarcado (2 pescadores)',mod:['Carnada','Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 330'},{s:'Media jornada',mod:['Señuelo'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 190'}],res:[]},
  {id:'g9',n:'Costa Sur Pesca',loc:'Bahía San Blas, Buenos Aires',ll:[-40.55,-62.25],nivel:3,rat:4.6,nr:17,pres:'Variada de mar embarcada y tiburón con devolución.',esp:['corvina','escalandrun','pescadilla'],of:[{s:'Variada embarcada',mod:['Carnada'],acc:['Embarcado a motor'],amb:'sanblas',costo:'USD 300'},{s:'Tiburón (captura y devolución)',mod:['Carnada'],acc:['Embarcado a motor'],amb:'sanblas',costo:'USD 420'}],res:[]}
 ];
-const LODGES = [
+let LODGES = [   // valores de EJEMPLO: si Supabase responde, se reemplazan (ver "CONEXIÓN CON LA BASE")
+
  {id:'l1',n:'Lodge Río Dorado',loc:'Paso de la Patria, Corrientes',ll:[-27.29,-58.54],nivel:3,rat:4.9,nr:52,pres:'Lodge sobre el Paraná con guías propios. Paquetes all-inclusive.',esp:['dorado','surubi'],cap:'16 huéspedes',of:[{s:'3 noches all-inclusive (p/p)',mod:['Carnada','Señuelo','Fly fishing'],acc:['Embarcado a motor'],amb:'parana-pdp',costo:'USD 1.800'}],ext:[{p:'Google',u:'https://www.google.com/maps'},{p:'TripAdvisor',u:'https://www.tripadvisor.com'},{p:'Booking',u:'https://www.booking.com'}],res:[{a:'Carlos V.',p:'Brasil',e:5,t:'Estrutura excelente, guias muito bons.',v:1}]},
  {id:'l2',n:'Patagonia Fly Lodge',loc:'Junín de los Andes, Neuquén',ll:[-39.92,-71.12],nivel:2,rat:4.8,nr:30,pres:'Lodge de mosca con acceso a Chimehuín, Malleo y Limay.',esp:['trucha_m','trucha_a'],cap:'10 huéspedes',of:[{s:'Semana de mosca (p/p)',mod:['Fly fishing'],acc:['Vadeo','Flotada a remo'],amb:'chimehuin',costo:'USD 3.500'}],res:[]},
  {id:'l3',n:'Estancia Sur',loc:'Río Gallegos, Santa Cruz',ll:[-51.70,-69.60],nivel:2,rat:4.6,nr:11,pres:'Estancia con costa sobre el río Gallegos.',esp:['searun'],cap:'8 huéspedes',of:[{s:'Semana sea-run (p/p)',mod:['Fly fishing'],acc:['Vadeo'],amb:'gallegos',costo:'USD 5.200'}],res:[]},
  {id:'l4',n:'Fuegian Lodge',loc:'Río Grande, Tierra del Fuego',ll:[-53.72,-67.90],nivel:3,rat:5.0,nr:27,pres:'Lodge de alta gama sobre el río Grande.',esp:['searun'],cap:'12 huéspedes',of:[{s:'Semana all-inclusive (p/p)',mod:['Fly fishing'],acc:['Vadeo'],amb:'riogrande',costo:'USD 7.900'}],ext:[{p:'TripAdvisor',u:'https://www.tripadvisor.com'}],res:[{a:'Pierre D.',p:'Francia',e:5,t:'Inoubliable. Truite de 12 kg !',v:1}]},
  {id:'l5',n:'Posada del Uruguay',loc:'Federación, Entre Ríos',ll:[-30.99,-57.91],nivel:1,rat:4.2,nr:5,pres:'Posada con guía asociado y guardería de lanchas.',esp:['dorado','boga'],cap:'20 huéspedes',of:[{s:'Alojamiento + salida (p/p)',mod:['Carnada'],acc:['Embarcado a motor','Costa'],amb:'uruguay-fed',costo:'USD 160'}],res:[]}
 ];
-const ALOJAMIENTOS = [   // "otros servicios" que se sumen a futuro: mismo esquema
+let ALOJAMIENTOS = [   // valores de EJEMPLO: si Supabase responde, se reemplazan (ver "CONEXIÓN CON LA BASE")
+   // "otros servicios" que se sumen a futuro: mismo esquema
  {id:'o1',n:'Cabañas Costa Limay',loc:'Picún Leufú, Neuquén',ll:[-39.52,-69.29],nivel:1,rat:4.3,nr:9,pres:'Cabañas a 5 minutos del río. Ideal para pescadores independientes.',esp:[],of:[{s:'Cabaña 4 personas (noche)',mod:[],acc:[],amb:'limay',costo:'USD 70'}],res:[]}
 ];
 const FOTOS = {   // tabla foto: (entidad, id) -> fotos. o = propia | pescador | prestador
@@ -726,13 +734,17 @@ const NOTICIAS = [
  {f:'2026-08-20',t:'Pejerrey: balance del invierno en lagunas bonaerenses',r:'Cómo viene la temporada en Chascomús y alrededores. (ejemplo)',amb:['chascomus'],esp:['pejerrey']}
 ];
 
+</script>
+<!-- La aplicación arranca DESPUÉS de cargar los datos de la base (ver script "CONEXIÓN CON LA BASE" al final) -->
+<script type="text/plain" id="app-main">
 /* --- VISTA UNIFICADA de servicios (equivale a un SQL VIEW con UNION de las tablas por tipo) --- */
 const SRV = [...GUIAS.map(x=>({...x,tipo:'guia'})),...LODGES.map(x=>({...x,tipo:'lodge'})),...ALOJAMIENTOS.map(x=>({...x,tipo:'alojamiento'}))];
 SRV.forEach(s=>{ s.amb=[...new Set(s.of.map(o=>o.amb))]; s.mods=[...new Set(s.of.flatMap(o=>o.mod))]; s.accs=[...new Set(s.of.flatMap(o=>o.acc))]; s.prov=s.loc.split(', ').pop(); });
 const ESP_BY={},AMB_BY={},SRV_BY={};
 setTimeout(()=>SRV.forEach(s=>s.grps=[...new Set(s.amb.map(id=>GRP(AMB_BY[id].tipo)))]));
 ESPECIES.forEach(e=>ESP_BY[e.id]=e); AMBIENTES.forEach(a=>AMB_BY[a.id]=a); SRV.forEach(s=>SRV_BY[s.id]=s);
-const srvOfAmb=id=>SRV.filter(s=>s.amb.includes(id)).sort(byRank);
+const srvOfAmb=id=>SRV.filter(s=>s.amb.some(x=>x===id||AMB_BY[x]?.padre===id)).sort(byRank);   // incluye los tramos del río
+const tramosDe=id=>AMBIENTES.filter(a=>a.padre===id);
 const srvOfEsp=id=>SRV.filter(s=>s.esp.includes(id)).sort(byRank);
 const ambOfEsp=id=>AMBIENTES.filter(a=>a.esp.includes(id));
 function byRank(a,b){ return b.nivel-a.nivel || b.rat-a.rat; }
@@ -1029,6 +1041,8 @@ function newsFor(k,id){ const n=NOTICIAS.filter(x=>x[k].includes(id)); return n.
 function detAmb(a){
   return `<div class="det"><div class="prov">${TIPOS[a.tipo]} · ${a.prov.map(esc).join(' / ')}</div><h2>${esc(a.n)}</h2>${a.tramo?`<div class="tramo">Tramo: ${esc(a.tramo)}</div>`:''}
   <p class="desc">${esc(a.d)}</p>
+  ${a.padre&&AMB_BY[a.padre]?`<p class="psub">Parte de: <span class="chip link" data-amb="${a.padre}">${esc(AMB_BY[a.padre].n)}</span></p>`:''}
+  ${tramosDe(a.id).length?`<h3>Tramos destacados</h3><div class="chips">${tramosDe(a.id).map(t=>`<span class="chip link" data-amb="${t.id}">${esc(t.tramo)}</span>`).join('')}</div>`:''}
   <dl class="kv"><dt>Temporada</dt><dd>${a.temp.map(esc).join('<br>')}</dd><dt>Modalidad</dt><dd>${a.mod.map(esc).join(' · ')}</dd><dt>Costa / embarcado</dt><dd>${a.acc.map(esc).join(' · ')}</dd><dt>Tipo de pesca</dt><dd>${a.tp.map(esc).join(' · ')}</dd><dt>Agua</dt><dd>${esc(a.agua)}</dd>${a.tipo==='mar'?`<dt>Coordenadas</dt><dd class="mono">${a.ll[0].toFixed(3)}, ${a.ll[1].toFixed(3)}</dd>`:''}</dl>
   <h3>Especies</h3>${espChips(a.esp)}
   <h3>Reglamentación</h3><div class="rule">${esc(a.regl.t)} <a href="${a.regl.url}">Ver norma →</a></div>
@@ -1246,7 +1260,7 @@ const usdOf=o=>+String(o.costo).replace(/[^\d]/g,'');
 function tomorrow(){ const d=new Date(); d.setDate(d.getDate()+1); return d.toISOString().slice(0,10); }
 function openCk(html,wide){ const c=$('#ckout'); c.querySelector('.ckcard').classList.toggle('wide',!!wide); c.querySelector('.ckbody').innerHTML=html; c.classList.add('on'); c.querySelector('.ckcard').scrollTop=0; }
 function closeCk(){ $('#ckout').classList.remove('on'); }
-function startBooking(id){ const s=SRV_BY[id]; CK={s,of:0,date:tomorrow(),pax:2,org:'ext',met:'card',cur:'USD',name:'',country:'Estados Unidos'}; ckRender(); }
+function startBooking(id){ const s=SRV_BY[id]; if(DATOS_ORIGEN==='supabase'&&s.dbid&&s.of.some(o=>o.dbid)) return startReal(s); CK={s,of:0,date:tomorrow(),pax:2,org:'ext',met:'card',cur:'USD',name:'',country:'Estados Unidos'}; ckRender(); }
 function ckCalc(){
   const o=CK.s.of[CK.of], usd=usdOf(o), sen=usd*SENIA, m=METODOS[CK.org].find(x=>x.id===CK.met);
   const cur=m.cur.includes(CK.cur)?CK.cur:m.cur[0]; CK.cur=cur;
@@ -1471,6 +1485,233 @@ try{ if(localStorage.getItem('fia-tema')==='claro') setTheme('claro'); }catch(e)
   vs.forEach(v=>{ v.preload='auto'; v.muted=true; const p=v.play(); if(p&&p.catch) p.catch(()=>{}); });
   if(vs.length>1) setInterval(()=>{ if(Math.abs(vs[0].currentTime-vs[1].currentTime)>.3) vs[1].currentTime=vs[0].currentTime; },3000); })();
 renderFilters(); draw(); route();
+
+/* =====================================================================
+   RESERVA REAL CONTRA LA BASE (cuando los datos vienen de Supabase)
+   1) El pescador elige salida y día en el calendario del guía (solo libre/ocupado).
+   2) "Reservar" retiene el día 15 minutos en la base (nadie más lo puede tomar).
+   3) Elige el medio de pago: Mercado Pago (Argentina, ARS) · dLocal Go o PayPal
+      (exterior, USD) · Stripe (preparado, apagado). En desarrollo: "Pago simulado".
+   4) Al volver del pago (o con el simulado) se muestra la reserva confirmada.
+   Qué medios aparecen lo decide la tabla proveedor_pago (backoffice > Medios de pago).
+   ===================================================================== */
+let RV=null, RV_TIMER=null;
+const PAISES=['Argentina','Estados Unidos','Brasil','Reino Unido','Alemania','Francia','España','Italia','Uruguay','Chile','Canadá','Otro'];
+const FRANJA={dia:'Día completo',manana:'Mañana',tarde:'Tarde'};
+const fmtF=f=>new Date(f+'T12:00:00').toLocaleDateString(LANG==='en'?'en-US':'es-AR',{weekday:'short',day:'numeric',month:'short'});
+async function startReal(s){
+  const ofs=s.of.filter(o=>o.dbid);
+  RV={s,ofs,of:0,fecha:null,franja:null,pax:2,nombre:'',email:'',pais:'Estados Unidos',ok:false,ag:null,paso:1,err:''};
+  openCk('<p class="psub">Cargando la agenda del guía…</p>');
+  await rvAgenda(); rvRender();
+}
+async function rvAgenda(){
+  const hoy=new Date(), h=new Date(Date.now()+48*864e5), d=x=>x.toISOString().slice(0,10);
+  try{ RV.ag=await sbRpc('agenda_publica',{p_prestador:RV.s.dbid,p_desde:d(hoy),p_hasta:d(h)}); RV.err=''; }
+  catch(e){ RV.ag=[]; RV.err='No se pudo leer la agenda: '+e.message; }
+}
+const rvMedio=()=>RV.ofs[RV.of].unidad==='medio_dia';
+function rvLibre(x){ return rvMedio()?(x.manana==='libre'||x.tarde==='libre'):(x.manana==='libre'&&x.tarde==='libre'); }
+function rvRender(){
+  if(RV.paso===2) return rvPagar();
+  const o=RV.ofs[RV.of], libres=RV.ag.filter(rvLibre);
+  if(RV.fecha&&!libres.some(x=>x.fecha===RV.fecha)){ RV.fecha=null; RV.franja=null; }
+  const dia=RV.ag.find(x=>x.fecha===RV.fecha);
+  const pad=RV.ag.length?(new Date(RV.ag[0].fecha+'T12:00:00').getDay()+6)%7:0;
+  openCk(`<div class="eyebrow">Reserva directa con seña · ${SUPA.ambiente==='PRODUCCION'?'':'AMBIENTE DE PRUEBA'}</div><h2 class="ckt">${esc(RV.s.n)}</h2><div class="psub" style="margin:0 0 12px">${esc(RV.s.loc)} · ${stars(RV.s.rat,RV.s.nr)}</div>
+  ${RV.err?`<div class="note">${esc(RV.err)}</div>`:''}
+  <label class="ckl">Salida<select data-rv="of">${RV.ofs.map((x,i)=>`<option value="${i}"${i===RV.of?' selected':''}>${esc(x.s)} — ${esc(x.costo)}</option>`).join('')}</select></label>
+  <div class="flabel">Elegí el día · <small>verde = libre, reserva inmediata</small></div>
+  ${libres.length?`<div class="agcal">${['L','M','M','J','V','S','D'].map(x=>`<div class="agwd">${x}</div>`).join('')}${'<div></div>'.repeat(pad)}${RV.ag.map(x=>{const n=+x.fecha.slice(8),l=rvLibre(x);
+     return `<div class="agd${l?' lib':''}${x.fecha===RV.fecha?' sel':''}" ${l?`data-rvf="${x.fecha}"`:''} title="${fmtF(x.fecha)}">${n===1||x===RV.ag[0]?'<small>'+new Date(x.fecha+'T12:00:00').toLocaleDateString('es-AR',{month:'short'})+'</small>':''}${n}</div>`;}).join('')}</div>`
+   :`<div class="note">Este guía todavía no tiene días disponibles para reserva inmediata. Probá más adelante o escribile desde su ficha.</div>`}
+  ${dia&&rvMedio()?`<div class="tgs">${['manana','tarde'].map(f=>dia[f]==='libre'?`<span class="tg${RV.franja===f?' on':''}" data-rvfr="${f}">${FRANJA[f]}</span>`:`<span class="tg" style="opacity:.4">${FRANJA[f]} · ocupado</span>`).join('')}</div>`:''}
+  <div class="ckgrid" style="margin-top:10px">
+   <label>Pescadores<input type="number" min="1" max="6" data-rv="pax" value="${RV.pax}"></label>
+   <label>País de residencia<select data-rv="pais">${PAISES.map(p=>`<option${p===RV.pais?' selected':''}>${p}</option>`).join('')}</select></label>
+   <label>Nombre y apellido<input data-rv="nombre" value="${esc(RV.nombre)}" autocomplete="name"></label>
+   <label>Email<input type="email" data-rv="email" value="${esc(RV.email)}" autocomplete="email"></label>
+  </div>
+  <label class="ckl" style="display:flex;gap:8px;align-items:flex-start;font-size:.82rem"><input type="checkbox" data-rv="ok" ${RV.ok?'checked':''} style="width:auto;margin-top:3px"> Acepto que mis datos se usen para gestionar la reserva y enviárselos al guía, según la <a href="privacidad.html" target="_blank">política de privacidad</a>.</label>
+  <div class="cksum"><div><span>Valor de la salida</span><b>${esc(o.costo)}</b></div>
+   <div class="hl"><span>Seña a pagar ahora</span><b>se calcula al reservar</b></div>
+   <small>La seña es nuestra comisión; el resto se lo pagás al guía el día de la salida. Garantía: si el guía no puede salir (fuerza mayor), te devolvemos la seña completa.</small></div>
+  <div id="rverr"></div>
+  <button class="btn gold" data-rvgo="1" ${RV.fecha&&(!rvMedio()||RV.franja)?'':'disabled'}>Reservar ${RV.fecha?fmtF(RV.fecha)+(RV.franja?' · '+FRANJA[RV.franja]:''):''}<small>El día queda retenido 15 minutos mientras pagás</small></button>`);
+}
+async function rvReservar(){
+  const e=$('#rverr'), o=RV.ofs[RV.of];
+  if(!RV.nombre.trim()||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(RV.email)) return e.innerHTML='<div class="note">Completá nombre y un email válido.</div>';
+  if(!RV.ok) return e.innerHTML='<div class="note">Para reservar tenés que aceptar la política de privacidad.</div>';
+  try{
+    const r=await sbRpc('reservar',{p_servicio:o.dbid,p_fecha:RV.fecha,p_franja:RV.franja||'dia',p_personas:+RV.pax,p_nombre:RV.nombre.trim(),p_email:RV.email.trim(),p_pais:RV.pais});
+    RV.res=r[0]; RV.paso=2;
+    const provs=await sbGet('proveedor_pago?select=codigo,nombre,para_quien,monedas,activo,modo&order=orden');
+    RV.provs=provs.filter(p=>p.para_quien==='ambos'||p.para_quien===(RV.pais==='Argentina'?'argentina':'exterior'));
+    rvPagar();
+  }catch(err){ e.innerHTML=`<div class="note">${esc(err.message)}</div>`; await rvAgenda(); }
+}
+async function rvPagar(){
+  const r=RV.res, loc=RV.pais==='Argentina';
+  let fis=null; try{ fis=(await sbRpc('regla_fiscal',{p_moneda:loc?'ARS':r.moneda,p_pais:RV.pais}))[0]; }catch(e){}
+  openCk(`<div class="eyebrow">Paso 2 de 2 · Pagar la seña</div><h2 class="ckt">${esc(RV.s.n)}</h2>
+  <p class="psub">Reserva <b class="mono">${esc(r.codigo)}</b> · ${fmtF(RV.fecha)}${RV.franja?' · '+FRANJA[RV.franja]:''} · ${RV.pax} pescador(es)</p>
+  <div class="cksum"><div class="hl"><span>Seña a pagar ahora</span><b>${esc(r.moneda)} ${(+r.sena).toLocaleString('es-AR',{minimumFractionDigits:2})}</b></div>
+   <div><span>A pagar al guía el día de la salida</span><b>${esc(r.moneda)} ${(+r.saldo_guia).toLocaleString('es-AR',{minimumFractionDigits:2})}</b></div>
+   <small>⏱ Día retenido para vos: <b id="cdown">15:00</b>. Si no pagás en ese tiempo, se libera.${loc?' Mercado Pago cobra el equivalente en pesos.':''}</small></div>
+  <div class="flabel">Medio de pago</div>
+  <div class="mets">${RV.provs.map(p=>`<div class="met${p.activo?'':' off'}" ${p.activo?`data-rvpay="${p.codigo}"`:''}><b>${esc(p.nombre)}</b><small>${p.activo?(p.codigo==='simulado'?'Confirma sin cobrar (solo pruebas)':'Pago seguro en el sitio de '+esc(p.nombre)):'Próximamente'}</small></div>`).join('')}</div>
+  ${fis?`<div class="rule" style="margin-top:10px">🧾 ${esc(fis.nota)}. El guía emite su propia factura por el saldo.</div>`:''}
+  <div id="rverr"></div>
+  <button class="btn" data-rvback="1">← Cambiar fecha (libera la retención)</button>`);
+  clearInterval(RV_TIMER);
+  RV_TIMER=setInterval(()=>{ const el=$('#cdown'); if(!el){ clearInterval(RV_TIMER); return; }
+    const s=Math.max(0,Math.round((new Date(r.retenida_hasta)-Date.now())/1000)); el.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+    if(!s){ clearInterval(RV_TIMER); $('#rverr').innerHTML='<div class="note">La retención venció. Volvé a elegir la fecha.</div>'; } },1000);
+}
+async function rvPago(codigo){
+  const e=$('#rverr'); e.innerHTML='<p class="psub">Procesando…</p>';
+  try{
+    if(codigo==='simulado'){ await sbRpc('pago_simulado',{p_token:RV.res.token}); return mostrarReserva(RV.res.token); }
+    const {url}=await sbFn('crear-pago',{token:RV.res.token,proveedor:codigo});
+    location.href=url;                                   // al checkout del proveedor
+  }catch(err){ e.innerHTML=`<div class="note">${esc(err.message)}</div>`; }
+}
+async function mostrarReserva(token,aviso){
+  clearInterval(RV_TIMER);
+  let r; try{ r=(await sbRpc('mi_reserva',{p_token:token}))[0]; }catch(e){}
+  if(!r){ openCk('<h2 class="ckt">Reserva no encontrada</h2><p class="psub">El link no es válido.</p>'); return; }
+  const ok=r.estado==='confirmada'||r.estado==='realizada';
+  const link=location.origin+location.pathname+'?reserva='+token;
+  openCk(`<div class="okbig">${ok?'✔':'⏳'}</div><h2 class="ckt" style="text-align:center">${ok?'¡Reserva confirmada!':r.estado==='vencida'?'La reserva venció':'Reserva pendiente de pago'}</h2>
+  ${aviso?`<div class="note">${esc(aviso)}</div>`:''}
+  <p class="psub" style="text-align:center">Código <b class="mono">${esc(r.codigo)}</b> · ${esc(r.prestador)} · ${esc(r.servicio)} · ${fmtF(r.fecha_salida)}${r.franja!=='dia'?' · '+FRANJA[r.franja]:''}</p>
+  <div class="cksum"><div class="hl"><span>Seña ${ok?'pagada':'a pagar'}</span><b>${esc(r.moneda)} ${(+r.sena).toLocaleString('es-AR',{minimumFractionDigits:2})}</b></div>
+   <div><span>A pagar al guía el día de la salida</span><b>${esc(r.moneda)} ${(+r.saldo_guia).toLocaleString('es-AR',{minimumFractionDigits:2})}</b></div>
+   <small>Garantía: si el guía no puede salir por fuerza mayor, te devolvemos la seña.</small></div>
+  <div class="rule">Guardá este link para ver tu reserva: <span class="mono" style="word-break:break-all">${esc(link)}</span></div>
+  <button class="btn" data-ckclose="1">Volver al mapa</button>`);
+}
+// Vuelta desde Mercado Pago / dLocal Go / PayPal / Stripe: ?reserva=<token>&pago=ok|pendiente|error|paypal
+async function volverDePago(){
+  const q=new URLSearchParams(location.search), t=q.get('reserva'); if(!t) return;
+  const p=q.get('pago'); let aviso='';
+  if(p==='paypal'&&q.get('token')){ try{ await sbFn('crear-pago',{token:t,proveedor:'paypal',capturar:q.get('token')}); }catch(e){ aviso='PayPal: '+e.message; } }
+  if(p==='error') aviso='El pago no se completó. Si el día sigue retenido podés intentar de nuevo.';
+  history.replaceState(null,'',location.pathname);
+  mostrarReserva(t,aviso);
+}
+document.addEventListener('click',e=>{
+  if(!RV||!e.target.closest('#ckout')) return;
+  const t=e.target, f=t.closest('[data-rvf]'); if(f){ RV.fecha=f.dataset.rvf; RV.franja=null; rvRender(); return; }
+  const fr=t.closest('[data-rvfr]'); if(fr){ RV.franja=fr.dataset.rvfr; rvRender(); return; }
+  if(t.closest('[data-rvgo]')){ rvReservar(); return; }
+  const p=t.closest('[data-rvpay]'); if(p){ rvPago(p.dataset.rvpay); return; }
+  if(t.closest('[data-rvback]')){ sbRpc('soltar_reserva',{p_token:RV.res.token}).catch(()=>{}); RV.paso=1; RV.res=null; rvAgenda().then(rvRender); return; }
+});
+document.addEventListener('change',e=>{
+  const x=e.target.closest('[data-rv]'); if(!x||!RV) return; const k=x.dataset.rv;
+  RV[k]=k==='ok'?x.checked:k==='of'?+x.value:x.value;
+  if(k==='of'||k==='ok') rvRender();
+});
+document.addEventListener('input',e=>{ const x=e.target.closest('[data-rv]'); if(x&&RV&&['nombre','email','pax'].includes(x.dataset.rv)) RV[x.dataset.rv]=x.value; });
+
+</script>
+<script>
+/* =====================================================================
+   CONEXIÓN CON LA BASE (Supabase) · capa de datos
+   - Lee especies, ambientes y prestadores PUBLICADOS de Supabase y los convierte
+     al mismo formato que usaba el prototipo (así el resto del código no cambia).
+   - Si la base no responde en 6 s (o con ?datos=local en la URL), usa los datos
+     de ejemplo que están escritos más arriba en este archivo.
+   - La clave "publishable" es pública por diseño: lo que se puede ver o escribir
+     lo deciden las reglas de seguridad (RLS) de la base.
+   ===================================================================== */
+const SUPA={url:'https://xyfdufsszwwpjnnbwspl.supabase.co',key:'sb_publishable_KXALU1r39QBwB8UUX7BuvQ_fbH1foU6',ambiente:'DESARROLLO'};
+const CLARITY_ID='yntzordexf';   // ← código del proyecto de Microsoft Clarity (Settings > Overview > Project ID). Vacío = no se carga.
+let DATOS_ORIGEN='local';
+const SBH={apikey:SUPA.key,Authorization:'Bearer '+SUPA.key};
+async function sbGet(path,signal){ const r=await fetch(SUPA.url+'/rest/v1/'+path,{headers:SBH,signal}); if(!r.ok) throw new Error('HTTP '+r.status+' '+path.split('?')[0]); return r.json(); }
+async function sbRpc(fn,args){ const r=await fetch(SUPA.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:{...SBH,'Content-Type':'application/json'},body:JSON.stringify(args||{})});
+  const j=await r.json().catch(()=>null); if(!r.ok) throw new Error((j&&(j.message||j.hint))||('HTTP '+r.status)); return j; }
+async function sbFn(fn,body){ const r=await fetch(SUPA.url+'/functions/v1/'+fn,{method:'POST',headers:{...SBH,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({error:'La función "'+fn+'" no está publicada todavía'})); if(!r.ok||j.error) throw new Error(j.error||('HTTP '+r.status)); return j; }
+
+async function cargarDatos(){
+  if(new URLSearchParams(location.search).get('datos')==='local') return;
+  const ctl=new AbortController(), to=setTimeout(()=>ctl.abort(),6000);
+  try{
+    const [esp,amb,pre,niv]=await Promise.all([
+      sbGet('especie?select=id,nombre,nombre_en,nombre_cientifico,descripcion,como_pescar,color,especie_tipo_agua(tipo_agua(codigo))&order=id',ctl.signal),
+      sbGet('ambiente?select=id,nombre,tramo,tipo,descripcion,tipo_agua,lat,lng,geo_ref,ambiente_padre_id,reglamento(resumen,url_norma),ambiente_provincia(provincia(nombre)),ambiente_especie(especie_id),ambiente_modalidad(modalidad(nombre)),ambiente_acceso(acceso(nombre)),ambiente_tipo_pesca(tipo_pesca(nombre)),ambiente_licencia(licencia_pesca(nombre,costo_ref,url_tramite)),temporada(nota)&estado=eq.publicado&order=id',ctl.signal),
+      sbGet('prestador?select=id,tipo,nombre,direccion,presentacion,lat,lng,rating_promedio,rating_cantidad,prestador_enlace(plataforma,url),lodge(capacidad),servicio(id,nombre,precio,moneda,unidad,ambiente_id,activo,servicio_especie(especie_id),servicio_modalidad(modalidad(nombre)),servicio_acceso(acceso(nombre)))&estado=eq.publicado&order=id',ctl.signal),
+      sbGet('v_servicios_publicos?select=id,nivel',ctl.signal)]);
+    clearTimeout(to);
+    // --- especies (se conserva el id del prototipo para fotos e íconos) ---
+    const legE={}; ESPECIES.forEach(e=>legE[e.n]=e);
+    const espId={};
+    const E2=esp.map(x=>{ const l=legE[x.nombre]; const id=l?l.id:'e'+x.id; espId[x.id]=id; if(!FISH_P[id]) FISH_P[id]=FISH_P.dorado;
+      return {id,dbid:x.id,agua:x.especie_tipo_agua.map(t=>t.tipo_agua.codigo).sort(),n:x.nombre,en:x.nombre_en||x.nombre,sci:x.nombre_cientifico,c:x.color||'#8FA3B8',d:x.descripcion||'',como:x.como_pescar||''}; });
+    E2.forEach(e=>{ if(!e.agua.length) e.agua=['dulce']; });
+    // --- ambientes ---
+    const legA={}; AMBIENTES.forEach(a=>legA[a.n+'|'+a.tramo]=a);
+    const ambId={}; amb.forEach(x=>{ const l=legA[x.nombre+'|'+(x.tramo||'')]; ambId[x.id]=l?l.id:'a'+x.id; });
+    const limpio=t=>String(t||'').replace(/^\[EJEMPLO\]\s*/,'');
+    const A2=amb.map(x=>({id:ambId[x.id],dbid:x.id,n:x.nombre,tramo:x.tramo||'',tipo:x.tipo,geo:x.geo_ref||null,ll:[x.lat??-34.6,x.lng??-58.4],
+      prov:x.ambiente_provincia.map(p=>p.provincia.nombre),d:x.descripcion||'',temp:x.temporada.map(t=>t.nota).filter(Boolean),
+      mod:x.ambiente_modalidad.map(m=>m.modalidad.nombre),acc:x.ambiente_acceso.map(m=>m.acceso.nombre),tp:x.ambiente_tipo_pesca.map(m=>m.tipo_pesca.nombre),
+      agua:x.tipo_agua||'',regl:{t:x.reglamento?.resumen||'Consultar el reglamento de pesca provincial vigente.',url:x.reglamento?.url_norma||'#'},
+      lic:x.ambiente_licencia.map(l=>({t:limpio(l.licencia_pesca.costo_ref||l.licencia_pesca.nombre),url:l.licencia_pesca.url_tramite||'#'})),
+      esp:x.ambiente_especie.map(e=>espId[e.especie_id]).filter(Boolean),padre:x.ambiente_padre_id?ambId[x.ambiente_padre_id]:null}));
+    // --- prestadores (tablas separadas por tipo, como en el prototipo) ---
+    const nivel={}; niv.forEach(v=>nivel[v.id]=v.nivel);
+    const legP={}; [...GUIAS,...LODGES,...ALOJAMIENTOS].forEach(p=>legP[p.n]=p);
+    const G=[],Lo=[],Al=[];
+    pre.forEach(x=>{ const l=legP[x.nombre]||{};
+      const of=x.servicio.filter(s=>s.activo&&ambId[s.ambiente_id]).map(s=>({dbid:s.id,s:s.nombre,unidad:s.unidad||'dia',mod:s.servicio_modalidad.map(m=>m.modalidad.nombre),acc:s.servicio_acceso.map(m=>m.acceso.nombre),
+        amb:ambId[s.ambiente_id],precio:+s.precio||0,moneda:s.moneda||'USD',costo:(s.moneda||'USD')+' '+Math.round(+s.precio||0).toLocaleString('es-AR')}));
+      if(!of.length) return;   // sin servicios en ambientes publicados: no se muestra
+      const o={id:l.id||('p'+x.id),dbid:x.id,n:x.nombre,loc:x.direccion||'',ll:[x.lat,x.lng],nivel:nivel[x.id]||1,rat:+x.rating_promedio||0,nr:x.rating_cantidad||0,pres:x.presentacion||'',
+        esp:[...new Set(x.servicio.flatMap(s=>s.servicio_especie.map(e=>espId[e.especie_id])).filter(Boolean))],of,
+        ext:x.prestador_enlace.map(e=>({p:e.plataforma,u:e.url})),res:l.res||[],soc:l.soc,cap:x.lodge?.capacidad?x.lodge.capacidad+' huéspedes':l.cap};
+      (x.tipo==='guia'?G:x.tipo==='lodge'?Lo:Al).push(o); });
+    ESPECIES=E2; AMBIENTES=A2; GUIAS=G; LODGES=Lo; ALOJAMIENTOS=Al; DATOS_ORIGEN='supabase';
+  }catch(e){ clearTimeout(to); console.warn('[datos] Supabase no respondió, uso datos de ejemplo:',e.message||e); }
+}
+
+/* ---------- AVISO DE COOKIES Y PRIVACIDAD (RGPD + Ley 25.326) ----------
+   - Nada de analítica hasta que la persona ACEPTA. Rechazar es tan fácil como aceptar.
+   - La elección se recuerda en este navegador y se puede cambiar desde el pie ("Configurar cookies").
+   - Microsoft Clarity solo se carga si aceptó y si CLARITY_ID está cargado. */
+const CK_KEY='fia_consent_v1';
+function leerConsent(){ try{ return JSON.parse(localStorage.getItem(CK_KEY)||'null'); }catch(e){ return null; } }
+function guardarConsent(an){ try{ localStorage.setItem(CK_KEY,JSON.stringify({analitica:an,fecha:new Date().toISOString()})); }catch(e){} }
+function cargarClarity(){
+  if(!CLARITY_ID||window.clarity) return;
+  (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",CLARITY_ID);
+  window.clarity('consentv2',{ad_Storage:'denied',analytics_Storage:'granted'});
+}
+function bannerCookies(forzar){
+  const c=leerConsent(); if(c&&!forzar){ if(c.analitica) cargarClarity(); return; }
+  let b=document.getElementById('cookiebar'); if(b) b.remove();
+  b=document.createElement('div'); b.id='cookiebar';
+  b.innerHTML=`<div class="cb-t"><b>🍪 Cookies y privacidad</b><br>Usamos cookies de analítica (Microsoft Clarity) solo si las aceptás, para entender cómo se usa el mapa y mejorarlo. Las necesarias para que la página funcione no se pueden desactivar. <a href="privacidad.html" target="_blank">Política de privacidad</a></div>
+   <div class="cb-b"><button class="btn" data-cb="0">Rechazar</button><button class="btn gold" data-cb="1">Aceptar analítica</button></div>`;
+  document.body.appendChild(b);
+  b.addEventListener('click',e=>{ const x=e.target.closest('[data-cb]'); if(!x) return; const an=x.dataset.cb==='1'; guardarConsent(an); b.remove();
+    if(an) cargarClarity(); else if(window.clarity){ window.clarity('consentv2',{ad_Storage:'denied',analytics_Storage:'denied'}); } });
+}
+document.addEventListener('click',e=>{ if(e.target.closest('[data-cookies]')){ e.preventDefault(); bannerCookies(true); } });
+
+/* ---------- ARRANQUE: primero los datos, después la aplicación ---------- */
+(async()=>{
+  await cargarDatos();
+  const s=document.createElement('script'); s.textContent=document.getElementById('app-main').textContent; document.body.appendChild(s);
+  if(SUPA.ambiente!=='PRODUCCION'){ const d=document.createElement('div'); d.id='envbadge'; d.textContent=SUPA.ambiente+' · datos: '+(DATOS_ORIGEN==='supabase'?'Supabase':'ejemplo local'); document.body.appendChild(d); }
+  bannerCookies(false);
+  if(typeof volverDePago==='function') volverDePago();
+})();
+
 </script>
 </body>
 </html>

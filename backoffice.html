@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Backoffice · Pesca</title>
+<style>
+:root{--bg:#f6f8f9;--card:#fff;--tx:#1b2a33;--mut:#5d6f7a;--bd:#dde5ea;--ac:#0b6e86;--ac2:#e6f3f6;--ok:#1f8a4c;--err:#c0392b;--r:10px}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+button,input,select,textarea{font:inherit}
+.btn{border:1px solid var(--bd);background:#fff;border-radius:8px;padding:7px 14px;cursor:pointer}
+.btn:hover{border-color:var(--ac)}.btn.pri{background:var(--ac);color:#fff;border-color:var(--ac)}.btn.del{color:var(--err)}
+.btn:disabled{opacity:.5;cursor:default}
+header{display:flex;align-items:center;gap:12px;padding:10px 18px;background:#fff;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5}
+header b{font-size:17px}.env{font-size:11px;background:#fff3cd;color:#7a5a00;border-radius:20px;padding:2px 8px;font-weight:600}
+header .sp{flex:1}.who{color:var(--mut);font-size:13px}
+.wrap{display:flex;min-height:calc(100vh - 53px)}
+nav{width:210px;background:#fff;border-right:1px solid var(--bd);padding:12px 8px;flex-shrink:0}
+nav .grp{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:14px 10px 4px}
+nav a{display:block;padding:7px 10px;border-radius:8px;color:var(--tx);text-decoration:none;cursor:pointer}
+nav a:hover{background:var(--bg)}nav a.on{background:var(--ac2);color:var(--ac);font-weight:600}
+main{flex:1;padding:22px;min-width:0;max-width:1100px}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--mut);margin:0 0 16px;font-size:14px}
+.bar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}.bar input{flex:1;min-width:180px}
+input[type=text],input[type=number],input[type=email],input[type=password],input[type=url],select,textarea{width:100%;border:1px solid var(--bd);border-radius:8px;padding:8px 10px;background:#fff}
+textarea{min-height:90px;resize:vertical}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--bd);font-size:14px;vertical-align:top}
+th{background:#fafcfd;color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}tbody tr:hover{background:#fafcfd;cursor:pointer}
+.pill{display:inline-block;font-size:12px;border-radius:20px;padding:1px 8px;background:var(--bg)}
+.pill.publicado,.pill.publicada,.pill.admin{background:#e3f4ea;color:var(--ok)}.pill.borrador,.pill.pendiente{background:#fff3cd;color:#7a5a00}
+.form{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}
+label.f{display:block;font-size:13px;color:var(--mut);margin-bottom:4px}label.f i{color:var(--err);font-style:normal}
+.hint{font-size:12px;color:var(--mut);margin-top:3px}
+.checks{display:flex;flex-wrap:wrap;gap:6px;max-height:190px;overflow:auto;border:1px solid var(--bd);border-radius:8px;padding:8px}
+.checks label{display:flex;align-items:center;gap:5px;font-size:14px;border:1px solid var(--bd);border-radius:20px;padding:3px 10px;cursor:pointer;background:#fff}
+.checks label:has(input:checked){background:var(--ac2);border-color:var(--ac);color:var(--ac)}
+.checks input{margin:0}
+.acts{display:flex;gap:10px;margin-top:18px;justify-content:flex-end}.acts .sp{flex:1}
+.msg{padding:10px 14px;border-radius:8px;margin-bottom:12px;font-size:14px}.msg.ok{background:#e3f4ea;color:var(--ok)}.msg.err{background:#fdecea;color:var(--err)}
+.login{max-width:360px;margin:10vh auto;background:#fff;border:1px solid var(--bd);border-radius:14px;padding:26px}
+.login h1{margin-bottom:14px}.login .f{margin-top:12px}.login .btn{width:100%;margin-top:18px;padding:10px}
+.empty{padding:30px;text-align:center;color:var(--mut);background:#fff;border:1px dashed var(--bd);border-radius:var(--r)}
+.menu-btn{display:none}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;max-width:560px}
+.cal .dh{font-size:12px;color:var(--mut);text-align:center}
+.cal .d{min-height:62px;border:1px solid var(--bd);border-radius:10px;background:#fff;padding:5px;cursor:pointer;user-select:none;display:flex;flex-direction:column;gap:2px;font-size:13px}
+.cal .d b{font-size:15px}.cal .d small{font-size:10.5px;line-height:1.2}
+.cal .d.disponible{background:#e3f4ea;border-color:#8ccfa7}.cal .d.bloqueado{background:#fdecea;border-color:#f0a59c}
+.cal .d.res{background:#fff3cd;border-color:#e6c65c;cursor:default}.cal .d.pas{opacity:.35;cursor:default}.cal .d.vac{visibility:hidden}
+.cal .d.hoy{outline:2px solid var(--ac)}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin:10px 0}.leg span:before{content:'';display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c);border:1px solid var(--bd)}
+.box{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:14px;margin-top:16px;max-width:560px}
+.rcard{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;display:grid;gap:4px}.rcard .top{display:flex;justify-content:space-between;gap:8px;align-items:center}.rcard .acts2{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.mono{font-family:ui-monospace,Consolas,monospace;font-size:12.5px;word-break:break-all}
+@media(max-width:760px){.who{display:none}header{padding:10px 12px}.cal .d{min-height:54px;padding:4px}.cal .d small{font-size:9.5px}nav{position:fixed;left:-230px;top:53px;bottom:0;z-index:4;transition:left .2s}nav.open{left:0}.menu-btn{display:inline-block}.grid{grid-template-columns:1fr}main{padding:14px}td:nth-child(n+3),th:nth-child(n+3){display:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// ====== CONFIGURACIÓN DEL AMBIENTE (desarrollo) ======
+// La clave "publishable" es pública por diseño: la seguridad la ponen las reglas (RLS) de la base.
+const AMBIENTE = 'DESARROLLO';
+const SUPABASE_URL = 'https://xyfdufsszwwpjnnbwspl.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_KXALU1r39QBwB8UUX7BuvQ_fbH1foU6';
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ====== DEFINICIÓN DE PANTALLAS ======
+// Cada entidad: tabla, columnas de la lista, campos del formulario y relaciones N:N (casillas).
+const E = {
+  ambiente: { titulo:'Ambientes', uno:'ambiente', grupo:'Contenido', orden:'nombre',
+    ayuda:'Ríos, lagos, lagunas, embalses y zonas de mar. Clave: Nombre + Tramo (tramo vacío = río completo).',
+    lista:['nombre','tramo','tipo','estado'],
+    campos:[
+      {k:'nombre',l:'Nombre',req:1},
+      {k:'tramo',l:'Tramo',hint:'Vacío = el río/lago completo. Ej.: "Alto", "Paso de la Patria"'},
+      {k:'tipo',l:'Tipo',req:1,op:[['rio','Río'],['lago','Lago'],['laguna','Laguna'],['embalse','Embalse'],['mar','Mar']]},
+      {k:'estado',l:'Estado',req:1,op:[['publicado','Publicado (visible en la web)'],['borrador','Borrador (no visible)'],['archivado','Archivado']],def:'publicado'},
+      {k:'ambiente_padre_id',l:'Pertenece a (opcional)',ref:'ambiente',hint:'Para un tramo: el río completo al que pertenece'},
+      {k:'reglamento_id',l:'Reglamento',ref:'reglamento'},
+      {k:'lat',l:'Latitud',num:1,hint:'Obligatoria para Mar. Ej.: -27.3845'},
+      {k:'lng',l:'Longitud',num:1,hint:'Ej.: -58.5731'},
+      {k:'tipo_agua',l:'Tipo de agua (texto libre)',hint:'Ej.: dulce, salobre, clara, turbia'},
+      {k:'geo_ref',l:'Referencia geométrica IGN',hint:'Lo completamos al vincular con el mapa; se puede dejar vacío'},
+      {k:'descripcion',l:'Descripción',area:1,full:1},
+    ],
+    rel:[
+      {l:'Provincia/s',t:'ambiente_provincia',a:'ambiente_id',b:'provincia_id',src:'provincia'},
+      {l:'Especies',t:'ambiente_especie',a:'ambiente_id',b:'especie_id',src:'especie'},
+      {l:'Modalidad (técnica)',t:'ambiente_modalidad',a:'ambiente_id',b:'modalidad_id',src:'modalidad'},
+      {l:'Acceso (desde dónde)',t:'ambiente_acceso',a:'ambiente_id',b:'acceso_id',src:'acceso'},
+      {l:'Tipo de pesca',t:'ambiente_tipo_pesca',a:'ambiente_id',b:'tipo_pesca_id',src:'tipo_pesca'},
+      {l:'Licencias que necesita el pescador',t:'ambiente_licencia',a:'ambiente_id',b:'licencia_id',src:'licencia_pesca'},
+    ]},
+  especie: { titulo:'Especies', uno:'especie', grupo:'Contenido', orden:'nombre',
+    lista:['nombre','nombre_en','nombre_cientifico'],
+    campos:[
+      {k:'nombre',l:'Nombre',req:1},{k:'nombre_en',l:'Nombre en inglés'},
+      {k:'nombre_cientifico',l:'Nombre científico',req:1},{k:'color',l:'Color (para íconos)',hint:'Ej.: #D4A017'},
+      {k:'foto_url',l:'URL de la foto',full:1,hint:'Por ahora un enlace; más adelante se sube el archivo desde acá'},
+      {k:'descripcion',l:'Descripción',area:1,full:1},{k:'como_pescar',l:'Cómo pescarla',area:1,full:1},
+    ],
+    rel:[{l:'Tipo de agua',t:'especie_tipo_agua',a:'especie_id',b:'tipo_agua_id',src:'tipo_agua'}]},
+  reglamento: { titulo:'Reglamentos', uno:'reglamento', grupo:'Normativa', orden:'nombre',
+    ayuda:'Un reglamento sirve para muchos ambientes (ej. Reglamento Patagónico).',
+    lista:['nombre','jurisdiccion','vigencia_hasta'],
+    campos:[{k:'nombre',l:'Nombre',req:1},{k:'jurisdiccion',l:'Jurisdicción'},
+      {k:'vigencia_desde',l:'Vigente desde',date:1},{k:'vigencia_hasta',l:'Vigente hasta',date:1},
+      {k:'url_norma',l:'Enlace a la norma',full:1},{k:'resumen',l:'Resumen',area:1,full:1}]},
+  licencia_pesca: { titulo:'Licencias de pesca', uno:'licencia', grupo:'Normativa', orden:'nombre',
+    ayuda:'Permisos que debe sacar el pescador (provinciales, parques nacionales).',
+    lista:['nombre','jurisdiccion','costo_ref'],
+    campos:[{k:'nombre',l:'Nombre',req:1},{k:'jurisdiccion',l:'Jurisdicción'},
+      {k:'costo_ref',l:'Costo de referencia'},{k:'url_tramite',l:'Enlace al trámite'}]},
+  provincia:{titulo:'Provincias',uno:'provincia',grupo:'Catálogos',orden:'nombre',lista:['nombre'],campos:[{k:'nombre',l:'Nombre',req:1}]},
+  modalidad:{titulo:'Modalidades',uno:'modalidad',grupo:'Catálogos',orden:'nombre',lista:['nombre'],campos:[{k:'nombre',l:'Nombre',req:1}],ayuda:'Técnica: carnada, señuelo, fly...'},
+  acceso:{titulo:'Accesos',uno:'acceso',grupo:'Catálogos',orden:'nombre',lista:['nombre'],campos:[{k:'nombre',l:'Nombre',req:1}],ayuda:'Desde dónde: costa, vadeo, embarcado...'},
+  tipo_pesca:{titulo:'Tipos de pesca',uno:'tipo de pesca',grupo:'Catálogos',orden:'nombre',lista:['nombre'],campos:[{k:'nombre',l:'Nombre',req:1}]},
+  agenda:{titulo:'Agenda',uno:'agenda',grupo:'Reservas',custom:()=>pantallaAgenda(),prestador:1},
+  reservas:{titulo:'Reservas',uno:'reserva',grupo:'Reservas',custom:()=>pantallaReservas(),prestador:1},
+  pagos:{titulo:'Medios de pago y parámetros',uno:'parámetro',grupo:'Administración',soloAdmin:1,custom:()=>pantallaPagos()},
+  perfil:{titulo:'Usuarios',uno:'usuario',grupo:'Administración',orden:'email',soloAdmin:1,sinAlta:1,sinBorrar:1,
+    ayuda:'Los usuarios se crean en Supabase > Authentication > Users. Acá se les asigna el rol.',
+    lista:['email','nombre','rol'],
+    campos:[{k:'email',l:'Email',ro:1},{k:'nombre',l:'Nombre'},
+      {k:'rol',l:'Rol',req:1,op:[['admin','Administrador'],['editor','Editor'],['prestador','Prestador'],['pescador','Pescador']]},
+      {k:'prestador_id',l:'Prestador asociado (solo para rol Prestador)',ref:'prestador',hint:'El guía que entra con este usuario ve y marca SOLO la agenda de este prestador'}]},
+};
+const ETQ={nombre:'Nombre',tramo:'Tramo',tipo:'Tipo',estado:'Estado',nombre_en:'Inglés',nombre_cientifico:'Científico',jurisdiccion:'Jurisdicción',vigencia_hasta:'Vigente hasta',costo_ref:'Costo',email:'Email',rol:'Rol'};
+
+// ====== ESTADO ======
+let yo=null, actual='ambiente', cache={};
+const $=s=>document.querySelector(s), app=$('#app');
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const traducir=e=>{const m=e?.message||String(e);
+  if(/duplicate key.*nombre, tramo/i.test(m))return 'Ya existe un ambiente con ese Nombre y Tramo.';
+  if(/duplicate key/i.test(m))return 'Ya existe un registro con ese valor (debe ser único).';
+  if(/foreign key/i.test(m))return 'No se puede: hay otros datos que dependen de este registro.';
+  if(/row-level security|permission denied/i.test(m))return 'Tu usuario no tiene permiso para esta acción.';
+  if(/ambiente_check|lat is not null/i.test(m))return 'Para tipo Mar, Latitud y Longitud son obligatorias.';
+  if(/Invalid login/i.test(m))return 'Email o contraseña incorrectos.';
+  return m;};
+
+// ====== LOGIN ======
+async function inicio(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session)return pantallaLogin();
+  const {data,error}=await sb.from('perfil').select('*').eq('id',session.user.id).single();
+  if(error||!data)return pantallaLogin('No se pudo leer tu perfil. Detalle técnico: '+(error?.message||'sin datos'),true);
+  yo=data;
+  if(!['admin','editor','prestador'].includes(yo.rol))return pantallaLogin(`Tu usuario tiene rol "${yo.rol}". El backoffice es para Administrador, Editor o Prestador.`,true);
+  if(yo.rol==='prestador'&&!yo.prestador_id)return pantallaLogin('Tu usuario es Prestador pero todavía no está asociado a una ficha. Pedile al administrador que lo asocie.',true);
+  if(yo.rol==='prestador')actual='agenda';
+  armar();
+}
+function pantallaLogin(err,conSalir){
+  app.innerHTML=`<form class="login" id="fl"><h1>Backoffice</h1><span class="env">${AMBIENTE}</span>
+   ${err?`<div class="msg err" style="margin-top:12px">${esc(err)}</div>`:''}
+   <label class="f">Email</label><input type="email" id="em" required autocomplete="username">
+   <label class="f">Contraseña</label><input type="password" id="pw" required autocomplete="current-password">
+   <button class="btn pri">Entrar</button>
+   ${conSalir?'<button type="button" class="btn" id="bs">Salir</button>':''}</form>`;
+  $('#fl').onsubmit=async ev=>{ev.preventDefault();
+    const {error}=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});
+    if(error)return pantallaLogin(traducir(error)); inicio();};
+  if(conSalir)$('#bs').onclick=async()=>{await sb.auth.signOut();pantallaLogin();};
+}
+
+// ====== ESTRUCTURA ======
+function armar(){
+  const grupos={};for(const[k,v]of Object.entries(E)){if(v.soloAdmin&&yo.rol!=='admin')continue;if(yo.rol==='prestador'&&!v.prestador)continue;(grupos[v.grupo]??=[]).push(k);}
+  app.innerHTML=`<header><button class="btn menu-btn" id="mb">☰</button><b>Backoffice</b><span class="env">${AMBIENTE}</span><span class="sp"></span>
+   <span class="who">${esc(yo.email)} · ${({admin:'Administrador',editor:'Editor',prestador:'Prestador'})[yo.rol]}</span><button class="btn" id="out">Salir</button></header>
+   <div class="wrap"><nav id="nav">${Object.entries(grupos).map(([g,ks])=>`<div class="grp">${g}</div>`+ks.map(k=>`<a data-k="${k}">${E[k].titulo}</a>`).join('')).join('')}</nav><main id="main"></main></div>`;
+  $('#out').onclick=async()=>{await sb.auth.signOut();pantallaLogin();};
+  $('#mb').onclick=()=>$('#nav').classList.toggle('open');
+  document.querySelectorAll('nav a').forEach(a=>a.onclick=()=>{$('#nav').classList.remove('open');ir(a.dataset.k);});
+  ir(actual);
+}
+async function opciones(tabla){ // lista {id,nombre} para selects y casillas
+  if(cache[tabla])return cache[tabla];
+  const {data,error}=await sb.from(tabla).select(tabla==='ambiente'?'id,nombre,tramo':tabla==='perfil'?'id,nombre:email':'id,nombre').order(tabla==='perfil'?'email':'nombre');
+  if(error)throw error;
+  return cache[tabla]=data.map(r=>({id:r.id,n:r.tramo?`${r.nombre} — ${r.tramo}`:r.nombre}));
+}
+
+// ====== LISTA ======
+async function ir(k,aviso){
+  actual=k;const d=E[k];
+  document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.k===k));
+  if(d.custom)return d.custom();
+  const m=$('#main');m.innerHTML=`<h1>${d.titulo}</h1><p class="sub">Cargando…</p>`;
+  const {data,error}=await sb.from(k).select('*').order(d.orden);
+  if(error){m.innerHTML=`<h1>${d.titulo}</h1><div class="msg err">${esc(traducir(error))}</div>`;return;}
+  m.innerHTML=`<h1>${d.titulo}</h1><p class="sub">${esc(d.ayuda||'')} ${data.length} registro(s).</p>
+   ${aviso?`<div class="msg ok">${esc(aviso)}</div>`:''}
+   <div class="bar"><input type="text" id="q" placeholder="Buscar…">${d.sinAlta?'':`<button class="btn pri" id="nuevo">+ Nuevo ${d.uno}</button>`}</div>
+   ${data.length?`<table><thead><tr>${d.lista.map(c=>`<th>${ETQ[c]||c}</th>`).join('')}</tr></thead><tbody>
+   ${data.map(r=>`<tr data-id="${r.id}" data-txt="${esc(d.lista.map(c=>r[c]).join(' ').toLowerCase())}">${d.lista.map(c=>`<td>${['estado','rol'].includes(c)?`<span class="pill ${esc(r[c])}">${esc(r[c])}</span>`:esc(r[c])}</td>`).join('')}</tr>`).join('')}
+   </tbody></table>`:`<div class="empty">Todavía no hay ${d.titulo.toLowerCase()}. ${d.sinAlta?'':'Tocá “+ Nuevo”.'}</div>`}`;
+  $('#q').oninput=e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('tbody tr').forEach(tr=>tr.style.display=tr.dataset.txt.includes(q)?'':'none');};
+  if($('#nuevo'))$('#nuevo').onclick=()=>editar(k,null);
+  document.querySelectorAll('tbody tr').forEach(tr=>tr.onclick=()=>editar(k,data.find(r=>String(r.id)===tr.dataset.id)));
+}
+
+// ====== FORMULARIO ======
+async function editar(k,reg){
+  const d=E[k],m=$('#main');let html='';
+  try{
+    for(const c of d.campos){
+      const v=reg?reg[c.k]:(c.def??'');let inp;
+      if(c.op)inp=`<select id="c_${c.k}">${c.req?'':'<option value="">—</option>'}${c.op.map(([val,t])=>`<option value="${val}" ${String(v)===val?'selected':''}>${t}</option>`).join('')}</select>`;
+      else if(c.ref){const ops=(await opciones(c.ref)).filter(o=>!(reg&&c.ref===k&&o.id===reg.id));
+        inp=`<select id="c_${c.k}"><option value="">—</option>${ops.map(o=>`<option value="${o.id}" ${String(v)===String(o.id)?'selected':''}>${esc(o.n)}</option>`).join('')}</select>`;}
+      else if(c.area)inp=`<textarea id="c_${c.k}">${esc(v)}</textarea>`;
+      else inp=`<input type="${c.num?'number':c.date?'date':'text'}" ${c.num?'step="any"':''} id="c_${c.k}" value="${esc(v)}" ${c.ro?'disabled':''}>`;
+      html+=`<div class="${c.full?'full':''}"><label class="f">${c.l}${c.req?' <i>*</i>':''}</label>${inp}${c.hint?`<div class="hint">${c.hint}</div>`:''}</div>`;
+    }
+    for(const[i,r]of(d.rel||[]).entries()){
+      const ops=await opciones(r.src);let sel=[];
+      if(reg){const {data,error}=await sb.from(r.t).select(r.b).eq(r.a,reg.id);if(error)throw error;sel=data.map(x=>x[r.b]);}
+      html+=`<div class="full"><label class="f">${r.l}</label>${ops.length?`<div class="checks" id="r_${i}">${ops.map(o=>`<label><input type="checkbox" value="${o.id}" ${sel.includes(o.id)?'checked':''}>${esc(o.n)}</label>`).join('')}</div>`:`<div class="hint">Todavía no hay opciones cargadas en ${esc(E[r.src]?.titulo||r.src)}.</div>`}</div>`;
+    }
+  }catch(e){m.innerHTML=`<div class="msg err">${esc(traducir(e))}</div>`;return;}
+  m.innerHTML=`<h1>${reg?'Editar':'Nuevo'} ${d.uno}</h1><p class="sub">Los campos con <span style="color:var(--err)">*</span> son obligatorios.</p>
+   <div id="err"></div><form class="form" id="frm"><div class="grid">${html}</div>
+   <div class="acts">${reg&&!d.sinBorrar?'<button type="button" class="btn del" id="borrar">Borrar</button>':''}<span class="sp"></span>
+   <button type="button" class="btn" id="volver">Cancelar</button><button class="btn pri" id="guardar">Guardar</button></div></form>`;
+  $('#volver').onclick=()=>ir(k);
+  if($('#borrar'))$('#borrar').onclick=async()=>{
+    if(!confirm(`¿Borrar este ${d.uno}? No se puede deshacer.`))return;
+    const {error}=await sb.from(k).delete().eq('id',reg.id);
+    if(error)return mostrarErr(error);delete cache[k];ir(k,'Borrado.');};
+  $('#frm').onsubmit=async ev=>{ev.preventDefault();$('#guardar').disabled=true;
+    const fila={};
+    for(const c of d.campos){if(c.ro)continue;let v=$('#c_'+c.k).value.trim();
+      if(c.req&&v===''){$('#guardar').disabled=false;return mostrarErr(`Falta completar: ${c.l}`);}
+      if(v===''&&c.k!=='tramo')v=null;else if(c.num)v=Number(v);else if(c.ref)v=Number(v);
+      fila[c.k]=v;}
+    let id=reg?.id,res;
+    res=reg?await sb.from(k).update(fila).eq('id',id).select().single():await sb.from(k).insert(fila).select().single();
+    if(res.error){$('#guardar').disabled=false;return mostrarErr(res.error);}
+    id=res.data.id;
+    for(const[i,r]of(d.rel||[]).entries()){
+      const box=$('#r_'+i);if(!box)continue;
+      const marcados=[...box.querySelectorAll('input:checked')].map(x=>Number(x.value));
+      let e1=(await sb.from(r.t).delete().eq(r.a,id)).error;
+      if(!e1&&marcados.length)e1=(await sb.from(r.t).insert(marcados.map(b=>({[r.a]:id,[r.b]:b})))).error;
+      if(e1){$('#guardar').disabled=false;return mostrarErr(e1);}
+    }
+    delete cache[k];ir(k,`Guardado: ${fila.nombre||fila.email||''}`);
+  };
+}
+
+// ====== AGENDA DEL PRESTADOR ======
+// Un toque por día: sin marcar → DISPONIBLE (reserva inmediata) → BLOQUEADO → sin marcar.
+// Los días con reserva no se pueden tocar (la base además impide la doble reserva).
+const AG={pid:null,y:new Date().getFullYear(),m:new Date().getMonth()};
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+async function elegirPrestador(){ // admin/editor: elegir de qué prestador ver la agenda
+  if(yo.rol==='prestador'){AG.pid=yo.prestador_id;return '';}
+  const ops=await opciones('prestador'); if(!AG.pid&&ops.length)AG.pid=ops[0].id;
+  return `<div class="bar"><select id="agp">${ops.map(o=>`<option value="${o.id}" ${o.id===AG.pid?'selected':''}>${esc(o.n)}</option>`).join('')}</select></div>`;
+}
+async function pantallaAgenda(){
+  const m=$('#main'); const sel=await elegirPrestador();
+  if(!AG.pid){m.innerHTML='<h1>Agenda</h1><div class="empty">No hay prestadores cargados.</div>';return;}
+  const ini=new Date(AG.y,AG.m,1), fin=new Date(AG.y,AG.m+1,0), hoy=iso(new Date());
+  const [d1,r1]=await Promise.all([
+    sb.from('disponibilidad').select('fecha,franja,estado').eq('prestador_id',AG.pid).gte('fecha',iso(ini)).lte('fecha',iso(fin)),
+    sb.from('reserva').select('codigo,fecha_salida,franja,estado,cliente_nombre').eq('prestador_id',AG.pid)
+      .in('estado',['retenida','pendiente_pago','confirmada','realizada']).gte('fecha_salida',iso(ini)).lte('fecha_salida',iso(fin))]);
+  if(d1.error||r1.error){m.innerHTML=`<h1>Agenda</h1><div class="msg err">${esc(traducir(d1.error||r1.error))}</div>`;return;}
+  const disp={};d1.data.forEach(x=>{if(x.franja==='dia')disp[x.fecha]=x.estado;});
+  const res={};r1.data.forEach(x=>(res[x.fecha_salida]??=[]).push(x));
+  let cells='';const pad=(ini.getDay()+6)%7;for(let i=0;i<pad;i++)cells+='<div class="d vac"></div>';
+  for(let n=1;n<=fin.getDate();n++){const f=iso(new Date(AG.y,AG.m,n)),rs=res[f],e=disp[f];
+    const cls=f<hoy?'pas':rs?'res':(e||'');
+    const txt=rs?rs.map(r=>`<small>${esc(r.codigo)}${r.franja!=='dia'?' · '+(r.franja==='manana'?'mañana':'tarde'):''}${r.estado==='confirmada'?'':' ('+r.estado.replace('_',' ')+')'}</small>`).join(''):e==='disponible'?'<small>Libre</small>':e==='bloqueado'?'<small>Bloqueado</small>':'';
+    cells+=`<div class="d ${cls} ${f===hoy?'hoy':''}" data-f="${f}"><b>${n}</b>${txt}</div>`;}
+  m.innerHTML=`<h1>Agenda</h1><p class="sub">Tocá un día para marcarlo <b>Disponible</b> (el pescador reserva al instante) o <b>Bloqueado</b>. Otro toque lo desmarca.</p>${sel}
+   <div id="err"></div>
+   <div class="bar" style="max-width:560px;align-items:center"><button class="btn" id="ant">◀</button><b style="flex:1;text-align:center">${MESES[AG.m]} ${AG.y}</b><button class="btn" id="sig">▶</button></div>
+   <div class="cal">${['Lu','Ma','Mi','Ju','Vi','Sá','Do'].map(x=>`<div class="dh">${x}</div>`).join('')}${cells}</div>
+   <div class="leg"><span style="--c:#e3f4ea">Disponible</span><span style="--c:#fdecea">Bloqueado</span><span style="--c:#fff3cd">Reservado</span><span style="--c:#fff">Sin marcar (no se ofrece)</span></div>
+   <div class="bar" style="max-width:560px"><button class="btn" id="todo">✓ Todo el mes disponible</button><button class="btn" id="limpiar">Limpiar el mes</button></div>
+   <div class="box" id="cal-links">Cargando link de calendario…</div>`;
+  if($('#agp'))$('#agp').onchange=e=>{AG.pid=Number(e.target.value);pantallaAgenda();};
+  $('#ant').onclick=()=>{AG.m--;if(AG.m<0){AG.m=11;AG.y--;}pantallaAgenda();};
+  $('#sig').onclick=()=>{AG.m++;if(AG.m>11){AG.m=0;AG.y++;}pantallaAgenda();};
+  const marcar=async(f,est)=>{const {error}=await sb.rpc('marcar_dia',{p_fecha:f,p_estado:est,p_franja:'dia',p_prestador:AG.pid});if(error)mostrarErr(error);return !error;};
+  document.querySelectorAll('.cal .d[data-f]').forEach(c=>{const f=c.dataset.f;if(f<hoy||res[f])return;
+    c.onclick=async()=>{const sigE={undefined:'disponible',disponible:'bloqueado',bloqueado:null}[disp[f]];
+      c.style.opacity=.5; if(await marcar(f,sigE)){disp[f]=sigE||undefined;} pantallaAgenda();};});
+  $('#todo').onclick=async()=>{for(let n=1;n<=fin.getDate();n++){const f=iso(new Date(AG.y,AG.m,n));if(f<hoy||res[f]||disp[f]==='bloqueado')continue;if(!(await marcar(f,'disponible')))break;}pantallaAgenda();};
+  $('#limpiar').onclick=async()=>{if(!confirm('¿Desmarcar todos los días del mes? Las reservas no se tocan.'))return;for(const f of Object.keys(disp)){if(f>=hoy&&!res[f])await marcar(f,null);}pantallaAgenda();};
+  linksCalendario();
+}
+async function linksCalendario(){
+  let {data,error}=await sb.from('prestador_calendario').select('*').eq('prestador_id',AG.pid).maybeSingle();
+  if(!error&&!data)({data,error}=await sb.from('prestador_calendario').insert({prestador_id:AG.pid}).select().single());
+  const b=$('#cal-links'); if(!b)return;
+  if(error){b.innerHTML=`<div class="msg err">${esc(traducir(error))}</div>`;return;}
+  const url=`${SUPABASE_URL}/functions/v1/ical?t=${data.ical_token}`;
+  b.innerHTML=`<b>📅 Ver mis reservas en el calendario del teléfono</b>
+   <p class="hint" style="font-size:13px">Copiá este link y suscribilo una sola vez. Es personal: no lo compartas.<br>
+   <b>Google Calendar</b> (desde la compu): Otros calendarios → ＋ → Desde URL → pegar.<br>
+   <b>iPhone</b>: Ajustes → Calendario → Cuentas → Añadir cuenta → Otra → Añadir calendario suscrito.<br>
+   Google actualiza estos links cada varias horas: sirve para <i>ver</i> reservas; la disponibilidad se marca acá.</p>
+   <div class="mono">${esc(url)}</div><div class="bar" style="margin-top:8px"><button class="btn" id="cpy">Copiar link</button></div>
+   <hr style="border:0;border-top:1px solid var(--bd);margin:12px 0">
+   <b>Sincronizar con Google Calendar</b> <span class="pill">próximamente</span>
+   <p class="hint" style="font-size:13px">Con “Continuar con Google”, lo ocupado en tu calendario se bloqueará solo acá y cada reserva nueva aparecerá sola en tu calendario.</p>
+   <button class="btn" disabled>Continuar con Google</button>`;
+  $('#cpy').onclick=()=>navigator.clipboard.writeText(url).then(()=>$('#cpy').textContent='✓ Copiado');
+}
+
+// ====== RESERVAS ======
+async function pantallaReservas(){
+  const m=$('#main');m.innerHTML='<h1>Reservas</h1><p class="sub">Cargando…</p>';
+  let q=sb.from('reserva').select('id,codigo,fecha_salida,franja,personas,estado,cliente_nombre,cliente_pais,cliente_email,moneda,sena,saldo_guia,servicio:servicio_id(nombre),prestador:prestador_id(nombre)')
+    .not('estado','in','(vencida)').order('fecha_salida');
+  if(yo.rol==='prestador')q=q.eq('prestador_id',yo.prestador_id);
+  const {data,error}=await q;
+  if(error){m.innerHTML=`<h1>Reservas</h1><div class="msg err">${esc(traducir(error))}</div>`;return;}
+  const F={dia:'Día completo',manana:'Mañana',tarde:'Tarde'};
+  m.innerHTML=`<h1>Reservas</h1><p class="sub">Reservas con seña. El saldo se lo cobra el guía al cliente el día de la salida (y le hace su propia factura).</p><div id="err"></div>
+   ${data.length?data.map(r=>`<div class="rcard"><div class="top"><b>${esc(r.fecha_salida)} · ${F[r.franja]||''}</b><span class="pill ${r.estado==='confirmada'?'publicado':'pendiente'}">${esc(r.estado.replaceAll('_',' '))}</span></div>
+     <div><span class="mono">${esc(r.codigo)}</span> · ${esc(r.servicio?.nombre)}${yo.rol!=='prestador'?' · '+esc(r.prestador?.nombre):''}</div>
+     <div>${esc(r.cliente_nombre)} (${esc(r.cliente_pais)}) · ${r.personas} pers. · <a href="mailto:${esc(r.cliente_email)}">${esc(r.cliente_email)}</a></div>
+     <div class="hint" style="font-size:13px">Seña cobrada: ${esc(r.moneda)} ${r.sena} · <b>A cobrar al cliente el día: ${esc(r.moneda)} ${r.saldo_guia}</b></div>
+     ${r.estado==='confirmada'?`<div class="acts2"><button class="btn" data-real="${r.id}">✓ Salida realizada</button><button class="btn del" data-fm="${r.id}">No puedo salir</button></div>`:''}</div>`).join(''):'<div class="empty">Todavía no hay reservas.</div>'}
+   <p class="hint">“No puedo salir” = fuerza mayor o imposibilidad del guía: se libera el día y se le devuelve la seña al cliente (garantía).</p>`;
+  document.querySelectorAll('[data-real]').forEach(b=>b.onclick=async()=>{const {error}=await sb.from('reserva').update({estado:'realizada'}).eq('id',b.dataset.real);if(error)return mostrarErr(error);pantallaReservas();});
+  document.querySelectorAll('[data-fm]').forEach(b=>b.onclick=async()=>{const mot=prompt('Motivo (se guarda en el registro): p. ej. tormenta, crecida, problema mecánico');if(mot===null)return;
+    const {error}=await sb.rpc('marcar_fuerza_mayor',{p_reserva:Number(b.dataset.fm),p_motivo:mot});if(error)return mostrarErr(error);pantallaReservas();});
+}
+
+// ====== MEDIOS DE PAGO Y PARÁMETROS (solo admin) ======
+async function pantallaPagos(){
+  const m=$('#main');
+  const [p,q]=await Promise.all([sb.from('proveedor_pago').select('*').order('orden'),sb.from('parametro').select('*').order('clave')]);
+  if(p.error||q.error){m.innerHTML=`<h1>Medios de pago</h1><div class="msg err">${esc(traducir(p.error||q.error))}</div>`;return;}
+  m.innerHTML=`<h1>Medios de pago y parámetros</h1><p class="sub">Qué medios se ofrecen en la página y valores de negocio. Las credenciales NO van acá: se cargan como secretos en Supabase → Edge Functions → Secrets.</p><div id="err"></div>
+   <table><thead><tr><th>Medio</th><th>Para</th><th>Monedas</th><th>Activo</th><th>Modo</th></tr></thead><tbody>
+   ${p.data.map(x=>`<tr><td><b>${esc(x.nombre)}</b><br><small>${esc(x.nota)}</small></td><td>${esc(x.para_quien)}</td><td>${esc(x.monedas.join(', '))}</td>
+     <td><input type="checkbox" data-act="${x.codigo}" ${x.activo?'checked':''}></td>
+     <td><select data-modo="${x.codigo}"><option ${x.modo==='sandbox'?'selected':''} value="sandbox">Prueba (sandbox)</option><option ${x.modo==='produccion'?'selected':''} value="produccion">Producción</option></select></td></tr>`).join('')}
+   </tbody></table>
+   <h1 style="margin-top:24px;font-size:18px">Parámetros</h1>
+   <table><thead><tr><th>Parámetro</th><th>Valor</th><th>Para qué sirve</th></tr></thead><tbody>
+   ${q.data.map(x=>`<tr><td class="mono">${esc(x.clave)}</td><td><input type="text" data-par="${esc(x.clave)}" value="${esc(x.valor)}"></td><td><small>${esc(x.descripcion)}</small></td></tr>`).join('')}
+   </tbody></table>`;
+  const up=async(t,k,v,campo)=>{const {error}=await sb.from(t).update(v).eq(campo,k);if(error)mostrarErr(error);};
+  document.querySelectorAll('[data-act]').forEach(i=>i.onchange=()=>up('proveedor_pago',i.dataset.act,{activo:i.checked},'codigo'));
+  document.querySelectorAll('[data-modo]').forEach(i=>i.onchange=()=>up('proveedor_pago',i.dataset.modo,{modo:i.value},'codigo'));
+  document.querySelectorAll('[data-par]').forEach(i=>i.onchange=()=>up('parametro',i.dataset.par,{valor:i.value.trim()},'clave'));
+}
+
+function mostrarErr(e){const b=$('#err');if(!b)return alert(traducir(e));b.innerHTML=`<div class="msg err">${esc(traducir(e))}</div>`;window.scrollTo(0,0);}
+
+sb.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_OUT')yo=null;});
+inicio();
+</script>
+</body>
+</html>
