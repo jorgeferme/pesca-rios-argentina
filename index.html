@@ -1696,7 +1696,7 @@ function bannerCookies(forzar){
   let b=document.getElementById('cookiebar'); if(b) b.remove();
   b=document.createElement('div'); b.id='cookiebar';
   b.innerHTML=`<div class="cb-t"><b>🍪 Cookies y privacidad</b><br>Usamos cookies de analítica (Microsoft Clarity) solo si las aceptás, para entender cómo se usa el mapa y mejorarlo. Las necesarias para que la página funcione no se pueden desactivar. <a href="privacidad.html" target="_blank">Política de privacidad</a></div>
-   <div class="cb-b"><button class="btn" data-cb="0">Rechazar</button><button class="btn gold" data-cb="1">Aceptar analítica</button></div>`;
+   <div class="cb-b"><button class="btn" data-cb="0">Rechazar</button><button class="btn gold" data-cb="1">Aceptar cookies</button></div>`;
   document.body.appendChild(b);
   b.addEventListener('click',e=>{ const x=e.target.closest('[data-cb]'); if(!x) return; const an=x.dataset.cb==='1'; guardarConsent(an); b.remove();
     if(an) cargarClarity(); else if(window.clarity){ window.clarity('consentv2',{ad_Storage:'denied',analytics_Storage:'denied'}); } });
