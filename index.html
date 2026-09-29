@@ -857,7 +857,7 @@ LAKES.features.forEach((f,i)=>{const n=f.properties.n||f.properties.name||'';f.p
 if(DATOS_ORIGEN!=='supabase') AMBIENTES.forEach(a=>{ if(a.geo&&!/^[LAE]:/.test(a.geo)) a.geo=null; });
 const ambByGeo={}; AMBIENTES.forEach(a=>{ if(a.geo&&(!a.tramo||!ambByGeo[a.geo])) ambByGeo[a.geo]=a; });   // el río completo (tramo vacío) manda sobre sus tramos
 const featAmb=f=>ambByGeo[f.properties.name];
-/* TRAMOS: al tocar un río con tramos se resalta solo el tramo (coral) y el río completo sigue en su color base */
+/* TRAMOS: el 1er toque sobre un río con tramos resalta el río completo; los tramos se eligen desde su ficha o tocando el río ya elegido */
 TRAMOS.features.forEach((f,i)=>f.properties._k='t'+i);
 const TRAMOS_DE=g=>TRAMOS.features.filter(t=>t.properties.geo===g);
 const nrm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
@@ -869,6 +869,7 @@ function tramoDeAmb(a){   // tramo dibujable de un ambiente-tramo: por nombre, o
   if(!a||!a.tramo||!a.geo) return null; const ts=TRAMOS_DE(a.geo); if(!ts.length) return null;
   const n=ts.find(t=>nrm(t.properties.tramo)===nrm(a.tramo)); if(n) return n;
   let best=null; ts.forEach(t=>{ const d=distPx(a.ll,t); if(!best||d<best.d) best={t,d}; }); return best.t; }
+function geoElegido(){ if(!SEL) return null; if(SEL.type==='amb') return AMB_BY[SEL.id]?.geo||null; if(SEL.type==='tramo'){ const t=selTramo(); return t?t.properties.geo:null; } return null; }
 function selTramo(){ if(!SEL) return null; if(SEL.type==='tramo') return TRAMOS.features.find(t=>t.properties._k===SEL.k); if(SEL.type==='amb') return tramoDeAmb(AMB_BY[SEL.id]); return null; }
 
 // ESTADO: F = filtros del panel izquierdo · R = resultados del buscador · SEL = elemento seleccionado
@@ -901,8 +902,10 @@ function onGeo(f,l){
   l.on('mouseover',()=>{ if(!featSel(f)) l.setStyle(f.properties._t==='rio'?{weight:5}:{fillOpacity:.72}); });
   l.on('mouseout',()=>l.setStyle(styleF(f)));
   l.on('click',e=>{ featClick=true; setTimeout(()=>featClick=false,50);
-    const t=f.properties._t==='rio'&&nm?tramoCerca(nm,e.latlng):null; if(t) return selectTramo(t);
-    const a=featAmb(f); a?selectAmb(a.id,{fit:false}):selectGeo(f); });
+    // 1er toque: el río completo (resaltado y encuadrado). Con el río ya elegido, tocar un tramo lo elige.
+    const conTramos=f.properties._t==='rio'&&nm&&TRAMOS_DE(nm).length, act=conTramos&&geoElegido()===nm;
+    const t=act?tramoCerca(nm,e.latlng):null; if(t) return selectTramo(t);
+    const a=featAmb(f); a?selectAmb(a.id,{fit:!!conTramos&&!act}):selectGeo(f); });
 }
 function espIcon(e,big){ return L.divIcon({className:'ico',html:`<div class="mk sp${big?' big':''}">${fishIconSVG(e.id,big?'#FF7A59':e.c,uid())}</div>`,iconSize:[40,40],iconAnchor:[20,20]}); }
 function srvIcon(s,big){ return L.divIcon({className:'ico',html:`<div class="mk srv t-${s.tipo}${big?' big':''}">${esc(initials(s.n))}${s.nivel===3?'<span class="ok">✓</span>':''}</div>`,iconSize:[36,36],iconAnchor:[18,18]}); }
@@ -1089,7 +1092,8 @@ function detAmb(a){
   <p class="desc">${esc(a.d)}</p>
   ${a.padre&&AMB_BY[a.padre]?`<p class="psub">Parte de: <span class="chip link" data-amb="${a.padre}">${esc(AMB_BY[a.padre].n)}</span></p>`:''}
   ${!tramosDe(a.id).length&&!a.tramo&&a.geo&&TRAMOS_DE(a.geo).length?`<h3>Tramos</h3><div class="chips">${TRAMOS_DE(a.geo).map(t=>`<span class="chip link" data-tramo="${t.properties._k}">${esc(t.properties.tramo)}</span>`).join('')}</div>`:''}
-  ${tramosDe(a.id).length?`<h3>Tramos destacados</h3><div class="chips">${tramosDe(a.id).map(t=>`<span class="chip link" data-amb="${t.id}">${esc(t.tramo)}</span>`).join('')}</div>`:''}
+  ${tramosDe(a.id).length?`<h3>Tramos</h3><p class="psub">Tocá un tramo para verlo en el mapa.</p><div class="chips">${tramosDe(a.id).map(t=>`<span class="chip link" data-amb="${t.id}">${esc(t.tramo)}</span>`).join('')}</div>`:''}
+  ${a.padre&&tramosDe(a.padre).length>1?`<h3>Otros tramos</h3><div class="chips">${tramosDe(a.padre).filter(t=>t.id!==a.id).map(t=>`<span class="chip link" data-amb="${t.id}">${esc(t.tramo)}</span>`).join('')}</div>`:''}
   <dl class="kv"><dt>Temporada</dt><dd>${a.temp.map(esc).join('<br>')}</dd><dt>Modalidad</dt><dd>${a.mod.map(esc).join(' · ')}</dd><dt>Costa / embarcado</dt><dd>${a.acc.map(esc).join(' · ')}</dd><dt>Tipo de pesca</dt><dd>${a.tp.map(esc).join(' · ')}</dd><dt>Agua</dt><dd>${esc(a.agua)}</dd>${a.tipo==='mar'?`<dt>Coordenadas</dt><dd class="mono">${a.ll[0].toFixed(3)}, ${a.ll[1].toFixed(3)}</dd>`:''}</dl>
   <h3>Especies</h3>${espChips(a.esp)}
   <h3>Reglamentación</h3><div class="rule">${esc(a.regl.t)} <a href="${a.regl.url}">Ver norma →</a></div>
