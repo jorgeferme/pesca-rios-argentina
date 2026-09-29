@@ -920,7 +920,7 @@ function draw(){
     l.bindTooltip(esc(f.properties.n)+' · '+esc(f.properties.tramo),{sticky:true,className:'rtip',direction:'top'});
     l.on('click',()=>{ featClick=true; setTimeout(()=>featClick=false,50); }); }}));
   // ambientes sin geometría (spots de mar y ríos no incluidos en la capa): puntos
-  AMBIENTES.filter(a=>!a.geo&&ambVisible(a)).forEach(a=>{
+  AMBIENTES.filter(a=>!a.geo&&!a.sinUbic&&ambVisible(a)).forEach(a=>{
     const s=isSelAmb(a);
     const m=L.circleMarker(a.ll,{radius:s?11:8,color:'#fff',weight:2,fillColor:s?C.sel:(TIPO_COLOR[a.tipo]),fillOpacity:1});
     m.bindTooltip(a.n+(a.tramo?' · '+a.tramo:''),{className:'rtip',direction:'top'});
@@ -933,7 +933,7 @@ function draw(){
   resLayer.clearLayers();
   if(R&&R.prov&&PROV_BY[R.prov]) resLayer.addLayer(L.geoJSON(PROV_BY[R.prov],{interactive:false,style:{color:'#E0B45C',weight:2.6,dashArray:'7 5',fillColor:'#E0B45C',fillOpacity:.07}}));
   if(R){
-    if(!R.esp) R.amb.forEach(id=>{ const a=AMB_BY[id]; const big=isSelAmb(a);   /* especie: sin íconos de pez, se ven los ambientes filtrados */
+    if(!R.esp) R.amb.forEach(id=>{ const a=AMB_BY[id]; if(a.sinUbic) return; const big=isSelAmb(a);   /* especie: sin íconos de pez, se ven los ambientes filtrados */
       const m=L.marker(a.ll,{icon:R.esp?espIcon(ESP_BY[R.esp],big):ambIcon(a,big),zIndexOffset:500});
       m.bindTooltip(a.n+(a.tramo?' · '+a.tramo:''),{className:'rtip',direction:'top',offset:[0,-16]});
       resLayer.addLayer(clickable(m,()=>selectAmb(id,{fit:false})));
@@ -966,6 +966,7 @@ function fitLatLngs(pts,maxZ){
 }
 function ambPts(a){
   const tr=tramoDeAmb(a); if(tr){ const b=L.geoJSON(tr).getBounds(); return [b.getSouthWest(),b.getNorthEast()]; }
+  if(a.sinUbic){ const f=PROV_BY[a.prov[0]]; if(f){ const b=L.geoJSON(f).getBounds(); return [b.getSouthWest(),b.getNorthEast()]; } }
   if(!a.geo) return [a.ll];
   const pts=[]; [RIVERS,LAKES].forEach(fc=>fc.features.forEach(f=>{ if(f.properties.name===a.geo) L.geoJSON(f).eachLayer(l=>pts.push(...l.getBounds?[l.getBounds().getSouthWest(),l.getBounds().getNorthEast()]:[])); }));
   return pts.length?pts:[a.ll];
@@ -1039,7 +1040,7 @@ function nearMe(){
   $('#restx').textContent='📍 Buscando tu ubicación…'; $('#resbar').classList.add('on');
   navigator.geolocation.getCurrentPosition(p=>{
     const me=[p.coords.latitude,p.coords.longitude];
-    const as=AMBIENTES.map(a=>({a,d:kmTo(me,a.ll)})).sort((x,y)=>x.d-y.d).slice(0,5);
+    const as=AMBIENTES.filter(a=>!a.sinUbic).map(a=>({a,d:kmTo(me,a.ll)})).sort((x,y)=>x.d-y.d).slice(0,5);
     const ss=SRV.map(s=>({s,d:kmTo(me,s.ll)})).sort((x,y)=>(x.d-y.d)).slice(0,8);
     F=F0(); renderFilters(); SEL=null;
     R={me,amb:new Set(as.map(x=>x.a.id)),srv:new Set(ss.filter(x=>x.s.nivel===3).map(x=>x.s.id)),label:`📍 Cerca tuyo — ${as.length} ambientes · ${ss.filter(x=>x.s.nivel===3).length} con reserva directa`};
@@ -1084,7 +1085,7 @@ function gallery(key){ const fs=FOTOS[key]||[]; const O={propia:'Foto Fishing in
 function srvRows(list){ return list.length?list.map(s=>`<div class="prow" data-srv="${s.id}"><div class="av t-${s.tipo}">${esc(initials(s.n))}</div><div class="pi"><div class="pn">${esc(s.n)} ${lvlBadge(s)}</div><div class="pm">${TIPO_SRV[s.tipo]} · ${esc(s.loc)}</div></div>${stars(s.rat,s.nr)}</div>`).join(''):'<p class="psub">Todavía no hay servicios cargados en este ambiente.</p>'; }
 function newsFor(k,id){ const n=NOTICIAS.filter(x=>x[k].includes(id)); return n.length?`<h3>Novedades</h3>`+n.map(x=>`<div class="rule"><b>${esc(x.t)}</b><br><small class="mono">${x.f}</small></div>`).join(''):''; }
 function detAmb(a){
-  return `<div class="det"><div class="prov">${TIPOS[a.tipo]} · ${a.prov.map(esc).join(' / ')}</div><h2>${esc(a.n)}</h2>${a.tramo?`<div class="tramo">Tramo: ${esc(a.tramo)}</div>`:''}
+  return `<div class="det"><div class="prov">${TIPOS[a.tipo]} · ${a.prov.map(esc).join(' / ')}</div><h2>${esc(a.n)}</h2>${a.tramo?`<div class="tramo">Tramo: ${esc(a.tramo)}</div>`:''}${a.sinUbic?`<div class="tramo">📍 Ubicación en el mapa a confirmar</div>`:''}
   <p class="desc">${esc(a.d)}</p>
   ${a.padre&&AMB_BY[a.padre]?`<p class="psub">Parte de: <span class="chip link" data-amb="${a.padre}">${esc(AMB_BY[a.padre].n)}</span></p>`:''}
   ${!tramosDe(a.id).length&&!a.tramo&&a.geo&&TRAMOS_DE(a.geo).length?`<h3>Tramos</h3><div class="chips">${TRAMOS_DE(a.geo).map(t=>`<span class="chip link" data-tramo="${t.properties._k}">${esc(t.properties.tramo)}</span>`).join('')}</div>`:''}
@@ -1740,7 +1741,8 @@ async function cargarDatos(){
     const legA={}; AMBIENTES.forEach(a=>legA[a.n+'|'+a.tramo]=a);
     const ambId={}; amb.forEach(x=>{ const l=legA[x.nombre+'|'+(x.tramo||'')]; ambId[x.id]=l?l.id:'a'+x.id; });
     const limpio=t=>String(t||'').replace(/^\[EJEMPLO\]\s*/,'');
-    const A2=amb.map(x=>({id:ambId[x.id],dbid:x.id,n:x.nombre,tramo:x.tramo||'',tipo:x.tipo,geo:x.geo_ref?x.geo_ref.split(',')[0].trim():null,ll:[x.lat??-34.6,x.lng??-58.4],
+    const provCentro=n=>{ const f=PROVS.features.find(p=>p.properties.n===n); return f?(c=>[c.lat,c.lng])(L.geoJSON(f).getBounds().getCenter()):[-38.4,-63.6]; };   // sin coordenadas: centro de su provincia (no se dibuja punto)
+    const A2=amb.map(x=>({id:ambId[x.id],dbid:x.id,n:x.nombre,tramo:x.tramo||'',tipo:x.tipo,geo:x.geo_ref?x.geo_ref.split(',')[0].trim():null,ll:(x.lat!=null&&x.lng!=null)?[x.lat,x.lng]:provCentro(x.ambiente_provincia[0]?.provincia?.nombre),sinUbic:x.lat==null||x.lng==null,
       prov:x.ambiente_provincia.map(p=>p.provincia.nombre),d:x.descripcion||'',temp:x.temporada.map(t=>t.nota).filter(Boolean),
       mod:x.ambiente_modalidad.map(m=>m.modalidad.nombre),acc:x.ambiente_acceso.map(m=>m.acceso.nombre),tp:x.ambiente_tipo_pesca.map(m=>m.tipo_pesca.nombre),
       agua:x.tipo_agua||'',regl:{t:x.reglamento?.resumen||'Consultar el reglamento de pesca provincial vigente.',url:x.reglamento?.url_norma||'#'},
