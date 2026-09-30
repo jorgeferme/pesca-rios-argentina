@@ -186,7 +186,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 .qb .fish{width:30px;height:30px}.qb .em{width:30px;height:30px;border-radius:50%;background:#F4F1EA;display:flex;align-items:center;justify-content:center;font-size:1rem}
 .qb.on{border-color:var(--dorado);background:#2c2716}.qb.near{border-color:#2F80ED}
 #resbar{position:static;z-index:1100;background:rgba(19,34,37,.96);border:1px solid var(--sel);border-radius:22px;padding:7px 8px 7px 14px;font-size:.82rem;display:none;align-items:center;gap:10px;box-shadow:0 6px 18px rgba(0,0,0,.45);white-space:nowrap;max-width:92%}
-#resbar.on{display:flex}
+#resbar,#resbar.on{display:none!important}   /* quitado a pedido: la búsqueda se limpia con la ✕ del buscador o cerrando la ficha */
 #resbar span{overflow:hidden;text-overflow:ellipsis}
 #resbar button{background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:14px;padding:4px 10px;cursor:pointer;font-size:.74rem}
 .legend{position:absolute;z-index:1000;left:12px;bottom:22px;background:rgba(19,34,37,.95);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.72rem;color:var(--ink-soft)}
@@ -210,6 +210,11 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 .mk.big{transform:scale(1.18);border-color:var(--sel)}
 .mk.amb{width:20px;height:20px;margin:8px;background:var(--c);border:3px solid #fff}.mk.amb.big{background:var(--sel);border-color:#fff;transform:scale(1.25)}
 .mk.clu{width:42px;height:42px;background:var(--dorado);border:3px solid #fff;font-size:.95rem;box-shadow:0 0 0 6px rgba(224,180,92,.35),0 3px 8px rgba(0,0,0,.5)}
+.reflbl{font:500 11px/1.1 system-ui,sans-serif;color:#243a3f;white-space:nowrap;text-shadow:0 0 2px #fff,0 0 3px #fff,0 0 4px #fff;pointer-events:none}
+.reflbl.t1{font-weight:650;font-size:12px}
+.reflbl::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#243a3f;margin-right:4px;vertical-align:1px;box-shadow:0 0 0 1.5px #fff}
+.sat .reflbl{color:#fff;text-shadow:0 0 3px #000,0 0 4px #000}
+.sat .reflbl::before{background:#fff;box-shadow:0 0 0 1.5px #000}
 .maplbl{font-family:"Fraunces",serif;font-style:italic;font-size:.8rem;color:#0E3C46;text-align:center;white-space:nowrap;text-shadow:0 0 3px #fff,0 0 3px #fff}
 /* ---------- PANEL DE DETALLE (derecha / hoja inferior) ---------- */
 #drawer{position:fixed;top:var(--hh);right:0;bottom:0;width:var(--dw);max-width:100%;background:var(--panel);border-left:1px solid var(--line);z-index:2500;transform:translateX(102%);transition:transform .28s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;box-shadow:-12px 0 34px rgba(0,0,0,.45)}
@@ -452,8 +457,6 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
       <div class="tgs" id="f-esp"></div>
       <div class="flabel">Modalidad</div>
       <div class="tgs" id="f-mod"></div>
-      <div class="flabel">Capas</div>
-      <div class="tgs" id="f-capas"></div>
       <div class="fcount" id="fcount"></div>
     </div>
   </aside>
@@ -494,7 +497,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
   <p class="eyebrow">Qué pescar</p>
   <h1 class="pt">Especies</h1>
   <p class="psub">Tocá una especie para ver su descripción, cómo pescarla y dónde habita.</p>
-  <div class="fbar"><select id="e-prov"></select><select id="e-agua"></select><span class="cnt" id="e-cnt"></span></div>
+  <div class="fbar"><select id="e-prov"></select><select id="e-agua"></select><select id="e-mod"></select><span class="cnt" id="e-cnt"></span></div>
   <div class="grid" id="e-list"></div>
 </div></section>
 
@@ -655,7 +658,7 @@ function fishIconSVG(id, ring, uid){
 const EXCLUIDOS = [];   // nombres de ríos a ocultar siempre (filtro interno del admin)
 const TIPOS = {rio:'Río', lago:'Lago', laguna:'Laguna', mar:'Mar'};
 // Agrupación SOLO de pantalla: lago y laguna comparten botón (en la base siguen distintos)
-const GRUPOS = {rio:'Río', lago:'Lago / Laguna', mar:'Mar'};
+const GRUPOS = {rio:'Río', lago:'Lago', mar:'Mar'};   // 'Lago' incluye lagos, lagunas y embalses
 const GRP = t=>t==='laguna'||t==='embalse'?'lago':t;
 // Dos catálogos separados: técnica (modalidad) y acceso (desde dónde se pesca)
 const TECNICAS=['Carnada','Señuelo','Fly fishing','Trolling'];
@@ -835,7 +838,7 @@ function setBase(i){ const [name,mk]=BASES[i], t=mk(); let errs=0, ok=0;
   __base.cur=t; __base.name=name; if(!satOn) t.addTo(map); t.bringToBack(); try{ syncMalv(); }catch(e){} }
 const sat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Imágenes © Esri, Maxar, Earthstar Geographics (demo)'});
 const SatCtl=L.Control.extend({options:{position:'topleft'},onAdd(){const d=L.DomUtil.create('div','leaflet-bar');const a=L.DomUtil.create('a','satbtn',d);a.href='#';a.textContent='🛰 Satélite';
-  L.DomEvent.on(a,'click',e=>{L.DomEvent.preventDefault(e);L.DomEvent.stopPropagation(e);satOn=!satOn;if(satOn){map.removeLayer(__base.cur);sat.addTo(map);a.textContent='🗺 Mapa';}else{map.removeLayer(sat);__base.cur.addTo(map);a.textContent='🛰 Satélite';}});return d;}});
+  L.DomEvent.on(a,'click',e=>{L.DomEvent.preventDefault(e);L.DomEvent.stopPropagation(e);satOn=!satOn;if(satOn){map.removeLayer(__base.cur);sat.addTo(map);a.textContent='🗺 Mapa';}else{map.removeLayer(sat);__base.cur.addTo(map);a.textContent='🛰 Satélite';} syncRefs();});return d;}});
 map.addControl(new SatCtl());
 setBase(location.protocol==='file:'?2:0);
 // Argentina resaltada: países vecinos con velo oscuro y contorno dorado suave (por debajo de ríos y marcadores)
@@ -844,6 +847,22 @@ const maskR=L.svg({pane:'mascara'});
 L.geoJSON(MASK,{pane:'mascara',renderer:maskR,interactive:false,style:{stroke:false,fillColor:'#1F2A2D',fillOpacity:.5}}).addTo(map);
 // Rótulo propio "Islas Malvinas" (solo si el fondo no es el mapa del IGN, que ya lo rotula así)
 const malvLbl=L.marker([-51.75,-59.2],{pane:'mascara',interactive:false,icon:L.divIcon({className:'maplbl',html:'Islas Malvinas',iconSize:[120,18],iconAnchor:[60,-14]})});
+/* REFERENCIAS (ciudades, provincias y rutas) — discretas y según el zoom.
+   Ciudades: propias (así respetamos "Islas Malvinas" y elegimos qué mostrar). t1 = capitales y destinos de pesca principales (zoom ≥5); t2 = zoom ≥7.
+   En el mapa común se ocultan desde zoom 9, donde el propio mapa ya rotula. Rutas: capa transparente de Esri, solo sobre satélite y desde zoom 7. */
+const CIUDADES=[[1,'Buenos Aires',-34.60,-58.38],[1,'Córdoba',-31.42,-64.18],[1,'Rosario',-32.95,-60.65],[1,'Mendoza',-32.89,-68.84],[1,'San Miguel de Tucumán',-26.82,-65.22],[1,'Salta',-24.79,-65.41],[1,'Neuquén',-38.95,-68.06],[1,'Bariloche',-41.13,-71.31],[1,'Mar del Plata',-38.00,-57.56],[1,'Comodoro Rivadavia',-45.86,-67.48],[1,'Río Gallegos',-51.62,-69.22],[1,'Ushuaia',-54.80,-68.30],[1,'Posadas',-27.37,-55.90],[1,'Corrientes',-27.47,-58.83],[1,'Resistencia',-27.45,-58.99],[1,'Santa Fe',-31.63,-60.70],[1,'Paraná',-31.73,-60.53],[1,'Bahía Blanca',-38.72,-62.27],[1,'Santiago del Estero',-27.79,-64.26],[1,'San Juan',-31.54,-68.53],[1,'San Luis',-33.30,-66.34],[1,'San Salvador de Jujuy',-24.19,-65.30],[1,'Catamarca',-28.47,-65.78],[1,'La Rioja',-29.41,-66.86],[1,'Formosa',-26.18,-58.18],[1,'Santa Rosa',-36.62,-64.29],[1,'Viedma',-40.81,-62.99],[1,'Rawson',-43.30,-65.10],[1,'La Plata',-34.92,-57.95],[1,'El Calafate',-50.34,-72.27],[1,'Esquel',-42.91,-71.32],[1,'San Martín de los Andes',-40.16,-71.35],[1,'Río Grande',-53.79,-67.70],
+ [2,'Trelew',-43.25,-65.31],[2,'Puerto Madryn',-42.77,-65.04],[2,'Junín de los Andes',-39.95,-71.07],[2,'Villa La Angostura',-40.76,-71.65],[2,'El Bolsón',-41.96,-71.53],[2,'Trevelin',-43.09,-71.46],[2,'Zapala',-38.90,-70.07],[2,'Chos Malal',-37.38,-70.27],[2,'Aluminé',-39.24,-70.92],[2,'Cipolletti',-38.93,-67.99],[2,'General Roca',-39.03,-67.58],[2,'Paso de la Patria',-27.32,-58.57],[2,'Ituzaingó',-27.60,-56.69],[2,'Goya',-29.14,-59.26],[2,'Esquina',-30.02,-59.53],[2,'Puerto Iguazú',-25.60,-54.57],[2,'Concordia',-31.39,-58.02],[2,'Colón',-32.22,-58.14],[2,'Federación',-30.98,-57.92],[2,'Gualeguaychú',-33.01,-58.52],[2,'Reconquista',-29.15,-59.65],[2,'Rafaela',-31.25,-61.49],[2,'Chascomús',-35.57,-58.01],[2,'Tandil',-37.32,-59.13],[2,'Necochea',-38.55,-58.74],[2,'Carmen de Patagones',-40.80,-62.98],[2,'San Rafael',-34.62,-68.33],[2,'Malargüe',-35.47,-69.58],[2,'Villa Carlos Paz',-31.42,-64.50],[2,'Río Cuarto',-33.12,-64.35],[2,'El Chaltén',-49.33,-72.89],[2,'Perito Moreno',-46.59,-70.93],[2,'Los Antiguos',-46.55,-71.62],[2,'Puerto Deseado',-47.75,-65.90],[2,'Puerto San Julián',-49.31,-67.73],[2,'Tolhuin',-54.51,-67.19]];
+map.createPane('refs'); map.getPane('refs').style.zIndex=390; map.getPane('refs').style.pointerEvents='none';
+const refProv=L.geoJSON(PROVS,{pane:'refs',interactive:false,style:()=>({color:satOn?'#fff':'#5b6f73',weight:satOn?1:.8,opacity:satOn?.55:.45,dashArray:'4 4',fill:false})});
+const refCity=L.layerGroup(CIUDADES.map(([t,n,la,lo])=>{ const m=L.marker([la,lo],{pane:'refs',interactive:false,keyboard:false,icon:L.divIcon({className:'reflbl t'+t,html:esc(n),iconSize:null,iconAnchor:[4,7]})}); m._t=t; return m; }));
+const refRutas=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',{pane:'refs',minZoom:7,maxZoom:19,opacity:.55,attribution:'Rutas © Esri'});
+function syncRefs(){ const z=map.getZoom();
+  if(!map.hasLayer(refProv)) refProv.addTo(map); refProv.setStyle({color:satOn?'#fff':'#5b6f73',weight:satOn?1:.8,opacity:satOn?.55:.45});
+  map.getContainer().classList.toggle('sat',satOn);
+  const verCiud=z>=5&&(satOn||z<9); if(verCiud&&!map.hasLayer(refCity)) refCity.addTo(map); if(!verCiud&&map.hasLayer(refCity)) map.removeLayer(refCity);
+  refCity.eachLayer(m=>{ const el=m.getElement&&m.getElement(); if(el) el.style.display=(m._t===1||z>=7)?'':'none'; });
+  if(satOn&&!map.hasLayer(refRutas)) refRutas.addTo(map); if(!satOn&&map.hasLayer(refRutas)) map.removeLayer(refRutas); }
+map.on('zoomend',syncRefs); setTimeout(syncRefs,0);
 function syncMalv(){ const show=__base.name!=='ign'&&map.getZoom()>=5; if(show&&!map.hasLayer(malvLbl)) malvLbl.addTo(map); if(!show&&map.hasLayer(malvLbl)) map.removeLayer(malvLbl); }
 map.on('zoomend',syncMalv); syncMalv();
 
@@ -936,7 +955,7 @@ function draw(){
   resLayer.clearLayers();
   if(R&&R.prov&&PROV_BY[R.prov]) resLayer.addLayer(L.geoJSON(PROV_BY[R.prov],{interactive:false,style:{color:'#E0B45C',weight:2.6,dashArray:'7 5',fillColor:'#E0B45C',fillOpacity:.07}}));
   if(R){
-    if(!R.esp) R.amb.forEach(id=>{ const a=AMB_BY[id]; if(a.sinUbic) return; const big=isSelAmb(a);   /* especie: sin íconos de pez, se ven los ambientes filtrados */
+    if(!R.esp) R.amb.forEach(id=>{ const a=AMB_BY[id]; if(a.sinUbic||a.geo) return;   /* ríos y lagos se marcan sobre su trazo; el círculo solo para los que son un punto */ const big=isSelAmb(a);   /* especie: sin íconos de pez, se ven los ambientes filtrados */
       const m=L.marker(a.ll,{icon:R.esp?espIcon(ESP_BY[R.esp],big):ambIcon(a,big),zIndexOffset:500});
       m.bindTooltip(a.n+(a.tramo?' · '+a.tramo:''),{className:'rtip',direction:'top',offset:[0,-16]});
       resLayer.addLayer(clickable(m,()=>selectAmb(id,{fit:false})));
@@ -1005,7 +1024,7 @@ function setResults(r){ // r = {kind:'esp'|'tipo'|'amb'|'srv'|'prov', id}. Toda 
     R={tipo:r.id,amb:new Set(as.map(a=>a.id)),srv:new Set(s3.map(s=>s.id)),label:`${GRUPOS[r.id]} — ${as.length} ambiente(s) · ${s3.length} con reserva directa`}; draw(); openDrawer(detList('Tipo de ambiente',GRUPOS[r.id],as,ss),GRUPOS[r.id]); fitLatLngs(as.map(a=>a.ll),7); }
   else if(r.kind==='amb'){ const a=AMB_BY[r.id], s3=top3(srvOfAmb(r.id)); R={amb:new Set([r.id]),srv:new Set(s3.map(s=>s.id)),label:`${a.n}${a.tramo?' · '+a.tramo:''} — ${s3.length} con reserva directa`}; selectAmb(r.id,{fit:true}); }
   else if(r.kind==='srv'){ const s=SRV_BY[r.id]; R={amb:new Set(),srv:new Set([r.id]),label:`${TIPO_SRV[s.tipo]}: ${s.n}`}; selectSrv(r.id,{fit:true}); }
-  else if(r.kind==='prov'){ const p=r.id, as=AMBIENTES.filter(a=>a.prov.includes(p)), ss=srvOfProv(p), s3=top3(ss);
+  else if(r.kind==='prov'){ const p=r.id, np=norm(p), as=AMBIENTES.filter(a=>a.prov.includes(p)).sort((a,b)=>norm(b.n).includes(np)-norm(a.n).includes(np)), ss=srvOfProv(p), s3=top3(ss);
     R={prov:p,amb:new Set(as.map(a=>a.id)),srv:new Set(s3.map(s=>s.id)),label:`${p} — ${as.length} ambiente(s) · ${s3.length} con reserva directa`}; draw();
     const esps=[...new Set(as.flatMap(a=>a.esp))];
     openDrawer(detList('Provincia',p,as,ss,esps.length?`<h3>Especies · ${esps.length}</h3>${espChips(esps)}`:''),p);
@@ -1020,7 +1039,6 @@ function renderFilters(){
   $('#f-tipos').innerHTML=Object.entries(GRUPOS).map(([k,v])=>`<span class="tg${F.tipos[k]?' on':''}" data-ft="${k}"><span class="dot" style="background:${TIPO_COLOR[k]}"></span>${v}</span>`).join('');
   $('#f-esp').innerHTML=`<div class="sptiles"><div class="sptile${!F.esp?' on':''}" data-fe=""><span class="fish" style="font-size:1.4rem;align-items:center;justify-content:center">🎣</span>Todas</div>`+ESPECIES.map(e=>`<div class="sptile${F.esp===e.id?' on':''}" data-fe="${e.id}">${fishBadge(e)}${esc(espName(e))}</div>`).join('')+'</div>';
   $('#f-mod').innerHTML=[['','Todas'],...TECNICAS.map(m=>[m,m])].map(([k,v])=>`<span class="tg${(F.mod||'')===k?' on':''}" data-fm="${k}">${v}</span>`).join('');
-  $('#f-capas').innerHTML=`<span class="tg${F.srv?' on':''}" data-fc="srv">Servicios con reserva directa</span><span class="tg${F.soloFichas?' on':''}" data-fc="soloFichas">Solo con ficha</span>`;
   const n=Object.values(F.tipos).filter(x=>!x).length+(F.esp?1:0)+(F.mod?1:0)+(F.soloFichas?1:0);
   $('#fbtnn').style.display=n?'inline':'none'; $('#fbtnn').textContent=n;
 }
@@ -1170,7 +1188,8 @@ addEventListener('resize',fitIg);
 function openDrawer(html,title){ $('#dbody').innerHTML=html; setTimeout(fitIg,0); $('#dtitle').textContent=title; $('#dbody').scrollTop=0; domOpen('drawer'); ovPush('drawer'); }
 function openFiltersSheet(){ domOpen('filters'); ovPush('filters'); }
 function resetMap(){ SEL=null; R=null; F=F0(); renderFilters(); $('#resbar').classList.remove('on'); if(typeof draw==='function') draw(); document.title='Fishing in Argentina'; setTimeout(()=>{ if(cur==='mapa'&&/^#\/mapa\//.test(location.hash)) try{history.replaceState(history.state,'','#/mapa');}catch(e){} },80); }
-$('#dclose').onclick=()=>{ ovClose('drawer'); if(cur==='mapa') resetMap(); };
+function limpiarBusqueda(){ const i=$('#ms input'); if(i){ i.value=''; $('#ms .sx').style.display='none'; $('#ms .sdrop').classList.remove('open'); } }
+$('#dclose').onclick=()=>{ ovClose('drawer'); if(cur==='mapa'){ resetMap(); limpiarBusqueda(); } };
 function sheetDrag(el,handle,name,peekable){
   // Posiciones: completa (0) · media (50%) · mínima (solo la barra de título, 66 px). Tocar la barra alterna; arrastrar se acomoda a la más cercana.
   let y0=0,base=0,dy=0,drag=false,moved=false,lastTouch=0;
@@ -1449,9 +1468,10 @@ function render(v){
   if(v==='especies'){
     fillSel('#e-prov','Provincia: todas',[...new Set(AMBIENTES.flatMap(a=>a.prov))].sort().map(p=>[p,p]));
     fillSel('#e-agua','Tipo de agua: todos',[['dulce','💧 Agua dulce'],['salada','🌊 Agua salada'],['ambas','💧🌊 Dulce y salada']]);
-    const p=$('#e-prov').value, ag=$('#e-agua').value;
+    fillSel('#e-mod','Modalidad: todas',TECNICAS.map(m=>[m,m]));
+    const p=$('#e-prov').value, ag=$('#e-agua').value, md=$('#e-mod').value;
     // 'Agua dulce' incluye las que viven en ambas; 'Dulce y salada' muestra solo las de los dos ambientes
-    const list=ESPECIES.filter(e=>(!p||ambOfEsp(e.id).some(a=>a.prov.includes(p)))&&(!ag||(ag==='ambas'?e.agua.length>1:e.agua.includes(ag))));
+    const list=ESPECIES.filter(e=>(!p||ambOfEsp(e.id).some(a=>a.prov.includes(p)))&&(!ag||(ag==='ambas'?e.agua.length>1:e.agua.includes(ag)))&&(!md||ambOfEsp(e.id).some(a=>a.mod.includes(md))));
     $('#e-cnt').textContent=list.length+' especie(s)';
     $('#e-list').innerHTML=list.map(cardEsp).join('')||'<p class="psub">No hay especies con esos filtros.</p>';
   }
@@ -1488,7 +1508,9 @@ IDX.forEach(x=>x.n=norm(x.txt));
 const GROUPS=[['esp','Especies'],['prov','Provincias'],['tipo','Tipos de ambiente'],['amb','Ambientes'],['srv','Servicios'],['geo','Ríos y lagos sin ficha']];
 function searchIdx(q){
   const w=norm(q).split(/\s+/).filter(Boolean); if(!w.length) return [];
-  return IDX.map(x=>{ let sc=0; for(const t of w){ if(!x.n.includes(t)) return null; sc+=(x.n.startsWith(t)||x.n.includes(' '+t))?2:1; } return {x,sc}; }).filter(Boolean).sort((a,b)=>b.sc-a.sc).map(r=>r.x);
+  const qn=w.join(' ');
+  return IDX.map(x=>{ let sc=0; const nm=x.nm||(x.nm=' '+norm(x.t())); for(const t of w){ if(!x.n.includes(t)) return null; sc+=(x.n.startsWith(t)||x.n.includes(' '+t))?2:1; if(nm.includes(' '+t)) sc+=3; }   // coincide en el nombre (no solo en la provincia)
+    if(nm.trim()===qn) sc+=4; return {x,sc}; }).filter(Boolean).sort((a,b)=>b.sc-a.sc).map(r=>r.x);
 }
 function pick(h){
   F=F0(); R=null; SEL=null; $('#resbar').classList.remove('on'); renderFilters();   // el buscador resetea los filtros
@@ -1505,7 +1527,8 @@ function attachSearch(box){
     x.style.display=inp.value?'block':'none';
     const res=searchIdx(inp.value); hits=[]; let html='';
     if(!inp.value.trim()){ drop.classList.remove('open'); return; }
-    GROUPS.forEach(([k,lab])=>{ const g=res.filter(r=>r.k===k).slice(0,k==='geo'?3:5); if(!g.length) return;
+    const best=k=>{ const i=res.findIndex(r=>r.k===k); return i<0?1e9:i; };
+    [...GROUPS].sort((a,b)=>best(a[0])-best(b[0])).forEach(([k,lab])=>{ const g=res.filter(r=>r.k===k).slice(0,k==='geo'?3:5); if(!g.length) return;
       html+=`<div class="sgroup">${lab}</div>`+g.map(h=>{hits.push(h);return `<div class="sitem" data-i="${hits.length-1}"><span class="ic">${h.ic}</span><span class="tx"><b>${esc(h.t())}</b><small>${esc(h.s())}</small></span></div>`;}).join(''); });
     drop.innerHTML=html||`<div class="snone">Sin resultados para “${esc(inp.value)}”.</div>`; act=0; mark(); drop.classList.add('open');
   };
@@ -1518,6 +1541,8 @@ function attachSearch(box){
   document.addEventListener('click',e=>{ if(!box.contains(e.target)) drop.classList.remove('open'); });
 }
 attachSearch($('#hs')); attachSearch($('#heros')); attachSearch($('#ms'));
+// ✕ del buscador del mapa: cierra todo (ficha de la derecha, sugerencias y resultados)
+$('#ms .sx').addEventListener('click',e=>{ e.stopPropagation(); limpiarBusqueda(); if(drawer.classList.contains('open')) ovClose('drawer'); resetMap(); $('#ms input').blur(); });
 if($('#mtop')){ L.DomEvent.disableClickPropagation($('#mtop')); L.DomEvent.disableScrollPropagation($('#mtop')); }
 // búsqueda de un río sin ficha
 const _applyMap=applyMap;
