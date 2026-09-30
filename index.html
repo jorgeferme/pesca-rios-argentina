@@ -63,6 +63,7 @@ h1.pt{font-family:"Fraunces",serif;font-weight:600;font-size:1.7rem;margin:0 0 4
 .stars{color:var(--dorado);font-size:.8rem}
 .stars small{color:var(--ink-faint)}
 .fbar{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 16px;align-items:center}
+@media(max-width:760px){ .fbar{flex-wrap:nowrap;overflow-x:auto;gap:6px;margin:0 -16px 12px;padding:0 16px 4px;scrollbar-width:none} .fbar::-webkit-scrollbar{display:none} .fbar select{flex:0 0 auto;padding:6px 8px;font-size:.78rem;border-radius:16px;max-width:62vw} .fbar .cnt{flex:0 0 auto;font-size:.74rem} }
 .fbar select{background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 10px;font-size:.84rem;font-family:inherit}
 .fbar .cnt{color:var(--ink-faint);font-size:.78rem;margin-left:auto}
 .note{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 13px;color:var(--ink-faint);font-size:.76rem;line-height:1.55;margin:0 0 16px}
@@ -196,6 +197,22 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 .legend .pt{width:12px;height:12px;border-radius:50%;border:2px solid #fff;flex:none}
 .leaflet-bar a.satbtn{width:auto;padding:0 8px;font-size:.72rem;font-weight:600;white-space:nowrap}
 #fbtn{display:none}
+#cbtn,#combo{display:none}
+@media(max-width:760px){
+  #cbtn{display:flex;align-items:center;justify-content:center;width:34px;height:22px;margin:-6px 0 0 4px;border-radius:0 0 12px 12px;border:1px solid var(--line);border-top:0;background:rgba(19,34,37,.95);color:var(--dorado);font-size:.9rem;padding:0;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+  #cbtn.on{color:var(--sel)}
+  #combo.on{display:block;background:rgba(19,34,37,.98);border:1px solid var(--line);border-radius:14px;padding:8px 10px 10px;width:calc(100vw - 70px);max-width:360px;box-shadow:0 10px 26px rgba(0,0,0,.5);color:var(--ink)}
+  #combo .cl{font-size:.64rem;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-soft);margin:6px 0 4px}
+  #combo .cr{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  #combo .cr::-webkit-scrollbar{display:none}
+  #combo .cc{flex:0 0 auto;display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:16px;padding:5px 10px;font-size:.8rem;background:var(--panel-2);white-space:nowrap}
+  #combo .cc .fish{width:22px;height:22px}
+  #combo .cc.on{border-color:var(--sel);background:var(--sel);color:#fff}
+  #combo .cf{display:flex;gap:8px;margin-top:10px}
+  #combo .cf button{flex:1;border-radius:12px;padding:9px;font-size:.84rem;border:1px solid var(--line);background:var(--panel-2);color:var(--ink)}
+  #combo .cf .go{background:var(--sel);border-color:var(--sel);color:#fff;font-weight:600}
+  body.claro #combo,body.claro #cbtn{background:rgba(255,255,255,.98)}
+}
 #refine{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:22px;z-index:1150;background:rgba(19,34,37,.97);border:1px solid var(--sel);border-radius:16px;padding:10px 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.45);max-width:min(92vw,420px);color:var(--ink)}
 #refine.on{display:block}
 #refine .rh{display:flex;align-items:center;gap:8px;font-size:.82rem;margin-bottom:4px}
@@ -477,14 +494,15 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
     <div id="mtop">
       <div class="sbox msearch" id="ms"><span class="si">🔍</span><input type="text" placeholder="Buscar especie, río, provincia, guía…" autocomplete="off"><span class="sx">✕</span><div class="sdrop"></div></div>
       <div id="qwrap"><button id="qtog"></button><div id="qbar"></div></div>
+      <button id="cbtn" title="Combinar especie, ambiente y modalidad">▾</button><div id="combo"></div>
       <div id="resbar"><span id="restx"></span><button id="resx">✕ Limpiar</button></div>
     </div>
     <div id="refine"></div>
     <button id="fbtn">⚙ Filtros <span class="n" id="fbtnn" style="display:none"></span></button>
     <div class="legend">
       <div class="row"><span class="sw" style="background:#1E90A8"></span> Río</div>
-      <div class="row"><span class="lk"></span> Lago / laguna</div>
-      <div class="row"><span class="pt" style="background:var(--sea)"></span> Spot de mar</div>
+      <div class="row"><span class="lk"></span> Lago</div>
+      <div class="row"><span class="pt" style="background:var(--sea)"></span> Mar</div>
       <div class="row"><span class="sw" style="background:var(--sel);height:5px"></span> Seleccionado</div>
       <div class="row"><span class="pt" style="background:var(--dorado)"></span> Guía · <span class="pt" style="background:#5FBB90"></span> Lodge (reserva directa)</div>
     </div>
@@ -668,14 +686,14 @@ function fishIconSVG(id, ring, uid){
    (en producción vienen de la base; acá están en memoria)
    ===================================================================== */
 const EXCLUIDOS = [];   // nombres de ríos a ocultar siempre (filtro interno del admin)
-const TIPOS = {rio:'Río', lago:'Lago', laguna:'Laguna', mar:'Mar'};
+const TIPOS = {rio:'Río', lago:'Lago', laguna:'Laguna', embalse:'Embalse', mar:'Mar'};
 // Agrupación SOLO de pantalla: lago y laguna comparten botón (en la base siguen distintos)
 const GRUPOS = {rio:'Río', lago:'Lago', mar:'Mar'};   // 'Lago' incluye lagos, lagunas y embalses
 const GRP = t=>t==='laguna'||t==='embalse'?'lago':t;
 // Dos catálogos separados: técnica (modalidad) y acceso (desde dónde se pesca)
 const TECNICAS=['Carnada','Señuelo','Fly fishing','Trolling'];
 const ACCESOS=['Costa','Vadeo','Embarcado a motor','Flotada a remo'];
-const TIPO_COLOR = {rio:'#1E90A8', lago:'#26C6DA', laguna:'#26C6DA', mar:'#4C8DFF'};
+const TIPO_COLOR = {rio:'#1E90A8', lago:'#26C6DA', laguna:'#26C6DA', embalse:'#26C6DA', mar:'#4C8DFF'};
 const NIVELES = {1:{n:'Gratuito'},2:{n:'Mayor visibilidad',b:'DESTACADO'},3:{n:'Reserva directa + visibilidad en el mapa',b:'RESERVA DIRECTA'}};
 const TIPO_SRV = {guia:'Guía de pesca', lodge:'Lodge', alojamiento:'Alojamiento'};
 
@@ -1054,6 +1072,12 @@ $('#resx').onclick=()=>{ if(R&&R.esp){ F.esp=null; renderFilters(); } R=null; $(
 /* AFINAR ESPECIE: al elegir una especie aparece una tarjeta (abajo a la derecha en el celular, al alcance del pulgar)
    con las modalidades y tipos de ambiente de esa especie. Se toca, filtra el mapa y se cierra sola cuando ya se eligió todo. */
 let REF=null;
+function afinar(esp,mod,tipo){   // especie ya elegida (R.esp) + modalidad y/o tipo de ambiente
+  F.mod=mod||null; F.tipos=tipo?{rio:false,lago:false,mar:false,[tipo]:true}:F0().tipos; renderFilters();
+  const e_=ESP_BY[esp], as=ambOfEsp(esp).filter(passF), s3=top3(srvOfEsp(esp)).filter(s=>!mod||s.mods.includes(mod));
+  R.amb=new Set(as.map(a=>a.id)); R.srv=new Set(s3.map(s=>s.id));
+  R.label=`${espName(e_)}${mod?' · '+mod:''}${tipo?' · '+GRUPOS[tipo]:''} — ${as.length} ambiente(s) · ${s3.length} con reserva directa`;
+  draw(); if(as.length) fitLatLngs([...as.map(a=>a.ll),...s3.map(s=>s.ll)],7); }
 function hideRefine(){ REF=null; const el=$('#refine'); if(el) el.classList.remove('on'); }
 function showRefine(esp){ const as=ambOfEsp(esp), mods=TECNICAS.filter(m=>as.some(a=>a.mod.includes(m))), tipos=Object.keys(GRUPOS).filter(k=>as.some(a=>GRP(a.tipo)===k));
   if(mods.length<2&&tipos.length<2) return hideRefine();
@@ -1064,13 +1088,29 @@ function renderRefine(){ if(!REF) return; const ch=(g,k,l)=>`<span class="rchip$
    +(REF.tipos.length>1?`<div class="rl">Ambiente</div><div class="rc">${REF.tipos.map(k=>ch('tipo',k,GRUPOS[k])).join('')}</div>`:''); }
 $('#refine').addEventListener('click',e=>{ e.stopPropagation(); if(e.target.closest('[data-rx]')) return hideRefine();
   const c=e.target.closest('[data-rg]'); if(!c||!REF||!R) return; const g=c.dataset.rg, k=c.dataset.rk; REF[g]=REF[g]===k?null:k;
-  F.mod=REF.mod; F.tipos=REF.tipo?{rio:false,lago:false,mar:false,[REF.tipo]:true}:F0().tipos; renderFilters();
-  const e_=ESP_BY[REF.esp], as=ambOfEsp(REF.esp).filter(passF), s3=top3(srvOfEsp(REF.esp)).filter(s=>!REF.mod||s.mods.includes(REF.mod));
-  R.amb=new Set(as.map(a=>a.id)); R.srv=new Set(s3.map(s=>s.id));
-  R.label=`${espName(e_)}${REF.mod?' · '+REF.mod:''}${REF.tipo?' · '+GRUPOS[REF.tipo]:''} — ${as.length} ambiente(s) · ${s3.length} con reserva directa`;
-  draw(); if(as.length) fitLatLngs([...as.map(a=>a.ll),...s3.map(s=>s.ll)],7); renderRefine();
+  afinar(REF.esp,REF.mod,REF.tipo); renderRefine();
   if((REF.mods.length<2||REF.mod)&&(REF.tipos.length<2||REF.tipo)) setTimeout(hideRefine,900); });
 L.DomEvent.disableClickPropagation($('#refine'));
+
+/* COMBINAR (solo celular): la flechita bajo la fila de especies abre una ventanita flotante para elegir
+   especie + tipo de ambiente + modalidad juntos. Tocar la fila de especies sigue funcionando como siempre. */
+let CB={esp:null,tipo:null,mod:null};
+function comboCount(){ return AMBIENTES.filter(a=>(!CB.esp||a.esp.includes(CB.esp))&&(!CB.tipo||GRP(a.tipo)===CB.tipo)&&(!CB.mod||a.mod.includes(CB.mod))).length; }
+function renderCombo(){ const cc=(g,k,h)=>`<span class="cc${CB[g]===k?' on':''}" data-cg="${g}" data-ck2="${esc(k)}">${h}</span>`, n=comboCount();
+  $('#combo').innerHTML=`<div class="cl">Especie</div><div class="cr">${ESPECIES.map(e=>cc('esp',e.id,fishBadge(e)+esc(espName(e)))).join('')}</div>
+   <div class="cl">Ambiente</div><div class="cr">${Object.entries(GRUPOS).map(([k,v])=>cc('tipo',k,esc(v))).join('')}</div>
+   <div class="cl">Modalidad</div><div class="cr">${TECNICAS.map(m=>cc('mod',m,esc(m))).join('')}</div>
+   <div class="cf"><button data-cx="1">Cerrar</button><button class="go" data-cgo="1"${n?'':' disabled'}>Ver ${n} en el mapa</button></div>`; }
+function closeCombo(){ $('#combo').classList.remove('on'); $('#cbtn').classList.remove('on'); $('#cbtn').textContent='▾'; }
+$('#cbtn').onclick=e=>{ e.stopPropagation(); if($('#combo').classList.contains('on')) return closeCombo();
+  CB={esp:R&&R.esp||F.esp||null,tipo:null,mod:F.mod||null}; renderCombo(); $('#combo').classList.add('on'); $('#cbtn').classList.add('on'); $('#cbtn').textContent='▴'; };
+$('#combo').addEventListener('click',e=>{ e.stopPropagation();
+  if(e.target.closest('[data-cx]')) return closeCombo();
+  const c=e.target.closest('[data-cg]'); if(c){ const g=c.dataset.cg, k=c.dataset.ck2; CB[g]=CB[g]===k?null:k; const sx=[...$('#combo').querySelectorAll('.cr')].map(r=>r.scrollLeft); renderCombo(); $('#combo').querySelectorAll('.cr').forEach((r,i)=>r.scrollLeft=sx[i]); return; }
+  if(e.target.closest('[data-cgo]')){ const {esp,tipo,mod}=CB; closeCombo();
+    if(esp){ F=F0(); R=null; setResults({kind:'esp',id:esp}); hideRefine(); if(tipo||mod) afinar(esp,mod,tipo); }
+    else { resetMap(); F.mod=mod; if(tipo) F.tipos={rio:false,lago:false,mar:false,[tipo]:true}; renderFilters(); draw(); } } });
+document.addEventListener('click',e=>{ if($('#combo').classList.contains('on')&&!e.target.closest('#combo,#cbtn')) closeCombo(); });
 
 /* ---------- Panel de filtros ---------- */
 function renderFilters(){
