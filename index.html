@@ -196,6 +196,17 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 20px;color:
 .legend .pt{width:12px;height:12px;border-radius:50%;border:2px solid #fff;flex:none}
 .leaflet-bar a.satbtn{width:auto;padding:0 8px;font-size:.72rem;font-weight:600;white-space:nowrap}
 #fbtn{display:none}
+#refine{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:22px;z-index:1150;background:rgba(19,34,37,.97);border:1px solid var(--sel);border-radius:16px;padding:10px 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.45);max-width:min(92vw,420px);color:var(--ink)}
+#refine.on{display:block}
+#refine .rh{display:flex;align-items:center;gap:8px;font-size:.82rem;margin-bottom:4px}
+#refine .rh b{color:var(--sel)}
+#refine .rx{margin-left:auto;background:none;border:0;color:var(--ink-soft);font-size:1rem;cursor:pointer;padding:2px 6px}
+#refine .rl{font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);margin:6px 0 4px}
+#refine .rc{display:flex;flex-wrap:wrap;gap:6px}
+#refine .rchip{border:1px solid var(--line);border-radius:18px;padding:8px 13px;font-size:.84rem;cursor:pointer;background:var(--panel-2);user-select:none}
+#refine .rchip.on{background:var(--sel);border-color:var(--sel);color:#fff}
+body.claro #refine{background:rgba(255,255,255,.98)}
+@media (max-width:760px){ #refine{position:fixed;left:auto;right:10px;transform:none;bottom:84px;max-width:calc(100vw - 20px)} body.sheet-shown #refine{bottom:calc(50vh + 10px)} }
 #tabbar{display:none;flex:none;user-select:none;-webkit-user-select:none;height:var(--tb);background:var(--panel);border-top:1px solid var(--line);z-index:3000;padding:0 4px;padding-bottom:env(safe-area-inset-bottom)}
 #tabbar a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--ink-soft);font-size:.68rem;text-decoration:none;cursor:pointer;border-radius:10px;margin:4px 1px}
 #tabbar a .ni{width:32px;height:32px;display:flex}#tabbar a .ni svg{width:100%;height:100%}
@@ -468,6 +479,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
       <div id="qwrap"><button id="qtog"></button><div id="qbar"></div></div>
       <div id="resbar"><span id="restx"></span><button id="resx">✕ Limpiar</button></div>
     </div>
+    <div id="refine"></div>
     <button id="fbtn">⚙ Filtros <span class="n" id="fbtnn" style="display:none"></span></button>
     <div class="legend">
       <div class="row"><span class="sw" style="background:#1E90A8"></span> Río</div>
@@ -488,7 +500,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
     <select id="s-tipo"></select><select id="s-prov"></select><select id="s-mod"></select><select id="s-acc"></select><select id="s-amb"></select><select id="s-esp"></select>
     <span class="cnt" id="s-cnt"></span>
   </div>
-  <div class="note">Orden: primero los planes de mayor visibilidad (marcados como destacados), luego por reputación. La transparencia sobre lo pago es buena práctica y exigencia en la UE.</div>
+  <div class="note">Orden: primero los planes de mayor visibilidad (marcados como destacados), luego los más vistos y después por reputación. La transparencia sobre lo pago es buena práctica y exigencia en la UE.</div>
   <div class="grid" id="s-list"></div>
 </div></section>
 
@@ -757,7 +769,12 @@ const srvOfAmb=id=>SRV.filter(s=>s.amb.some(x=>x===id||AMB_BY[x]?.padre===id)).s
 const tramosDe=id=>AMBIENTES.filter(a=>a.padre===id);
 const srvOfEsp=id=>SRV.filter(s=>s.esp.includes(id)).sort(byRank);
 const ambOfEsp=id=>AMBIENTES.filter(a=>a.esp.includes(id));
-function byRank(a,b){ return b.nivel-a.nivel || b.rat-a.rat; }
+/* MÁS VISTOS: contador anónimo en Supabase (tabla ficha_vista). Servicios: nivel pago > más vistos > reputación. */
+let VISTAS={}; const VISTO=new Set();
+const vS=s=>s&&s.dbid?(VISTAS['prestador:'+s.dbid]||0):0, vA=a=>a&&a.dbid?(VISTAS['ambiente:'+a.dbid]||0):0;
+function contarVista(tipo,o){ if(DATOS_ORIGEN!=='supabase'||!o||!o.dbid) return; const k=tipo+':'+o.dbid; if(VISTO.has(k)) return; VISTO.add(k);   // una vez por visita
+  sbRpc('sumar_vista',{p_tipo:tipo,p_id:o.dbid}).catch(()=>{}); }
+function byRank(a,b){ return b.nivel-a.nivel || vS(b)-vS(a) || b.rat-a.rat; }
 
 /* ---------- utilidades ---------- */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -995,8 +1012,8 @@ function ambPts(a){
 }
 const KIND_URL={esp:'especie',srv:'servicio',amb:'ambiente',prov:'provincia',tipo:'tipo'}, URL_KIND=Object.fromEntries(Object.entries(KIND_URL).map(([a,b])=>[b,a]));
 function setUrl(k,id,title){ try{ history.replaceState(history.state,'','#/mapa/'+KIND_URL[k]+'/'+encodeURIComponent(id)); }catch(e){} document.title=(title?title+' · ':'')+'Fishing in Argentina'; }
-function selectAmb(id,o={}){ const a=AMB_BY[id]; SEL={type:'amb',id}; draw(); openDrawer(detAmb(a),a.n); setUrl('amb',id,a.n); if(o.fit!==false) fitLatLngs(ambPts(a),a.geo?8:10); }
-function selectSrv(id,o={}){ const s=SRV_BY[id]; SEL={type:'srv',id}; draw(); openDrawer(detSrv(s),s.n); setUrl('srv',id,s.n); if(o.fit) fitLatLngs([s.ll],10); }
+function selectAmb(id,o={}){ const a=AMB_BY[id]; contarVista('ambiente',a); SEL={type:'amb',id}; draw(); openDrawer(detAmb(a),a.n); setUrl('amb',id,a.n); if(o.fit!==false) fitLatLngs(ambPts(a),a.geo?8:10); }
+function selectSrv(id,o={}){ const s=SRV_BY[id]; contarVista('prestador',s); SEL={type:'srv',id}; draw(); openDrawer(detSrv(s),s.n); setUrl('srv',id,s.n); if(o.fit) fitLatLngs([s.ll],10); }
 function selectTramo(t,o={}){
   const p=t.properties, a=AMBIENTES.find(x=>x.geo===p.geo&&x.tramo&&tramoDeAmb(x)===t);
   if(a) return selectAmb(a.id,{fit:!!o.fit});   // si el tramo ya tiene ficha, se abre esa
@@ -1017,8 +1034,8 @@ function selectGeo(f){
 const top3=ss=>ss.filter(s=>s.nivel===3);
 function srvOfProv(p){ return SRV.filter(s=>s.prov===p||s.amb.some(id=>AMB_BY[id].prov.includes(p))).sort(byRank); }
 function setResults(r){ // r = {kind:'esp'|'tipo'|'amb'|'srv'|'prov', id}. Toda búsqueda: mapa centrado + ficha/lista + servicios con reserva directa en el mapa
-  SEL=null;
-  if(r.kind==='esp'){ const e=ESP_BY[r.id]; const as=ambOfEsp(r.id); F.esp=r.id; renderFilters();   /* el buscador manda: el panel de filtros lo sigue */
+  SEL=null; hideRefine();
+  if(r.kind==='esp'){ setTimeout(()=>showRefine(r.id),0); const e=ESP_BY[r.id]; const as=ambOfEsp(r.id); F.esp=r.id; renderFilters();   /* el buscador manda: el panel de filtros lo sigue */
     const s3=top3(srvOfEsp(r.id)); R={esp:r.id,amb:new Set(as.map(a=>a.id)),srv:new Set(s3.map(s=>s.id)),label:`${espName(e)} — ${as.length} ambiente(s) · ${s3.length} con reserva directa`}; draw(); openDrawer(detEsp(e),espName(e)); fitLatLngs([...as.map(a=>a.ll),...s3.map(s=>s.ll)],7); }
   else if(r.kind==='tipo'){ const as=AMBIENTES.filter(a=>GRP(a.tipo)===r.id); const ss=SRV.filter(s=>s.amb.some(id=>as.some(a=>a.id===id))).sort(byRank), s3=top3(ss);
     R={tipo:r.id,amb:new Set(as.map(a=>a.id)),srv:new Set(s3.map(s=>s.id)),label:`${GRUPOS[r.id]} — ${as.length} ambiente(s) · ${s3.length} con reserva directa`}; draw(); openDrawer(detList('Tipo de ambiente',GRUPOS[r.id],as,ss),GRUPOS[r.id]); fitLatLngs(as.map(a=>a.ll),7); }
@@ -1033,6 +1050,27 @@ function setResults(r){ // r = {kind:'esp'|'tipo'|'amb'|'srv'|'prov', id}. Toda 
   if(r.kind==='esp'||r.kind==='tipo'||r.kind==='prov') setUrl(r.kind,r.id,r.kind==='esp'?espName(ESP_BY[r.id]):r.kind==='tipo'?GRUPOS[r.id]:r.id);
 }
 $('#resx').onclick=()=>{ if(R&&R.esp){ F.esp=null; renderFilters(); } R=null; $('#resbar').classList.remove('on'); draw(); try{history.replaceState(history.state,'','#/mapa');}catch(e){} document.title='Fishing in Argentina'; };
+
+/* AFINAR ESPECIE: al elegir una especie aparece una tarjeta (abajo a la derecha en el celular, al alcance del pulgar)
+   con las modalidades y tipos de ambiente de esa especie. Se toca, filtra el mapa y se cierra sola cuando ya se eligió todo. */
+let REF=null;
+function hideRefine(){ REF=null; const el=$('#refine'); if(el) el.classList.remove('on'); }
+function showRefine(esp){ const as=ambOfEsp(esp), mods=TECNICAS.filter(m=>as.some(a=>a.mod.includes(m))), tipos=Object.keys(GRUPOS).filter(k=>as.some(a=>GRP(a.tipo)===k));
+  if(mods.length<2&&tipos.length<2) return hideRefine();
+  REF={esp,mod:null,tipo:null,mods,tipos}; renderRefine(); $('#refine').classList.add('on'); }
+function renderRefine(){ if(!REF) return; const ch=(g,k,l)=>`<span class="rchip${REF[g]===k?' on':''}" data-rg="${g}" data-rk="${esc(k)}">${esc(l)}</span>`;
+  $('#refine').innerHTML=`<div class="rh">Afinar <b>${esc(espName(ESP_BY[REF.esp]))}</b><button class="rx" data-rx="1" title="Cerrar">✕</button></div>`
+   +(REF.mods.length>1?`<div class="rl">Modalidad</div><div class="rc">${REF.mods.map(m=>ch('mod',m,m)).join('')}</div>`:'')
+   +(REF.tipos.length>1?`<div class="rl">Ambiente</div><div class="rc">${REF.tipos.map(k=>ch('tipo',k,GRUPOS[k])).join('')}</div>`:''); }
+$('#refine').addEventListener('click',e=>{ e.stopPropagation(); if(e.target.closest('[data-rx]')) return hideRefine();
+  const c=e.target.closest('[data-rg]'); if(!c||!REF||!R) return; const g=c.dataset.rg, k=c.dataset.rk; REF[g]=REF[g]===k?null:k;
+  F.mod=REF.mod; F.tipos=REF.tipo?{rio:false,lago:false,mar:false,[REF.tipo]:true}:F0().tipos; renderFilters();
+  const e_=ESP_BY[REF.esp], as=ambOfEsp(REF.esp).filter(passF), s3=top3(srvOfEsp(REF.esp)).filter(s=>!REF.mod||s.mods.includes(REF.mod));
+  R.amb=new Set(as.map(a=>a.id)); R.srv=new Set(s3.map(s=>s.id));
+  R.label=`${espName(e_)}${REF.mod?' · '+REF.mod:''}${REF.tipo?' · '+GRUPOS[REF.tipo]:''} — ${as.length} ambiente(s) · ${s3.length} con reserva directa`;
+  draw(); if(as.length) fitLatLngs([...as.map(a=>a.ll),...s3.map(s=>s.ll)],7); renderRefine();
+  if((REF.mods.length<2||REF.mod)&&(REF.tipos.length<2||REF.tipo)) setTimeout(hideRefine,900); });
+L.DomEvent.disableClickPropagation($('#refine'));
 
 /* ---------- Panel de filtros ---------- */
 function renderFilters(){
@@ -1086,7 +1124,7 @@ $('#filters').addEventListener('click',e=>{
   const t=e.target.closest('[data-ft],[data-fe],[data-fc],[data-fm]'); if(!t) return;
   if(t.dataset.fm!==undefined) F.mod=t.dataset.fm||null;
   else if(t.dataset.ft) F.tipos[t.dataset.ft]=!F.tipos[t.dataset.ft];
-  else if(t.dataset.fe!==undefined){ if(t.dataset.fe){ setResults({kind:'esp',id:t.dataset.fe}); return; } F.esp=null; if(R){ R=null; $('#resbar').classList.remove('on'); } }
+  else if(t.dataset.fe!==undefined){ if(t.dataset.fe){ setResults({kind:'esp',id:t.dataset.fe}); return; } F.esp=null; hideRefine(); if(R){ R=null; $('#resbar').classList.remove('on'); } }
   else F[t.dataset.fc]=!F[t.dataset.fc];
   renderFilters(); draw();
 });
@@ -1187,8 +1225,8 @@ function fitIg(){ $$('.igprev iframe').forEach(f=>{ const w=f.clientWidth; if(w)
 addEventListener('resize',fitIg);
 function openDrawer(html,title){ $('#dbody').innerHTML=html; setTimeout(fitIg,0); $('#dtitle').textContent=title; $('#dbody').scrollTop=0; domOpen('drawer'); ovPush('drawer'); }
 function openFiltersSheet(){ domOpen('filters'); ovPush('filters'); }
-function resetMap(){ SEL=null; R=null; F=F0(); renderFilters(); $('#resbar').classList.remove('on'); if(typeof draw==='function') draw(); document.title='Fishing in Argentina'; setTimeout(()=>{ if(cur==='mapa'&&/^#\/mapa\//.test(location.hash)) try{history.replaceState(history.state,'','#/mapa');}catch(e){} },80); }
-function limpiarBusqueda(){ const i=$('#ms input'); if(i){ i.value=''; $('#ms .sx').style.display='none'; $('#ms .sdrop').classList.remove('open'); } }
+function resetMap(){ hideRefine(); SEL=null; R=null; F=F0(); renderFilters(); $('#resbar').classList.remove('on'); if(typeof draw==='function') draw(); document.title='Fishing in Argentina'; setTimeout(()=>{ if(cur==='mapa'&&/^#\/mapa\//.test(location.hash)) try{history.replaceState(history.state,'','#/mapa');}catch(e){} },80); }
+function limpiarBusqueda(){ ['#ms','#hs'].forEach(id=>{ const bx=$(id); if(!bx) return; bx.querySelector('input').value=''; bx.querySelector('.sx').style.display='none'; bx.querySelector('.sdrop').classList.remove('open'); }); }
 $('#dclose').onclick=()=>{ ovClose('drawer'); if(cur==='mapa'){ resetMap(); limpiarBusqueda(); } };
 function sheetDrag(el,handle,name,peekable){
   // Posiciones: completa (0) · media (50%) · mínima (solo la barra de título, 66 px). Tocar la barra alterna; arrastrar se acomoda a la más cercana.
@@ -1260,8 +1298,8 @@ function applyFocus(v,o){
   $$('.card.focus').forEach(c=>c.classList.remove('focus'));
   if(el){ el.classList.add('focus'); el.scrollIntoView({block:'center',behavior:'smooth'}); }
   if(v==='especies') openDrawer(detEsp(ESP_BY[o.id]),espName(ESP_BY[o.id]));
-  if(v==='servicios') openDrawer(detSrv(SRV_BY[o.id]),SRV_BY[o.id].n);
-  if(v==='ambientes') openDrawer(detAmb(AMB_BY[o.id]),AMB_BY[o.id].n);
+  if(v==='servicios'){ contarVista('prestador',SRV_BY[o.id]); openDrawer(detSrv(SRV_BY[o.id]),SRV_BY[o.id].n); }
+  if(v==='ambientes'){ contarVista('ambiente',AMB_BY[o.id]); openDrawer(detAmb(AMB_BY[o.id]),AMB_BY[o.id].n); }
 }
 // clics globales: pestañas + doble navegación entre secciones
 document.addEventListener('change',e=>{ const up=e.target.closest('[data-up]'); if(!up||!up.files[0]) return; const k=up.dataset.up, fr=new FileReader();
@@ -1480,7 +1518,7 @@ function render(v){
     fillSel('#a-prov','Provincia: todas',[...new Set(AMBIENTES.flatMap(a=>a.prov))].sort().map(p=>[p,p]));
     fillSel('#a-mod','Modalidad: todas',TECNICAS.map(m=>[m,m]));
     const t=$('#a-tipo').value,p=$('#a-prov').value,md=$('#a-mod').value;
-    const list=AMBIENTES.filter(a=>(!t||GRP(a.tipo)===t)&&(!p||a.prov.includes(p))&&(!md||a.mod.includes(md)));
+    const list=AMBIENTES.filter(a=>(!t||GRP(a.tipo)===t)&&(!p||a.prov.includes(p))&&(!md||a.mod.includes(md))).sort((x,y)=>vA(y)-vA(x));   // más vistos primero
     $('#a-cnt').textContent=list.length+' ambiente(s)';
     $('#a-list').innerHTML=list.map(cardAmb).join('');
   }
@@ -1542,7 +1580,7 @@ function attachSearch(box){
 }
 attachSearch($('#hs')); attachSearch($('#heros')); attachSearch($('#ms'));
 // ✕ del buscador del mapa: cierra todo (ficha de la derecha, sugerencias y resultados)
-$('#ms .sx').addEventListener('click',e=>{ e.stopPropagation(); limpiarBusqueda(); if(drawer.classList.contains('open')) ovClose('drawer'); resetMap(); $('#ms input').blur(); });
+['#ms','#hs'].forEach(id=>$(id+' .sx').addEventListener('click',e=>{ if(id==='#hs'&&cur!=='mapa') return; e.stopPropagation(); limpiarBusqueda(); if(drawer.classList.contains('open')) ovClose('drawer'); resetMap(); $(id+' input').blur(); }));   // en el celular el buscador es el de arriba (#hs)
 if($('#mtop')){ L.DomEvent.disableClickPropagation($('#mtop')); L.DomEvent.disableScrollPropagation($('#mtop')); }
 // búsqueda de un río sin ficha
 const _applyMap=applyMap;
@@ -1791,6 +1829,7 @@ async function cargarDatos(){
       (x.tipo==='guia'?G:x.tipo==='lodge'?Lo:Al).push(o); });
     A2.forEach(a=>{ if(!a.geo&&a.tramo&&a.padre){ const p=A2.find(y=>y.id===a.padre); if(p&&p.geo) a.geo=p.geo; } });   // tramo -> geometría del río padre
     ESPECIES=E2; AMBIENTES=A2; GUIAS=G; LODGES=Lo; ALOJAMIENTOS=Al; DATOS_ORIGEN='supabase';
+    sbGet('ficha_vista?select=tipo,ref_id,vistas').then(rs=>{ VISTAS={}; rs.forEach(r=>VISTAS[r.tipo+':'+r.ref_id]=+r.vistas); if(cur==='servicios'||cur==='ambientes') try{ go(cur); }catch(e){} }).catch(()=>{});   // si la tabla todavía no existe, se sigue con el orden de siempre
   }catch(e){ clearTimeout(to); console.warn('[datos] Supabase no respondió, uso datos de ejemplo:',e.message||e); }
 }
 
