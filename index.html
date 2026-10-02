@@ -937,7 +937,8 @@ function distPx(ll,f){ const p=map.latLngToLayerPoint(ll); let m=1e9;
 function tramoCerca(g,ll){ let best=null; TRAMOS_DE(g).forEach(t=>{ const d=distPx(ll,t); if(!best||d<best.d) best={t,d}; }); return best&&best.d<30?best.t:null; }
 function tramoDeAmb(a){   // tramo dibujable de un ambiente-tramo: por nombre, o el más cercano a su punto
   if(!a||!a.tramo||!a.geo) return null; const ts=TRAMOS_DE(a.geo); if(!ts.length) return null;
-  const n=ts.find(t=>nrm(t.properties.tramo)===nrm(a.tramo)); if(n) return n;
+  const TR_OLD={'Alto Paraná Corrientes':'Alto Paraná correntino','Alto Paraná Misiones':'Alto Paraná misionero','Uruguay Superior':'Alto Uruguay','Uruguay Inferior':'Bajo Uruguay','Embalse Salto Grande':'Embalse de Salto Grande'};   // nombres anteriores al 02-10 (por si la base todavía no se actualizó)
+  const n=ts.find(t=>nrm(t.properties.tramo)===nrm(a.tramo))||ts.find(t=>TR_OLD[t.properties.tramo]&&nrm(TR_OLD[t.properties.tramo])===nrm(a.tramo)); if(n) return n;
   let best=null; ts.forEach(t=>{ const d=distPx(a.ll,t); if(!best||d<best.d) best={t,d}; }); return best.t; }
 function geoElegido(){ if(!SEL) return null; if(SEL.type==='amb') return AMB_BY[SEL.id]?.geo||null; if(SEL.type==='tramo'){ const t=selTramo(); return t?t.properties.geo:null; } return null; }
 function selTramo(){ if(!SEL) return null; if(SEL.type==='tramo') return TRAMOS.features.find(t=>t.properties._k===SEL.k); if(SEL.type==='amb') return tramoDeAmb(AMB_BY[SEL.id]); return null; }
