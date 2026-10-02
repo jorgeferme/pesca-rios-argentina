@@ -718,7 +718,7 @@ let ESPECIES = [   // valores de EJEMPLO: si Supabase responde, se reemplazan (v
  {id:'boga',agua:['dulce'],n:'Boga',en:'Boga',sci:'Megaleporinus obtusidens',c:'#C9A36A',d:'Muy buscada por su pelea; frecuente en ríos del Litoral.',como:'Fondo con masas y cebado, líneas finas; de costa o embarcado.'},
  {id:'trucha_m',agua:['dulce'],n:'Trucha marrón',en:'Brown trout',sci:'Salmo trutta',c:'#A0522D',d:'Protagonista de los ríos patagónicos, introducida hace más de un siglo.',como:'Mosca (seca, ninfa, streamer) o spinning liviano con cucharitas. Vadeo en correderas y pozones al amanecer y atardecer.'},
  {id:'trucha_a',agua:['dulce'],n:'Trucha arcoíris',en:'Rainbow trout',sci:'Oncorhynchus mykiss',c:'#E07A9A',d:'Combativa y saltadora; abundante en ríos y lagos andinos.',como:'Mosca seca y ninfa en correderas; spinning liviano. Muchos tramos son solo mosca y devolución: revisar reglamento.'},
- {id:'searun',agua:['dulce','salada'],n:'Trucha marrón de mar',en:'Sea-run brown trout',sci:'Salmo trutta (anádroma)',c:'#8FA3B8',d:'Se alimenta en el mar y vuelve a los ríos australes: ejemplares de gran porte.',como:'Mosca con caña de dos manos o una mano pesada, líneas de hundimiento, en pozones con viento. Con devolución.'},
+ {id:'searun',agua:['dulce','salada'],n:'Sea trout',en:'Sea-run brown trout',sci:'Salmo trutta (anádroma)',c:'#8FA3B8',d:'Se alimenta en el mar y vuelve a los ríos australes: ejemplares de gran porte.',como:'Mosca con caña de dos manos o una mano pesada, líneas de hundimiento, en pozones con viento. Con devolución.'},
  {id:'perca',agua:['dulce'],n:'Perca',en:'Creole perch',sci:'Percichthys trucha',c:'#B8B04A',d:'Perca criolla, nativa de la Patagonia.',como:'Señuelos pequeños o ninfas cerca de costas rocosas de lagos.'},
  {id:'salmon',agua:['dulce'],n:'Salmón encerrado',en:'Landlocked salmon',sci:'Salmo salar sebago',c:'#E08A5C',d:'Salmón del Atlántico que vive en agua dulce.',como:'Trolling embarcado en lagos; spinning desde costa en desembocaduras.'},
  {id:'pejerrey',agua:['dulce'],n:'Pejerrey',en:'Silverside (pejerrey)',sci:'Odontesthes bonariensis',c:'#B0C4D8',d:'Clásico de las lagunas pampeanas y de embalses.',como:'Líneas de flote finas con mojarra o filet, embarcado. Mejor en otoño–invierno.'},
@@ -1872,7 +1872,7 @@ async function cargarDatos(){
     // --- especies (se conserva el id del prototipo para fotos e íconos) ---
     const legE={}; ESPECIES.forEach(e=>legE[e.n]=e);
     const espId={};
-    const E2=esp.map(x=>{ const l=legE[x.nombre]||legE[{'Surubí pintado':'Surubí','Tiburón':'Tiburón escalandrún'}[x.nombre]]; const id=l?l.id:'e'+x.id; espId[x.id]=id; if(!FISH_P[id]) FISH_P[id]=FISH_P.dorado;
+    const E2=esp.map(x=>{ const l=legE[x.nombre]||legE[{'Surubí pintado':'Surubí','Tiburón':'Tiburón escalandrún','Trucha marrón de mar':'Sea trout'}[x.nombre]]; const id=l?l.id:'e'+x.id; espId[x.id]=id; if(!FISH_P[id]) FISH_P[id]=FISH_P.dorado;
       return {id,dbid:x.id,agua:x.especie_tipo_agua.map(t=>t.tipo_agua.codigo).sort(),n:x.nombre,en:x.nombre_en||x.nombre,sci:x.nombre_cientifico,c:x.color||'#8FA3B8',d:x.descripcion||'',como:x.como_pescar||''}; });
     E2.forEach(e=>{ if(!e.agua.length) e.agua=['dulce']; });
     // --- ambientes ---
