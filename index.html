@@ -243,6 +243,13 @@ body.claro #refine{background:rgba(255,255,255,.98)}
 .reflbl::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#243a3f;margin-right:4px;vertical-align:1px;box-shadow:0 0 0 1.5px #fff}
 .sat .reflbl{color:#fff;text-shadow:0 0 3px #000,0 0 4px #000}
 .sat .reflbl::before{background:#fff;box-shadow:0 0 0 1.5px #000}
+/* Ciudades de referencia de pesca (tabla ciudad_referencia): violeta; resaltadas al elegir un ambiente */
+.reflbl.rp{font-weight:650;color:#4b2a8a}
+.reflbl.rp::before{background:#7B4FC9;width:7px;height:7px}
+.reflbl.rp.hl{font-size:13px;background:#7B4FC9;color:#fff;padding:2px 7px 2px 5px;border-radius:10px;text-shadow:none;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.reflbl.rp.hl::before{background:#fff;box-shadow:none}
+.sat .reflbl.rp:not(.hl){color:#e9dcff}
+.sat .reflbl.rp::before{background:#B48CFF}
 .maplbl{font-family:"Fraunces",serif;font-style:italic;font-size:.8rem;color:#0E3C46;text-align:center;white-space:nowrap;text-shadow:0 0 3px #fff,0 0 3px #fff}
 /* ---------- PANEL DE DETALLE (derecha / hoja inferior) ---------- */
 #drawer{position:fixed;top:var(--hh);right:0;bottom:0;width:var(--dw);max-width:100%;background:var(--panel);border-left:1px solid var(--line);z-index:2500;transform:translateX(102%);transition:transform .28s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;box-shadow:-12px 0 34px rgba(0,0,0,.45)}
@@ -889,13 +896,22 @@ const CIUDADES=[[1,'Buenos Aires',-34.60,-58.38],[1,'Córdoba',-31.42,-64.18],[1
  [2,'Trelew',-43.25,-65.31],[2,'Puerto Madryn',-42.77,-65.04],[2,'Junín de los Andes',-39.95,-71.07],[2,'Villa La Angostura',-40.76,-71.65],[2,'El Bolsón',-41.96,-71.53],[2,'Trevelin',-43.09,-71.46],[2,'Zapala',-38.90,-70.07],[2,'Chos Malal',-37.38,-70.27],[2,'Aluminé',-39.24,-70.92],[2,'Cipolletti',-38.93,-67.99],[2,'General Roca',-39.03,-67.58],[2,'Paso de la Patria',-27.32,-58.57],[2,'Ituzaingó',-27.60,-56.69],[2,'Goya',-29.14,-59.26],[2,'Esquina',-30.02,-59.53],[2,'Puerto Iguazú',-25.60,-54.57],[2,'Concordia',-31.39,-58.02],[2,'Colón',-32.22,-58.14],[2,'Federación',-30.98,-57.92],[2,'Gualeguaychú',-33.01,-58.52],[2,'Reconquista',-29.15,-59.65],[2,'Rafaela',-31.25,-61.49],[2,'Chascomús',-35.57,-58.01],[2,'Tandil',-37.32,-59.13],[2,'Necochea',-38.55,-58.74],[2,'Carmen de Patagones',-40.80,-62.98],[2,'San Rafael',-34.62,-68.33],[2,'Malargüe',-35.47,-69.58],[2,'Villa Carlos Paz',-31.42,-64.50],[2,'Río Cuarto',-33.12,-64.35],[2,'El Chaltén',-49.33,-72.89],[2,'Perito Moreno',-46.59,-70.93],[2,'Los Antiguos',-46.55,-71.62],[2,'Puerto Deseado',-47.75,-65.90],[2,'Puerto San Julián',-49.31,-67.73],[2,'Tolhuin',-54.51,-67.19]];
 map.createPane('refs'); map.getPane('refs').style.zIndex=390; map.getPane('refs').style.pointerEvents='none';
 const refProv=L.geoJSON(PROVS,{pane:'refs',interactive:false,style:()=>({color:satOn?'#fff':'#5b6f73',weight:satOn?1:.8,opacity:satOn?.55:.45,dashArray:'4 4',fill:false})});
-const refCity=L.layerGroup(CIUDADES.map(([t,n,la,lo])=>{ const m=L.marker([la,lo],{pane:'refs',interactive:false,keyboard:false,icon:L.divIcon({className:'reflbl t'+t,html:esc(n),iconSize:null,iconAnchor:[4,7]})}); m._t=t; return m; }));
+const refCity=L.layerGroup(CIUDADES.map(([t,n,la,lo])=>{ const m=L.marker([la,lo],{pane:'refs',interactive:false,keyboard:false,icon:L.divIcon({className:'reflbl t'+t,html:esc(n),iconSize:null,iconAnchor:[4,7]})}); m._t=t; m._n=n; return m; }));
+/* Ciudades de referencia (base de datos): desde dónde se sale a pescar. Se ven desde zoom 6; al elegir un ambiente se resaltan las suyas. */
+let CIUD_REF=[]; const refPesca=L.layerGroup();
+function setCiudadesRef(arr){ CIUD_REF=arr; const ya=new Set(arr.map(c=>c.n));
+  refCity.eachLayer(m=>{ if(ya.has(m._n)) refCity.removeLayer(m); });
+  refPesca.clearLayers(); arr.forEach(c=>{ const m=L.marker(c.ll,{pane:'refs',interactive:false,keyboard:false,icon:L.divIcon({className:'reflbl rp',html:esc(c.n),iconSize:null,iconAnchor:[4,7]})}); m._c=c; refPesca.addLayer(m); });
+  AMBIENTES.forEach(a=>{ a.ciud=arr.filter(c=>c.amb.includes(a.id)).map(c=>c.n); }); syncRefs(); }
 const refRutas=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',{pane:'refs',minZoom:7,maxZoom:19,opacity:.55,attribution:'Rutas © Esri'});
 function syncRefs(){ const z=map.getZoom();
   if(!map.hasLayer(refProv)) refProv.addTo(map); refProv.setStyle({color:satOn?'#fff':'#5b6f73',weight:satOn?1:.8,opacity:satOn?.55:.45});
   map.getContainer().classList.toggle('sat',satOn);
   const verCiud=z>=5&&(satOn||z<9); if(verCiud&&!map.hasLayer(refCity)) refCity.addTo(map); if(!verCiud&&map.hasLayer(refCity)) map.removeLayer(refCity);
   refCity.eachLayer(m=>{ const el=m.getElement&&m.getElement(); if(el) el.style.display=(m._t===1||z>=7)?'':'none'; });
+  let selC=[]; try{ if(SEL&&SEL.type==='amb'&&AMB_BY[SEL.id]) selC=AMB_BY[SEL.id].ciud||[]; }catch(e){}
+  const verP=CIUD_REF.length&&(z>=6||selC.length); if(verP&&!map.hasLayer(refPesca)) refPesca.addTo(map); if(!verP&&map.hasLayer(refPesca)) map.removeLayer(refPesca);
+  refPesca.eachLayer(m=>{ const el=m.getElement&&m.getElement(); if(!el) return; const hl=selC.includes(m._c.n); el.classList.toggle('hl',hl); el.style.display=(z>=6||hl)?'':'none'; if(hl) m.setZIndexOffset(1000); else m.setZIndexOffset(0); });
   if(satOn&&!map.hasLayer(refRutas)) refRutas.addTo(map); if(!satOn&&map.hasLayer(refRutas)) map.removeLayer(refRutas); }
 map.on('zoomend',syncRefs); setTimeout(syncRefs,0);
 function syncMalv(){ const show=__base.name!=='ign'&&map.getZoom()>=5; if(show&&!map.hasLayer(malvLbl)) malvLbl.addTo(map); if(!show&&map.hasLayer(malvLbl)) map.removeLayer(malvLbl); }
@@ -966,7 +982,7 @@ function srvIcon(s,big){ return L.divIcon({className:'ico',html:`<div class="mk 
 function ambIcon(a,big){ return L.divIcon({className:'ico',html:`<div class="mk amb${big?' big':''}" style="--c:${TIPO_COLOR[a.tipo]}"></div>`,iconSize:[36,36],iconAnchor:[18,18]}); }
 function clickable(m,fn){ m.on('click',()=>{featClick=true;setTimeout(()=>featClick=false,50);fn();}); return m; }
 
-function draw(){
+function draw(){ try{ syncRefs(); }catch(e){}
   geoLayer.clearLayers();
   const lk=L.geoJSON(LAKES,{filter:featVisible,style:styleF,onEachFeature:onGeo});
   const rv=L.geoJSON(RIVERS,{filter:featVisible,style:styleF,onEachFeature:onGeo});
@@ -1189,6 +1205,7 @@ function srvRows(list){ return list.length?list.map(s=>`<div class="prow" data-s
 function newsFor(k,id){ const n=NOTICIAS.filter(x=>x[k].includes(id)); return n.length?`<h3>Novedades</h3>`+n.map(x=>`<div class="rule"><b>${esc(x.t)}</b><br><small class="mono">${x.f}</small></div>`).join(''):''; }
 function detAmb(a){
   return `<div class="det"><div class="prov">${TIPOS[a.tipo]} · ${a.prov.map(esc).join(' / ')}</div><h2>${esc(a.n)}</h2>${a.tramo?`<div class="tramo">Tramo: ${esc(a.tramo)}</div>`:''}${a.sinUbic?`<div class="tramo">📍 Ubicación en el mapa a confirmar</div>`:''}
+  ${a.ciud&&a.ciud.length?`<div class="psub" style="margin:8px 0 4px">Ciudades de referencia</div><div class="chips">${a.ciud.map(n=>`<span class="chip link" data-ciudad="${esc(n)}">📍 ${esc(n)}</span>`).join('')}</div>`:''}
   <p class="desc">${esc(a.d)}</p>
   ${a.padre&&AMB_BY[a.padre]?`<p class="psub">Parte de: <span class="chip link" data-amb="${a.padre}">${esc(AMB_BY[a.padre].n)}</span></p>`:''}
   ${!tramosDe(a.id).length&&!a.tramo&&a.geo&&TRAMOS_DE(a.geo).length?`<h3>Tramos</h3><div class="chips">${TRAMOS_DE(a.geo).map(t=>`<span class="chip link" data-tramo="${t.properties._k}">${esc(t.properties.tramo)}</span>`).join('')}</div>`:''}
@@ -1357,6 +1374,8 @@ document.addEventListener('click',e=>{
   const sz=e.target.closest('[data-size]'); if(sz){ const el=sz.dataset.size==='drawer'?drawer:filtersEl, st=sheetSt(el); setSheet(el, st==='half'?'full':'half'); return; }
 });
 document.addEventListener('click',e=>{ if(!e.target.closest('[data-tab=buscar]')) return; const i=$('#hs input'); i.focus(); i.select(); if(i.value) i.dispatchEvent(new Event('input')); });
+document.addEventListener('click',e=>{ const t=e.target.closest('[data-ciudad]'); if(!t) return; const c=CIUD_REF.find(x=>x.n===t.dataset.ciudad); if(!c) return;
+  const dr=document.getElementById('drawer'); if(dr&&window.innerWidth<760) setSheet(dr,'peek'); map.flyTo(c.ll,Math.max(map.getZoom(),10)); });
 document.addEventListener('click',e=>{ const t=e.target.closest('[data-tramo]'); if(!t) return; const f=TRAMOS.features.find(x=>x.properties._k===t.dataset.tramo); if(f){ go('mapa'); setTimeout(()=>selectTramo(f,{fit:true}),60); } });
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-go],[data-esp],[data-srv],[data-amb],[data-mapamb],[data-mapesp],[data-mapsrv],[data-q]'); if(!t) return;
@@ -1845,7 +1864,7 @@ async function cargarDatos(){
     // --- especies (se conserva el id del prototipo para fotos e íconos) ---
     const legE={}; ESPECIES.forEach(e=>legE[e.n]=e);
     const espId={};
-    const E2=esp.map(x=>{ const l=legE[x.nombre]; const id=l?l.id:'e'+x.id; espId[x.id]=id; if(!FISH_P[id]) FISH_P[id]=FISH_P.dorado;
+    const E2=esp.map(x=>{ const l=legE[x.nombre]||legE[{'Surubí pintado':'Surubí','Tiburón':'Tiburón escalandrún'}[x.nombre]]; const id=l?l.id:'e'+x.id; espId[x.id]=id; if(!FISH_P[id]) FISH_P[id]=FISH_P.dorado;
       return {id,dbid:x.id,agua:x.especie_tipo_agua.map(t=>t.tipo_agua.codigo).sort(),n:x.nombre,en:x.nombre_en||x.nombre,sci:x.nombre_cientifico,c:x.color||'#8FA3B8',d:x.descripcion||'',como:x.como_pescar||''}; });
     E2.forEach(e=>{ if(!e.agua.length) e.agua=['dulce']; });
     // --- ambientes ---
@@ -1873,6 +1892,8 @@ async function cargarDatos(){
       (x.tipo==='guia'?G:x.tipo==='lodge'?Lo:Al).push(o); });
     A2.forEach(a=>{ if(!a.geo&&a.tramo&&a.padre){ const p=A2.find(y=>y.id===a.padre); if(p&&p.geo) a.geo=p.geo; } });   // tramo -> geometría del río padre
     ESPECIES=E2; AMBIENTES=A2; GUIAS=G; LODGES=Lo; ALOJAMIENTOS=Al; DATOS_ORIGEN='supabase';
+    sbGet('ciudad_referencia?select=nombre,lat,lng,ambiente_ciudad(ambiente_id,orden)&order=nombre').then(rs=>setCiudadesRef(rs.map(c=>({n:c.nombre,ll:[c.lat,c.lng],
+      amb:c.ambiente_ciudad.sort((p,q)=>p.orden-q.orden).map(r=>ambId[r.ambiente_id]).filter(Boolean)})))).catch(()=>{});   // si la tabla todavía no existe, el mapa sigue igual
     sbGet('ficha_vista?select=tipo,ref_id,vistas').then(rs=>{ VISTAS={}; rs.forEach(r=>VISTAS[r.tipo+':'+r.ref_id]=+r.vistas); if(cur==='servicios'||cur==='ambientes') try{ go(cur); }catch(e){} }).catch(()=>{});   // si la tabla todavía no existe, se sigue con el orden de siempre
   }catch(e){ clearTimeout(to); console.warn('[datos] Supabase no respondió, uso datos de ejemplo:',e.message||e); }
 }
