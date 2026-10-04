@@ -1057,7 +1057,7 @@ function setUrl(k,id,title){ try{ history.replaceState(history.state,'','#/mapa/
 function selectAmb(id,o={}){ const a=AMB_BY[id]; contarVista('ambiente',a); SEL={type:'amb',id}; draw(); openDrawer(detAmb(a),a.n); setUrl('amb',id,a.n); if(o.fit!==false) fitLatLngs(ambPts(a),a.geo?8:10); }
 function selectSrv(id,o={}){ const s=SRV_BY[id]; contarVista('prestador',s); SEL={type:'srv',id}; draw(); openDrawer(detSrv(s),s.n); setUrl('srv',id,s.n); if(o.fit) fitLatLngs([s.ll],10); }
 function selectTramo(t,o={}){
-  const p=t.properties, a=AMBIENTES.find(x=>x.geo===p.geo&&x.tramo&&tramoDeAmb(x)===t);
+  const p=t.properties, a=AMBIENTES.find(x=>x.geo===p.geo&&x.tramo&&nrm(x.tramo)===nrm(p.tramo))||AMBIENTES.find(x=>x.geo===p.geo&&x.tramo&&tramoDeAmb(x)===t);   // primero la ficha con el mismo nombre de tramo
   if(a) return selectAmb(a.id,{fit:!!o.fit});   // si el tramo ya tiene ficha, se abre esa
   SEL={type:'tramo',k:p._k}; draw(); openDrawer(detTramo(t),p.n+' · '+p.tramo);
   if(o.fit){ const b=L.geoJSON(t).getBounds(); fitLatLngs([b.getSouthWest(),b.getNorthEast()],9); } }
