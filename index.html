@@ -1199,7 +1199,7 @@ function renderFilters(){
   $('#fbtnn').style.display=n?'inline':'none'; $('#fbtnn').textContent=n;
 }
 const QB=[['cerca'],['esp','dorado'],['esp','surubi'],['esp','trucha_a'],['esp','trucha_m'],['esp','pejerrey'],['esp','tararira'],['esp','searun'],['esp','corvina'],['tipo','mar']];
-function renderQbar(){ $('#qbar').innerHTML=QB.map(([k,id])=>k==='cerca'?`<span class="qb near${R&&R.me?' on':''}" data-qb="cerca"><span class="em">📍</span>Cerca mío</span>`
+function renderQbar(){ $('#qbar').innerHTML=QB.filter(([k,id])=>k!=='esp'||ESP_BY[id]).map(([k,id])=>k==='cerca'?`<span class="qb near${R&&R.me?' on':''}" data-qb="cerca"><span class="em">📍</span>Cerca mío</span>`
    :k==='tipo'?`<span class="qb${R&&!R.esp&&!R.prov&&!R.me&&R.tipo===id?' on':''}" data-qb="tipo:${id}"><span class="em">🌊</span>Mar</span>`
    :`<span class="qb${R&&R.esp===id?' on':''}" data-qb="esp:${id}">${fishBadge(ESP_BY[id])}${esc(espName(ESP_BY[id]))}</span>`).join('');
   const a=R&&R.esp?ESP_BY[R.esp]:null;
@@ -1939,9 +1939,9 @@ async function cargarDatos(){
       sbGet('v_servicios_publicos?select=id,nivel',ctl.signal)]);
     clearTimeout(to);
     // --- especies (se conserva el id del prototipo para fotos e íconos) ---
-    const legE={}; ESPECIES.forEach(e=>legE[e.n]=e);
+    const nzE=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z]/g,''); const legE={}; ESPECIES.forEach(e=>{ legE[e.n]=e; legE[nzE(e.n)]=e; });   // 05-10: 'Seatrout' = 'Sea trout' (sin espacios ni tildes)
     const espId={};
-    const E2=esp.map(x=>{ const l=legE[x.nombre]||legE[{'Surubí pintado':'Surubí','Tiburón':'Tiburón escalandrún','Trucha marrón de mar':'Sea trout'}[x.nombre]]; const id=l?l.id:'e'+x.id; espId[x.id]=id; if(!FISH_P[id]) FISH_P[id]=FISH_P.dorado;
+    const E2=esp.map(x=>{ const l=legE[x.nombre]||legE[nzE(x.nombre)]||legE[{'Surubí pintado':'Surubí','Tiburón':'Tiburón escalandrún','Trucha marrón de mar':'Sea trout'}[x.nombre]]; const id=l?l.id:'e'+x.id; espId[x.id]=id; if(!FISH_P[id]) FISH_P[id]=FISH_P.dorado;
       return {id,dbid:x.id,agua:x.especie_tipo_agua.map(t=>t.tipo_agua.codigo).sort(),n:x.nombre,en:x.nombre_en||x.nombre,sci:x.nombre_cientifico,c:x.color||'#8FA3B8',d:x.descripcion||'',como:x.como_pescar||''}; });
     E2.forEach(e=>{ if(!e.agua.length) e.agua=['dulce']; });
     // --- ambientes ---
