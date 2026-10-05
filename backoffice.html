@@ -88,6 +88,8 @@ const E = {
       {k:'lng',l:'Longitud',num:1,hint:'Ej.: -58.5731'},
       {k:'tipo_agua',l:'Tipo de agua (texto libre)',hint:'Ej.: dulce, salobre, clara, turbia'},
       {k:'geo_ref',l:'Referencia geométrica IGN',hint:'Lo completamos al vincular con el mapa; se puede dejar vacío'},
+      {k:'jerarquia',l:'Jerarquía en el mapa (ríos)',num:1,op:[['','Automática (por largo)'],['1','1 · Principal (se ve siempre, línea gruesa)'],['2','2 · Mediano'],['3','3 · Chico (se ve al acercar)']],hint:'Grosor de la línea y desde qué zoom se ve'},
+      {k:'endorreico',l:'¿No desemboca? (ríos)',op:[['false','No'],['true','Sí: el último tramo se dibuja punteado']],def:'false'},
       {k:'descripcion',l:'Descripción',area:1,full:1},
     ],
     rel:[
