@@ -445,6 +445,49 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
   .wrap{padding:20px 14px 50px}
 }
 @media(min-width:761px){ .fhead .bar{display:none} body[data-view=mapa] header .hsearch{visibility:hidden} }
+/* 07-10: menú de coordenadas (clic derecho / toque largo) */
+.cmenu .leaflet-popup-content{margin:10px 12px}
+.cmc{display:flex;flex-direction:column;gap:6px;min-width:190px}
+.cmc .cmt{font-size:.78rem;color:var(--ink,#123);user-select:all}
+.cmc button,.cmc a{display:block;text-align:left;font:inherit;font-size:.85rem;padding:7px 9px;border-radius:8px;border:1px solid rgba(0,0,0,.12);background:#fff;color:inherit;text-decoration:none;cursor:pointer}
+.cmc button:hover,.cmc a:hover{background:#f2f6f8}
+.cmc button.ok{background:#e7f6ec;border-color:#9ad3ad}
+/* 07-10: experiencias y videos */
+.xfoto{height:120px;border-radius:10px;background:#1b3a40 center/cover no-repeat;margin-bottom:8px}
+.xfoto.xph{display:flex;align-items:center;justify-content:center;font-size:2.2rem}
+.xfoto.big{height:180px}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:6px 0}
+.vcard{position:relative;cursor:pointer;border-radius:10px;overflow:hidden;background:#000;aspect-ratio:16/9}
+.vcard img{width:100%;height:100%;object-fit:cover;opacity:.85}
+.vcard .vplay{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);font-size:1.6rem;color:#fff;background:rgba(200,0,0,.85);border-radius:12px;padding:2px 14px}
+.vcard small{position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font-size:.7rem;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.8))}
+.vcard iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* 07-10: inicio (miniatura del mapa y recuadro final) */
+.hmap{position:relative;cursor:pointer;border-radius:16px;overflow:hidden;background:#0f2529;height:340px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.08)}
+.hmap svg{height:100%;width:auto;transition:transform .3s}
+.hmap:hover svg{transform:scale(1.03)}
+.hmcta{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(19,34,37,.9);color:#fff;padding:7px 14px;border-radius:20px;font-size:.85rem;white-space:nowrap}
+.hook{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:26px 0 10px}
+.hook>div{background:rgba(224,180,92,.1);border:1px solid rgba(224,180,92,.35);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.hook span{font-size:.86rem;opacity:.9}.hook .btn{align-self:flex-start}
+@media(max-width:700px){.hook{grid-template-columns:1fr}.hmap{height:300px}}
+/* 07-10: contacto por público */
+.ctabs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}
+.cbenef{font-size:.86rem;opacity:.9;margin:0 0 10px;line-height:1.4}
+.hp{position:absolute!important;left:-9999px!important;height:0;overflow:hidden}
+/* 07-10: spots y tramos sutiles */
+.mk.spot{width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid #FF7A59;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.tlbl{transform:translate(-50%,-140%);white-space:nowrap;font-size:.68rem;font-weight:600;color:#fff;background:rgba(11,40,55,.72);padding:2px 6px;border-radius:6px;pointer-events:none}
+.spl{display:flex;flex-direction:column;gap:8px;margin:6px 0 4px}
+.spr{display:flex;gap:9px;align-items:flex-start}
+.spr .spi{font-size:1.2rem;line-height:1.2}
+.spr small{opacity:.7}
+.spd{font-size:.8rem;opacity:.85;margin-top:2px}
+.spb{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.spb a,.spb button{font:inherit;font-size:.78rem;padding:4px 8px;border-radius:7px;border:1px solid rgba(0,0,0,.14);background:#fff;color:inherit;text-decoration:none;cursor:pointer}
+.spb button.ok{background:#e7f6ec}
+/* 07-10: especies principales en los filtros */
+.sptile.all{font-size:.78rem;opacity:.85}
 </style>
 <!-- Microsoft Clarity: se carga SOLO si la persona acepta cookies (ver "AVISO DE COOKIES" al final) -->
 </head>
@@ -457,6 +500,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
     <a data-go="servicios"><span class="ni" data-ico="servicios"></span><span data-i18n="nav_servicios">Servicios</span></a>
     <a data-go="especies"><span class="ni" data-ico="especies"></span><span data-i18n="nav_especies">Especies</span></a>
     <a data-go="ambientes"><span class="ni" data-ico="ambientes"></span><span data-i18n="nav_ambientes">Ambientes</span></a>
+    <a data-go="experiencias"><span class="ni" data-ico="experiencias"></span><span>Experiencias</span></a>
     <a data-go="contacto"><span class="ni" data-ico="contacto"></span><span data-i18n="nav_contacto">Contacto</span></a>
   </nav>
   <div class="hsearch sbox" id="hs"><span class="si">🔍</span><input type="text" placeholder="Buscar especie, río, lago, guía, lodge…" data-i18n-ph="ph" autocomplete="off"><span class="sx">✕</span><div class="sdrop"></div></div>
@@ -487,10 +531,14 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
     </div>
     <div class="ad">Espacio publicitario · banner horizontal<small>728×90 escritorio / 320×100 celular · AdSense o anunciante directo</small></div>
     <div class="sect"><h2>Servicios destacados <a data-go="servicios">Ver todos →</a></h2><p class="s">Guías y lodges con plan de visibilidad (identificados como destacados).</p><div class="grid" id="h-srv"></div></div>
+    <div class="sect"><h2>El mapa <a data-go="mapa">Abrir el mapa →</a></h2><p class="s">Tocá un río para ver dónde pescar, sus tramos, spots, guías y lodges.</p><div class="hmap" id="h-map" data-go="mapa" role="button" aria-label="Abrir el mapa"></div></div>
+    <div class="sect" id="h-xsec" style="display:none"><h2>Experiencias <a data-go="experiencias">Ver sección completa →</a></h2><p class="s">Ideas para tu próximo viaje de pesca.</p><div class="grid" id="h-exp"></div></div>
     <div class="sect"><h2>Especies <a data-go="especies">Ver todas →</a></h2><p class="s">Qué pescar y dónde.</p><div class="grid" id="h-esp"></div></div>
     <div class="ad">Espacio publicitario · patrocinio de sección<small>Ej.: marca de equipos, aerolínea, turismo provincial</small></div>
     <div class="sect"><h2>Ambientes <a data-go="ambientes">Ver todos →</a></h2><p class="s">Ríos, lagos, lagunas y spots de mar con ficha.</p><div class="grid" id="h-amb"></div></div>
     <div class="sect"><h2>Novedades</h2><p class="s">Aperturas de temporada, cambios de reglamento y notas (base de noticias).</p><div class="news" id="h-news"></div></div>
+    <div class="hook"><div><b>¿Sos guía o tenés un lodge?</b><span>Mostrate a pescadores de todo el mundo y recibí reservas con seña. Sin costo inicial.</span><button class="btn gold" data-ctgo="guia">Sumate</button></div>
+      <div><b>¿Planeás tu viaje de pesca?</b><span>Contanos fechas, especie y presupuesto y te armamos una propuesta.</span><button class="btn" data-ctgo="viaje">Organizar mi viaje</button></div></div>
   </div>
   <footer>© 2026 Fishing in Argentina · Prototipo v3.8 · Hidrografía: Instituto Geográfico Nacional (IGN), CC BY 4.0 · Mapa © OpenStreetMap · Contenidos de ejemplo · <a href="#" data-cont="1">Panel del contador (demo)</a> · <a href="privacidad.html">Privacidad</a> · <a href="#" data-cookies="1">Configurar cookies</a></footer>
 </section>
@@ -558,24 +606,31 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
   <p class="eyebrow">Dónde pescar</p>
   <h1 class="pt">Ambientes</h1>
   <p class="psub">Ríos (y sus tramos), lagos, lagunas y spots de mar, con reglamentación y licencia.</p>
-  <div class="fbar"><select id="a-tipo"></select><select id="a-prov"></select><select id="a-mod"></select><span class="cnt" id="a-cnt"></span></div>
+  <div class="fbar"><select id="a-tipo"></select><select id="a-esp"></select><select id="a-prov"></select><select id="a-mod"></select><span class="cnt" id="a-cnt"></span></div>
   <div class="grid" id="a-list"></div>
 </div></section>
 
 <!-- ===================== CONTACTO ===================== -->
+<!-- ===================== EXPERIENCIAS (07-10, bloque H) ===================== -->
+<section class="view" id="v-experiencias"><div class="wrap">
+  <p class="eyebrow">Ideas para tu viaje</p>
+  <h1 class="pt">Experiencias</h1>
+  <p class="psub">Guías de experiencia: dónde hacerlo, cuándo ir y quién te lleva.</p>
+  <div class="grid" id="x-list"></div>
+</div></section>
 <section class="view" id="v-contacto"><div class="wrap">
   <p class="eyebrow">Hablemos</p>
   <h1 class="pt">Contacto</h1>
   <div class="two">
     <div>
-      <p class="psub">Consultas de pescadores, prestadores que quieran sumarse y anunciantes.</p>
-      <form class="form" id="cform">
-        <label>Nombre<input required></label>
-        <label>Email<input type="email" required></label>
-        <label>Motivo<select><option>Soy pescador · consulta</option><option>Soy guía / lodge · quiero sumarme</option><option>Quiero anunciar</option><option>Otro</option></select></label>
-        <label>Mensaje<textarea rows="5" required></textarea></label>
-        <button class="btn gold" type="submit">Enviar</button>
-        <div id="cok" class="note" style="display:none">✔ Mensaje enviado (demo: no se envía nada).</div>
+      <p class="psub">Elegí quién sos y te contactamos.</p>
+      <div class="ctabs" id="ctabs"></div>
+      <div class="cbenef" id="cbenef"></div>
+      <form class="form" id="cform" novalidate>
+        <div id="cfields"></div>
+        <label class="hp" aria-hidden="true">No completar<input name="hpw" tabindex="-1" autocomplete="off"></label>
+        <button class="btn gold" type="submit" id="csend">Enviar</button>
+        <div id="cok" class="note" style="display:none"></div>
       </form>
     </div>
     <div>
@@ -824,6 +879,10 @@ const isMobile=()=>matchMedia('(max-width:760px)').matches;
 const initials=n=>n.split(' ').filter(w=>w.length>2||w===w.toUpperCase()).map(w=>w[0]).slice(0,2).join('').toUpperCase();
 let LANG='es';
 const espName=e=>LANG==='en'?e.en:e.n;
+/* 07-10 (bloque F): especies principales (columna especie.principal / orden_principal en la base).
+   Si la base todavía no tiene la columna, se usa esta lista (mismo orden que pidió el socio). */
+const PRINC_DEF=['Dorado','Surubí pintado','Pacú','Trucha marrón','Trucha arcoíris','Steelhead','Seatrout','Salmón chinook','Róbalo','Perca','Corvina rubia','Pescadilla','Tiburón'];
+function espPrincipales(){ const l=ESPECIES.filter(e=>e.pri!=null); const L2=l.length?l.sort((a,b)=>a.pri-b.pri):PRINC_DEF.map(n=>ESPECIES.find(e=>e.n===n)).filter(Boolean); return L2; }
 const stars=(r,n)=>`<span class="stars">${'★'.repeat(Math.round(r))}${'☆'.repeat(5-Math.round(r))} ${r.toFixed(1)} <small>(${n})</small></span>`;
 const lvlBadge=s=>NIVELES[s.nivel].b?`<span class="badge${s.nivel===3?' g':''}">${NIVELES[s.nivel].b}</span>`:'';
 let UIDC=0; const uid=()=>'u'+(UIDC++);
@@ -834,7 +893,7 @@ const fishBig=(e,big)=>ESP_FOTO[e.id]?(big?`<div class="fhero" data-zoom="${e.id
    dibujo plano con contorno oscuro. Se usan grandes en la portada y chicos en el menú.
    ===================================================================== */
 const ICO_S='#1B2A2E';
-const ICO_RING={buscar:'#5FBB90',inicio:'#7E9698',mapa:'#1E90A8',servicios:'#E0B45C',especies:'#6E8B3D',ambientes:'#26C6DA',contacto:'#A98BE0'};
+const ICO_RING={buscar:'#5FBB90',inicio:'#7E9698',mapa:'#1E90A8',servicios:'#E0B45C',especies:'#6E8B3D',ambientes:'#26C6DA',contacto:'#A98BE0',experiencias:'#E07A5F'};
 const ICO_ART={
  inicio:`<path d="M26 52 L50 30 L74 52" fill="none" stroke="${ICO_S}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
   <path d="M32 50 V74 H68 V50 L50 34 Z" fill="#E8B94A" stroke="${ICO_S}" stroke-width="3" stroke-linejoin="round"/>
@@ -865,6 +924,7 @@ const ICO_ART={
  buscar:`<circle cx="44" cy="44" r="17" fill="#CFE9EF" stroke="${ICO_S}" stroke-width="4.5"/>
   <path d="M36 40 q5 -8 13 -4" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
   <path d="M57 57 L72 72" stroke="${ICO_S}" stroke-width="8" stroke-linecap="round"/><path d="M58 58 L71 71" stroke="#E0B45C" stroke-width="3.5" stroke-linecap="round"/>`,
+ experiencias:`<path d="M18 62 H82 L72 76 H28 Z" fill="#E8B94A" stroke="${ICO_S}" stroke-width="3" stroke-linejoin="round"/><path d="M50 24 V60" stroke="${ICO_S}" stroke-width="3"/><path d="M52 26 L74 56 H52 Z" fill="#fff" stroke="${ICO_S}" stroke-width="2.5" stroke-linejoin="round"/><path d="M18 82 Q34 76 50 82 T82 82" fill="none" stroke="#3FB4CC" stroke-width="4" stroke-linecap="round"/>`,
  contacto:`<rect x="20" y="32" width="54" height="38" rx="4" fill="#fff" stroke="${ICO_S}" stroke-width="3"/>
   <path d="M21 34 L47 54 L73 34" fill="none" stroke="${ICO_S}" stroke-width="3" stroke-linejoin="round"/>
   <path d="M21 69 L40 51 M73 69 L54 51" stroke="${ICO_S}" stroke-width="2"/>
@@ -881,7 +941,21 @@ $$('[data-ico]').forEach(el=>el.innerHTML=secIcon(el.dataset.ico));
 /* =====================================================================
    MAPA
    ===================================================================== */
-const map=L.map('map',{zoomControl:true,preferCanvas:true,renderer:L.canvas({tolerance:10})}).setView([-38.5,-63.5],4.4);
+const map=L.map('map',{zoomControl:true,tapHold:true,preferCanvas:true,renderer:L.canvas({tolerance:10})}).setView([-38.5,-63.5],4.4);
+/* 07-10 (bloque E): clic derecho (PC) o toque largo (celular) sobre el mapa -> coordenadas del punto.
+   Formato "-40.12345, -71.12345" (Google Maps lo acepta tal cual). 5 decimales ≈ 1 m; el límite real es el mapa de fondo y el dibujo de los ríos. */
+function copiarTexto(t){ if(navigator.clipboard&&window.isSecureContext) return navigator.clipboard.writeText(t);
+  return new Promise((ok,no)=>{ const a=document.createElement('textarea'); a.value=t; a.setAttribute('readonly',''); a.style.cssText='position:fixed;opacity:0'; document.body.appendChild(a); a.select(); try{ document.execCommand('copy')?ok():no(); }catch(e){ no(e); } a.remove(); }); }
+map.on('contextmenu',ev=>{ const la=ev.latlng.lat.toFixed(5), lo=ev.latlng.lng.toFixed(5), t=la+', '+lo, en=LANG==='en';
+  L.popup({className:'cmenu',maxWidth:260,autoPanPadding:[20,20]}).setLatLng(ev.latlng).setContent(
+   `<div class="cmc"><div class="mono cmt">📍 ${t}</div>
+    <button type="button" data-copycoord="${t}">📋 ${en?'Copy coordinates':'Copiar coordenadas'}</button>
+    <a href="https://www.google.com/maps/search/?api=1&query=${la},${lo}" target="_blank" rel="noopener">🗺️ ${en?'Open in Google Maps':'Abrir en Google Maps'}</a>
+    <a href="https://www.google.com/maps/dir/?api=1&destination=${la},${lo}" target="_blank" rel="noopener">🚗 ${en?'Directions':'Cómo llegar'}</a></div>`).openOn(map); });
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-spotgo]'); if(!b) return; const x=SPOTS.find(y=>y.id===b.dataset.spotgo); if(!x) return;
+  if(cur!=='mapa') go('mapa'); if(!SEL||!ambsDeSel().has(x.amb)) selectAmb(x.amb,{fit:false}); setTimeout(()=>map.flyTo(x.ll,Math.max(map.getZoom(),13)),80); });
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-copycoord]'); if(!b) return; const t=b.dataset.copycoord, en=LANG==='en';
+  copiarTexto(t).then(()=>{ b.textContent='✓ '+(en?'Copied':'¡Copiado!'); b.classList.add('ok'); },()=>{ b.textContent=t; }); });
 map.attributionControl.addAttribution('Hidrografía: <a href="https://www.ign.gob.ar" target="_blank">IGN</a> · algunos ríos y costas © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap contributors</a>');
 let satOn=false;
 window.__base={cur:null,name:''};
@@ -916,6 +990,7 @@ const refCity=L.layerGroup(CIUDADES.map(([t,n,la,lo])=>{ const m=L.marker([la,lo
 /* Ciudades de referencia (base de datos): desde dónde se sale a pescar. Se ven desde zoom 6; al elegir un ambiente se resaltan las suyas. */
 let CIUD_REF=[]; const refPesca=L.layerGroup();
 function setCiudadesRef(arr){ CIUD_REF=arr; const ya=new Set(arr.map(c=>c.n));
+  try{ arr.forEach((c,i)=>{ const x={k:'loc',id:'cr'+i,t:()=>c.n,s:()=>'Ciudad de pesca · '+c.amb.length+' ambiente(s)',txt:c.n+' ciudad pesca',ic:'🎣',ll:c.ll,cab:1}; x.n=norm(x.txt); IDX.push(x); }); }catch(e){}
   refCity.eachLayer(m=>{ if(ya.has(m._n)) refCity.removeLayer(m); });
   refPesca.clearLayers(); arr.forEach(c=>{ const m=L.marker(c.ll,{pane:'refs',interactive:false,keyboard:false,icon:L.divIcon({className:'reflbl rp',html:esc(c.n),iconSize:null,iconAnchor:[4,7]})}); m._c=c; refPesca.addLayer(m); });
   AMBIENTES.forEach(a=>{ a.ciud=arr.filter(c=>c.amb.includes(a.id)).map(c=>c.n); }); syncRefs(); }
@@ -976,6 +1051,18 @@ function selTramo(){ if(!SEL) return null; if(SEL.type==='tramo') return TRAMOS.
 const F0=()=>({tipos:{rio:true,lago:true,mar:true},esp:null,mod:null,soloFichas:false,srv:true});
 let F=F0();
 let R=null, SEL=null;
+/* 07-10 (bloque C): SPOTS = lugares puntuales dentro de un ambiente (tabla spot). Se ven al elegir el ambiente (o su río / tramo). */
+let SPOTS=[];
+const SPOT_TIPO={pesquero:['🎣','Pesquero'],bajada:['⬇️','Bajada'],rampa:['🚤','Rampa'],puesto:['🏠','Puesto'],camping:['⛺','Camping'],otro:['📍','Lugar']};
+const comoLlegar=ll=>`https://www.google.com/maps/dir/?api=1&destination=${ll[0].toFixed(5)},${ll[1].toFixed(5)}`;
+function ambsDeSel(){ const S=new Set(); if(!SEL) return S;
+  if(SEL.type==='amb'){ S.add(SEL.id); AMBIENTES.forEach(a=>{ if(a.padre===SEL.id) S.add(a.id); }); }
+  const st=selTramo(); if(st) AMBIENTES.forEach(a=>{ if(a.tramo&&tramoDeAmb(a)===st) S.add(a.id); });
+  const g=geoElegido(); if(g&&!st) AMBIENTES.forEach(a=>{ if(a.geo===g) S.add(a.id); });
+  return S; }
+function spotsDe(ids){ return SPOTS.filter(x=>ids.has(x.amb)); }
+function spotRows(ss){ return ss.map(x=>`<div class="spr"><span class="spi">${SPOT_TIPO[x.tipo]?.[0]||'📍'}</span><div><b>${esc(x.n)}</b> <small>${SPOT_TIPO[x.tipo]?.[1]||''}</small>${x.d?`<div class="spd">${esc(x.d)}</div>`:''}${x.acc?`<div class="spd">🚗 ${esc(x.acc)}</div>`:''}
+  <div class="spb"><a href="${comoLlegar(x.ll)}" target="_blank" rel="noopener">🚗 Cómo llegar</a><button type="button" data-copycoord="${x.ll[0].toFixed(5)}, ${x.ll[1].toFixed(5)}">📋 Coordenadas</button><span class="chip link" data-spotgo="${x.id}">🗺 Ver</span></div></div></div>`).join(''); }
 const C={sel:'#FF7A59',river:'#1E90A8',sea:'#4C8DFF'};
 const ST={r:{color:'#1E90A8',weight:2.4,opacity:.95},rF:{color:'#2BA7C2',weight:3.4,opacity:1},rSel:{color:C.sel,weight:6,opacity:1},
   l:{color:'#0B6E86',weight:2,fillColor:'#26C6DA',fillOpacity:.5,opacity:.95},
@@ -1052,6 +1139,15 @@ function draw(){ try{ syncRefs(); }catch(e){}
   if(st) geoLayer.addLayer(L.geoJSON(st,{style:{color:C.sel,weight:7,opacity:1,lineCap:'round'},onEachFeature:(f,l)=>{
     l.bindTooltip(esc(f.properties.n)+' · '+esc(f.properties.tramo),{sticky:true,className:'rtip',direction:'top'});
     l.on('click',()=>{ featClick=true; setTimeout(()=>featClick=false,50); }); }}));
+  // 07-10 (bloque C): río elegido con tramos -> se ven los tramos sutiles (punteado claro + nombre chico) antes de tocar uno
+  const gS=geoElegido(); if(gS&&!st&&TRAMOS_DE(gS).length>1) TRAMOS_DE(gS).forEach(t=>{
+    geoLayer.addLayer(L.geoJSON(t,{interactive:false,style:{color:'#fff',weight:2,opacity:.95,dashArray:'2 9',lineCap:'round'}}));
+    const cs=t.geometry.coordinates.reduce((a,b)=>b.length>a.length?b:a,[]); if(cs.length){ const m=cs[cs.length>>1];
+      geoLayer.addLayer(L.marker([m[1],m[0]],{interactive:false,keyboard:false,icon:L.divIcon({className:'',iconSize:[0,0],html:`<div class="tlbl">${esc(t.properties.tramo)}</div>`})})); } });
+  // 07-10 (bloque C): spots del ambiente elegido
+  spotsDe(ambsDeSel()).forEach(x=>{ const m=L.marker(x.ll,{zIndexOffset:800,icon:L.divIcon({className:'ico',html:`<div class="mk spot">${SPOT_TIPO[x.tipo]?.[0]||'📍'}</div>`,iconSize:[30,30],iconAnchor:[15,15]})});
+    m.bindTooltip(esc(x.n),{className:'rtip',direction:'top',offset:[0,-14]});
+    m.bindPopup(`<div class="cmc">${spotRows([x])}</div>`,{className:'cmenu',maxWidth:280}); geoLayer.addLayer(m); });
   // ambientes sin geometría (spots de mar y ríos no incluidos en la capa): puntos
   AMBIENTES.filter(a=>!a.geo&&!a.sinUbic&&ambVisible(a)).forEach(a=>{
     const s=isSelAmb(a);
@@ -1193,7 +1289,7 @@ document.addEventListener('click',e=>{ if($('#combo').classList.contains('on')&&
 /* ---------- Panel de filtros ---------- */
 function renderFilters(){
   $('#f-tipos').innerHTML=Object.entries(GRUPOS).map(([k,v])=>`<span class="tg${F.tipos[k]?' on':''}" data-ft="${k}"><span class="dot" style="background:${TIPO_COLOR[k]}"></span>${v}</span>`).join('');
-  $('#f-esp').innerHTML=`<div class="sptiles"><div class="sptile${!F.esp?' on':''}" data-fe=""><span class="fish" style="font-size:1.4rem;align-items:center;justify-content:center">🎣</span>Todas</div>`+ESPECIES.map(e=>`<div class="sptile${F.esp===e.id?' on':''}" data-fe="${e.id}">${fishBadge(e)}${esc(espName(e))}</div>`).join('')+'</div>';
+  $('#f-esp').innerHTML=`<div class="sptiles"><div class="sptile${!F.esp?' on':''}" data-fe=""><span class="fish" style="font-size:1.4rem;align-items:center;justify-content:center">🎣</span>Todas</div>`+(()=>{ const P=espPrincipales(), sel=F.esp&&!P.some(e=>e.id===F.esp)?[ESP_BY[F.esp]]:[]; return [...P,...sel].filter(Boolean); })().map(e=>`<div class="sptile${F.esp===e.id?' on':''}" data-fe="${e.id}">${fishBadge(e)}${esc(espName(e))}</div>`).join('')+`<div class="sptile all" data-goesp="1"><span class="fish" style="font-size:1.2rem;align-items:center;justify-content:center">➕</span>${LANG==='en'?'All species':'Ver todas las especies'}</div></div>`;
   $('#f-mod').innerHTML=[['','Todas'],...TECNICAS.map(m=>[m,m])].map(([k,v])=>`<span class="tg${(F.mod||'')===k?' on':''}" data-fm="${k}">${v}</span>`).join('');
   const n=Object.values(F.tipos).filter(x=>!x).length+(F.esp?1:0)+(F.mod?1:0)+(F.soloFichas?1:0);
   $('#fbtnn').style.display=n?'inline':'none'; $('#fbtnn').textContent=n;
@@ -1241,6 +1337,7 @@ function updateCount(){ renderQbar();
   $('#fclear').onclick=()=>{ F=F0(); renderFilters(); draw(); };
 }
 $('#filters').addEventListener('click',e=>{
+  if(e.target.closest('[data-goesp]')){ go('especies'); return; }
   const t=e.target.closest('[data-ft],[data-fe],[data-fc],[data-fm]'); if(!t) return;
   if(t.dataset.fm!==undefined) F.mod=t.dataset.fm||null;
   else if(t.dataset.ft) F.tipos[t.dataset.ft]=!F.tipos[t.dataset.ft];
@@ -1272,10 +1369,12 @@ function detAmb(a){
   ${tramosDe(a.id).length?`<h3>Tramos</h3><p class="psub">Tocá un tramo para verlo en el mapa.</p><div class="chips">${tramosDe(a.id).map(t=>`<span class="chip link" data-amb="${t.id}">${esc(t.tramo)}</span>`).join('')}</div>`:''}
   ${a.padre&&tramosDe(a.padre).length>1?`<h3>Otros tramos</h3><div class="chips">${tramosDe(a.padre).filter(t=>t.id!==a.id).map(t=>`<span class="chip link" data-amb="${t.id}">${esc(t.tramo)}</span>`).join('')}</div>`:''}
   <dl class="kv"><dt>Temporada</dt><dd>${a.temp.map(esc).join('<br>')}</dd><dt>Modalidad</dt><dd>${a.mod.map(esc).join(' · ')}</dd><dt>Costa / embarcado</dt><dd>${a.acc.map(esc).join(' · ')}</dd><dt>Tipo de pesca</dt><dd>${a.tp.map(esc).join(' · ')}</dd><dt>Agua</dt><dd>${esc(a.agua)}</dd>${a.tipo==='mar'?`<dt>Coordenadas</dt><dd class="mono">${a.ll[0].toFixed(3)}, ${a.ll[1].toFixed(3)}</dd>`:''}</dl>
+  ${(()=>{ const ids=new Set([a.id,...AMBIENTES.filter(x=>x.padre===a.id).map(x=>x.id)]), ss=spotsDe(ids); return ss.length?`<h3>Spots · ${ss.length}</h3><div class="spl">${spotRows(ss)}</div>`:''; })()}
   <h3>Especies</h3>${espChips(a.esp)}
   <h3>Reglamentación</h3><div class="rule">${esc(a.regl.t)} <a href="${a.regl.url}">Ver norma →</a></div>
   <h3>Licencia de pesca</h3>${a.lic.map(l=>`<div class="rule">${esc(l.t)} <a href="${l.url}">Cómo sacarla →</a></div>`).join('')}
   <h3>Servicios · ${srvOfAmb(a.id).length}</h3>${srvRows(srvOfAmb(a.id))}
+  ${videoBlock(VIDEOS.filter(v=>v.amb===a.id||(v.amb&&AMB_BY[v.amb]?.padre===a.id)))}
   ${gallery('amb:'+a.id)}
   ${newsFor('amb',a.id)}
   <button class="btn" data-mapamb="${a.id}">🗺 Ver mapa del ambiente</button>
@@ -1298,6 +1397,7 @@ function detEsp(e){
   <h3>Dónde habita · ${as.length} ambiente(s)</h3><div class="chips">${as.map(a=>`<span class="chip link" data-amb="${a.id}">${esc(a.n)}${a.tramo?' · '+esc(a.tramo):''}</span>`).join('')}</div>
   <button class="btn" data-mapesp="${e.id}">🗺 Ver zonas que habita</button>
   <h3>Servicios que la trabajan · ${ss.length}</h3>${srvRows(ss)}
+  ${videoBlock(VIDEOS.filter(v=>v.esp===e.id))}
   ${newsFor('esp',e.id)}</div>`;
 }
 function detSrv(s){
@@ -1377,7 +1477,7 @@ sheetDrag(drawer,$('#dgrab'),'drawer',true); sheetDrag(filtersEl,$('#fgrab'),'fi
 /* =====================================================================
    NAVEGACIÓN ENTRE PESTAÑAS (#/inicio, #/mapa, ...)
    ===================================================================== */
-const VIEWS=['inicio','mapa','servicios','especies','ambientes','contacto'];
+const VIEWS=['inicio','mapa','servicios','especies','ambientes','experiencias','contacto'];
 let cur=null, pending=null;
 function go(v,opts){
   pending=opts||null; const h='#/'+v; $('#nav').classList.remove('open');
@@ -1435,7 +1535,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('click',e=>{ if(!e.target.closest('[data-tab=buscar]')) return; const i=$('#hs input'); i.focus(); i.select(); if(i.value) i.dispatchEvent(new Event('input')); });
 document.addEventListener('click',e=>{ const t=e.target.closest('[data-ciudad]'); if(!t) return; const c=CIUD_REF.find(x=>x.n===t.dataset.ciudad); if(!c) return;
-  const dr=document.getElementById('drawer'); if(dr&&window.innerWidth<760) setSheet(dr,'peek'); map.flyTo(c.ll,Math.max(map.getZoom(),10)); });
+  fichaCiudad(c.n,c.ll,c.amb,'Ciudad de referencia para pescar'); });
 document.addEventListener('click',e=>{ const t=e.target.closest('[data-tramo]'); if(!t) return; const f=TRAMOS.features.find(x=>x.properties._k===t.dataset.tramo); if(f){ go('mapa'); setTimeout(()=>selectTramo(f,{fit:true}),60); } });
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-go],[data-esp],[data-srv],[data-amb],[data-mapamb],[data-mapesp],[data-mapsrv],[data-q]'); if(!t) return;
@@ -1608,7 +1708,9 @@ function render(v){
   if(v==='inicio'){
     $('#qchips').innerHTML=['Dorado','Trucha','Paraná','Lodge','Pejerrey','Mar'].map(q=>`<span class="qchip" data-q="${q}">${q}</span>`).join('');
     $('#h-srv').innerHTML=SRV.filter(s=>s.nivel===3).sort(byRank).map(cardSrv).join('');
-    $('#h-esp').innerHTML=ESPECIES.slice(0,4).map(cardEsp).join('');
+    $('#h-esp').innerHTML=espPrincipales().slice(0,4).map(cardEsp).join('');
+    if(!$('#h-map').firstChild) $('#h-map').innerHTML=miniMapaSVG();
+    $('#h-xsec').style.display=EXPERIENCIAS.length?'':'none'; $('#h-exp').innerHTML=EXPERIENCIAS.slice(0,4).map(cardExp).join('');
     $('#h-amb').innerHTML=AMBIENTES.slice(0,4).map(cardAmb).join('');
     $('#h-news').innerHTML=NOTICIAS.map(n=>`<div class="card"><div class="d">${n.f}</div><div class="ct" style="margin-top:6px">${esc(n.t)}</div><div class="cm">${esc(n.r)}</div><div class="cl">${n.esp.map(id=>esc(espName(ESP_BY[id]))).join(' · ')}</div></div>`).join('');
   }
@@ -1640,17 +1742,92 @@ function render(v){
     fillSel('#a-tipo','Tipo: todos',Object.entries(GRUPOS));
     fillSel('#a-prov','Provincia: todas',[...new Set(AMBIENTES.flatMap(a=>a.prov))].sort().map(p=>[p,p]));
     fillSel('#a-mod','Modalidad: todas',TECNICAS.map(m=>[m,m]));
-    const t=$('#a-tipo').value,p=$('#a-prov').value,md=$('#a-mod').value;
-    const list=AMBIENTES.filter(a=>(!t||GRP(a.tipo)===t)&&(!p||a.prov.includes(p))&&(!md||a.mod.includes(md))).sort((x,y)=>vA(y)-vA(x));   // más vistos primero
+    fillSel('#a-esp','Especie: todas',espPrincipales().map(x=>[x.id,espName(x)]));
+    const t=$('#a-tipo').value,p=$('#a-prov').value,md=$('#a-mod').value,es=$('#a-esp').value;
+    const list=AMBIENTES.filter(a=>(!t||GRP(a.tipo)===t)&&(!p||a.prov.includes(p))&&(!md||a.mod.includes(md))&&(!es||a.esp.includes(es))).sort((x,y)=>vA(y)-vA(x));   // más vistos primero
     $('#a-cnt').textContent=list.length+' ambiente(s)';
     $('#a-list').innerHTML=list.map(cardAmb).join('');
   }
+  if(v==='experiencias'){ $('#x-list').innerHTML=EXPERIENCIAS.length?EXPERIENCIAS.map(cardExp).join(''):'<p class="psub">Muy pronto.</p>';
+    const sl=location.hash.split('/')[2]; if(sl){ const x=EXPERIENCIAS.find(y=>y.slug===sl); if(x) setTimeout(()=>abrirExp(x),30); } }
   if(v==='contacto'){
     $('#plans').innerHTML=[[1,['Ficha básica','Aparece en Servicios y en sus ambientes, al final','Contacto por formulario']],[2,['Todo lo anterior','Se lista antes que los gratuitos + sello Destacado','Contacto directo (WhatsApp/email)']],[3,['Todo lo anterior','Ícono propio en el mapa y en la portada','Primero en todos los listados','Reserva directa con seña y garantía de salida']]]
       .map(([n,b])=>`<div class="plan${n===3?' top':''}"><div class="mono" style="font-size:.62rem;color:var(--dorado)">NIVEL ${n}</div><b>${NIVELES[n].n}</b><ul>${b.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('');
-    $('#cform').onsubmit=ev=>{ev.preventDefault();$('#cok').style.display='block';};
+    renderContacto();
   }
 }
+
+/* 07-10 (bloques H y G): Experiencias (tabla experiencia + relaciones) y videos de YouTube (tabla video).
+   Videos: se muestra solo la miniatura; el reproductor (youtube-nocookie.com) se carga recién al tocar: no pesa ni pone cookies antes. */
+let EXPERIENCIAS=[], VIDEOS=[];
+function cargarExtras(ambId,espId){
+  sbGet('experiencia?select=id,titulo,slug,bajada,cuerpo,foto_url,temporada,nivel,presupuesto,region,experiencia_ambiente(ambiente_id),experiencia_especie(especie_id)&estado=eq.publicado&order=orden').then(rs=>{
+    EXPERIENCIAS=rs.map(x=>({dbid:x.id,slug:x.slug,t:x.titulo,b:x.bajada||'',c:x.cuerpo||'',foto:x.foto_url,temp:x.temporada,niv:x.nivel,pres:x.presupuesto,reg:x.region,
+      amb:x.experiencia_ambiente.map(r=>ambId[r.ambiente_id]).filter(Boolean),esp:x.experiencia_especie.map(r=>espId[r.especie_id]).filter(Boolean)}));
+    if(cur==='inicio'||cur==='experiencias') render(cur); }).catch(()=>{});
+  sbGet('video?select=id,youtube_id,titulo,canal,especie_id,ambiente_id,prestador_id,experiencia_id&estado=eq.publicado&order=orden').then(rs=>{
+    VIDEOS=rs.map(v=>({y:v.youtube_id,t:v.titulo,c:v.canal||'',esp:espId[v.especie_id]||null,amb:ambId[v.ambiente_id]||null,pre:v.prestador_id,exp:v.experiencia_id})); }).catch(()=>{});
+}
+const NIVEL_X={principiante:'Principiante',intermedio:'Intermedio',avanzado:'Avanzado',todos:'Para todos'};
+const cardExp=x=>`<div class="card xcard" data-exp="${esc(x.slug)}">${x.foto?`<div class="xfoto" style="background-image:url('${esc(x.foto)}')"></div>`:`<div class="xfoto xph">🎣</div>`}<div class="ct">${esc(x.t)}</div><div class="cm">${esc(x.b)}</div><div class="cl">${[x.reg,x.temp].filter(Boolean).map(esc).join(' · ')}</div></div>`;
+function videoBlock(list){ if(!list.length) return ''; return `<h3>Videos</h3><div class="vgrid">${list.map(v=>`<div class="vcard" data-yt="${esc(v.y)}" title="${esc(v.t)}"><img loading="lazy" alt="" src="https://i.ytimg.com/vi/${esc(v.y)}/hqdefault.jpg"><span class="vplay">▶</span><small>${esc(v.t)}${v.c?' · '+esc(v.c):''}</small></div>`).join('')}</div>`; }
+document.addEventListener('click',e=>{ const t=e.target.closest('[data-yt]'); if(!t||t.querySelector('iframe')) return;
+  t.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(t.dataset.yt)}?autoplay=1&rel=0" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>`; });
+function detExp(x){
+  const ss=[...new Map(x.amb.flatMap(id=>srvOfAmb(id)).map(s=>[s.id,s])).values()].sort(byRank);
+  const par=String(x.c).split(/\n\s*\n/).map(p=>`<p class="desc">${esc(p)}</p>`).join('');
+  return `<div class="det">${x.foto?`<div class="xfoto big" style="background-image:url('${esc(x.foto)}')"></div>`:''}<div class="prov">Experiencia${x.reg?' · '+esc(x.reg):''}</div><h2>${esc(x.t)}</h2><p class="desc"><b>${esc(x.b)}</b></p>
+  <div class="chips">${x.temp?`<span class="chip">📅 ${esc(x.temp)}</span>`:''}${x.niv?`<span class="chip">🎯 ${esc(NIVEL_X[x.niv]||x.niv)}</span>`:''}${x.pres?`<span class="chip">💲 ${esc(x.pres)}</span>`:''}</div>
+  ${par}${x.esp.length?`<h3>Especies</h3>${espChips(x.esp)}`:''}
+  <h3>Dónde hacerlo · ${x.amb.length}</h3><div class="chips">${x.amb.map(id=>`<span class="chip link" data-amb="${id}">${esc(AMB_BY[id].n)}${AMB_BY[id].tramo?' · '+esc(AMB_BY[id].tramo):''}</span>`).join('')}</div>
+  ${x.amb.length?`<button class="btn" data-expmap="${esc(x.slug)}">🗺 Ver en el mapa</button>`:''}
+  <h3>Quién te lleva · ${ss.length}</h3>${ss.length?srvRows(ss.slice(0,12)):'<p class="psub">Todavía no hay guías cargados para esta experiencia. ¿Sos guía? <span class="chip link" data-ctgo="guia">Sumate</span></p>'}
+  ${videoBlock(VIDEOS.filter(v=>v.exp===x.dbid))}
+  <div class="hook" style="grid-template-columns:1fr;margin-top:16px"><div><b>¿Querés hacerla?</b><span>Contanos fechas y presupuesto y te armamos el viaje.</span><button class="btn gold" data-ctgo="viaje">Organizar mi viaje</button></div></div></div>`; }
+function abrirExp(x){ openDrawer(detExp(x),x.t); history.replaceState(null,'','#/experiencias/'+x.slug); }
+document.addEventListener('click',e=>{ const t=e.target.closest('[data-exp]'); if(t){ const x=EXPERIENCIAS.find(y=>y.slug===t.dataset.exp); if(!x) return; if(cur!=='experiencias'&&cur!=='inicio') go('experiencias'); abrirExp(x); return; }
+  const m=e.target.closest('[data-expmap]'); if(!m) return; const x=EXPERIENCIAS.find(y=>y.slug===m.dataset.expmap); if(!x) return;
+  go('mapa'); setTimeout(()=>{ F=F0(); renderFilters(); SEL=null; R={amb:new Set(x.amb),srv:new Set(),label:'🎣 '+x.t}; draw(); $('#restx').textContent=R.label;
+    const B=L.latLngBounds(x.amb.map(id=>AMB_BY[id].ll)); if(B.isValid()) map.flyToBounds(B.pad(.25),{maxZoom:9}); },80); });
+
+/* 07-10 (bloque I): miniatura del mapa en el inicio (SVG liviano: provincias + ríos principales). Tocar = abrir el mapa. */
+function miniMapaSVG(){ const W=300,H=560, x0=-74,x1=-53,y0=-55.2,y1=-21.7, X=x=>((x-x0)/(x1-x0)*W).toFixed(0), Y=y=>((y1-y)/(y1-y0)*H).toFixed(0);
+  const path=(cs,n)=>{ const st=Math.max(1,Math.floor(cs.length/n)); return cs.filter((_,i)=>i%st===0||i===cs.length-1).map((c,i)=>(i?'L':'M')+X(c[0])+' '+Y(c[1])).join(''); };
+  let pv=''; PROVS.features.forEach(f=>{ const g=f.geometry, ps=g.type==='Polygon'?[g.coordinates]:g.coordinates; ps.forEach(p=>pv+=path(p[0],80)+'Z'); });
+  let rv=''; RIVERS.features.forEach(f=>{ if(jerOf(f)!==1) return; f.geometry.coordinates.forEach(cs=>rv+=path(cs,30)); });
+  let lk=''; LAKES.features.forEach(f=>f.geometry.coordinates.forEach(p=>{ if(p[0].length>60) lk+=path(p[0],12)+'Z'; }));
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"><path d="${pv}" fill="#16343a" stroke="#4b6b70" stroke-width=".6"/><path d="${lk}" fill="#26C6DA" opacity=".8"/><path d="${rv}" fill="none" stroke="#2BA7C2" stroke-width="1.6" stroke-linejoin="round"/></svg><span class="hmcta">🗺 Abrir el mapa interactivo</span>`; }
+document.addEventListener('click',e=>{ const t=e.target.closest('[data-ctgo]'); if(!t) return; CT=t.dataset.ctgo; go('contacto'); setTimeout(()=>{ try{ renderContacto(); }catch(_){} },30); });
+
+/* 07-10 (bloque J): contacto por tipo de público. Un formulario corto por público, beneficio claro y un solo botón.
+   Se guarda en la tabla contacto (alta anónima) y se ve en el backoffice > Contactos. */
+const CTIPOS={
+ pescador:{t:'🎣 Pescador',b:'¿Conocés un ambiente o un spot que no está? ¿Tenés una consulta? Contanos.',f:[['motivo','Motivo','sel',['Sugerir un ambiente o un spot','Consulta','Corrección de datos']],['lugar','Lugar (río, lago, spot)'],['coords','Coordenadas (opcional)','txt',null,'En el mapa: clic derecho o dedo apretado > Copiar coordenadas']]},
+ guia:{t:'🧭 Guía',b:'Sumate como guía: visibilidad para pescadores de todo el mundo, reputación con reseñas, y agenda y cobro de seña incluidos. Sin costo inicial.',f:[['zona','Zona y ambientes donde guiás'],['especies','Especies'],['web','Web / Instagram']]},
+ lodge:{t:'🏕️ Lodge',b:'Sumá tu lodge: visibilidad internacional y reserva directa con seña garantizada. Período de prueba sin costo.',f:[['lodge','Nombre del lodge'],['zona','Ubicación / ambientes'],['capacidad','Capacidad (huéspedes)'],['web','Web / Instagram']]},
+ anunciante:{t:'📣 Anunciante',b:'Publicitá en la guía de pesca de Argentina: banners, destacados y notas patrocinadas. Te enviamos el media kit (audiencia, países, páginas vistas).',f:[['empresa','Empresa / marca'],['formato','Formato de interés','sel',['Banner','Destacado','Nota patrocinada','No sé todavía']],['web','Web']]},
+ viaje:{t:'✈️ Viaje a medida',b:'Organizamos tu viaje de pesca: contanos fechas, especie y presupuesto y te armamos una propuesta.',f:[['fechas','Fechas aproximadas'],['especie','Especie objetivo'],['nivel','Nivel','sel',['Principiante','Intermedio','Avanzado']],['personas','Cantidad de personas'],['presupuesto','Presupuesto aproximado (USD)']]}};
+let CT='pescador';
+function renderContacto(){
+  $('#ctabs').innerHTML=Object.entries(CTIPOS).map(([k,v])=>`<span class="tg${k===CT?' on':''}" data-ctipo="${k}">${v.t}</span>`).join('');
+  $('#cbenef').textContent=CTIPOS[CT].b;
+  const fld=([k,l,typ,ops,hint])=>typ==='sel'?`<label>${l}<select name="${k}">${ops.map(o=>`<option>${esc(o)}</option>`).join('')}</select></label>`
+    :`<label>${l}<input name="${k}"${hint?` placeholder="${esc(hint)}"`:''}></label>`;
+  $('#cfields').innerHTML=`<label>Nombre<input name="nombre" required maxlength="120"></label><label>Email<input name="email" type="email" required maxlength="160"></label>
+    <label>WhatsApp / teléfono (opcional)<input name="telefono" maxlength="40"></label><label>País<input name="pais" maxlength="60" value="${CT==='viaje'?'':'Argentina'}"></label>
+    ${CTIPOS[CT].f.map(fld).join('')}<label>Mensaje<textarea name="mensaje" rows="4" maxlength="4000"></textarea></label>`;
+  $('#cok').style.display='none'; $('#csend').disabled=false;
+  $('#cform').onsubmit=async ev=>{ ev.preventDefault(); const f=ev.target, g=n=>(f.elements[n]?.value||'').trim();
+    if(g('hpw')) return;   // trampa para robots
+    if(!g('nombre')||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(g('email'))){ $('#cok').textContent='Completá nombre y un email válido.'; $('#cok').style.display='block'; return; }
+    const datos={}; CTIPOS[CT].f.forEach(([k])=>{ const v=f.querySelector(`#cfields [name="${k}"]`)?.value.trim(); if(v) datos[k]=v; });
+    const fila={tipo:CT,nombre:g('nombre'),email:g('email'),telefono:g('telefono')||null,pais:g('pais')||null,mensaje:g('mensaje')||null,datos,idioma:LANG};
+    $('#csend').disabled=true; let ok=false;
+    try{ if(DATOS_ORIGEN==='supabase'){ const r=await fetch(SUPA.url+'/rest/v1/contacto',{method:'POST',headers:{...SBH,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(fila)}); ok=r.ok; } }catch(e){}
+    $('#cok').textContent=ok?'✔ ¡Gracias! Recibimos tu mensaje y te respondemos a la brevedad.':(DATOS_ORIGEN==='supabase'?'No se pudo enviar. Probá de nuevo en un rato o escribinos por email.':'✔ Mensaje registrado (demo: sin conexión a la base no se envía).');
+    $('#cok').style.display='block'; if(ok) f.reset(); else $('#csend').disabled=false; };
+}
+document.addEventListener('click',e=>{ const t=e.target.closest('[data-ctipo]'); if(!t) return; CT=t.dataset.ctipo; renderContacto(); });
 
 /* =====================================================================
    BUSCADOR GLOBAL (estilo Google Maps: sugerencias agrupadas por tipo)
@@ -1674,7 +1851,30 @@ function cargarLocalidades(){ if(LOC_CARGANDO) return; LOC_CARGANDO=true; const 
   document.head.appendChild(sc); }
 document.querySelectorAll('.sbox input').forEach(inp=>inp.addEventListener('focus',cargarLocalidades,{once:true}));
 let locLayer=null;
-function irALocalidad(h){ go('mapa'); setTimeout(()=>{ if(locLayer) map.removeLayer(locLayer);
+/* 07-10 (bloque D): ficha de ciudad. Para ciudades de referencia (tabla ciudad_referencia) y para cualquier localidad del buscador:
+   ambientes que se pescan desde ahí (ambiente_ciudad) + otros cercanos, y guías / lodges / alojamientos cerca (primero los de mayor nivel). */
+const KM_AMB=120, KM_SRV=80;
+function fichaCiudad(n,ll,ambs,sub){ ambs=(ambs||[]).filter(id=>AMB_BY[id]);
+  const kmf=d=>d<10?d.toFixed(1)+' km':Math.round(d).toLocaleString('es-AR')+' km';
+  const prin=ambs.map(id=>({a:AMB_BY[id],d:kmTo(ll,AMB_BY[id].ll)}));
+  const cerca=AMBIENTES.filter(a=>!a.sinUbic&&!ambs.includes(a.id)).map(a=>({a,d:kmTo(ll,a.ll)})).filter(x=>x.d<=KM_AMB).sort((x,y)=>x.d-y.d).slice(0,8);
+  const ss=SRV.filter(s=>s.ll&&s.ll[0]!=null).map(s=>({s,d:kmTo(ll,s.ll)})).filter(x=>x.d<=KM_SRV).sort((x,y)=>(y.s.nivel-x.s.nivel)||(x.d-y.d)).slice(0,10);
+  const ra=l=>l.map(x=>`<div class="prow" data-amb="${x.a.id}"><div class="av" style="background:${TIPO_COLOR[x.a.tipo]}">${x.a.tipo==='mar'?'🌊':'💧'}</div><div class="pi"><div class="pn">${esc(x.a.n)}${x.a.tramo?' · '+esc(x.a.tramo):''}</div><div class="pm">${TIPOS[x.a.tipo]} · ${x.a.prov.map(esc).join(' / ')}</div></div><span class="mono" style="font-size:.76rem;color:var(--dorado)">${kmf(x.d)}</span></div>`).join('');
+  F=F0(); renderFilters(); SEL=null;
+  R={amb:new Set([...ambs,...cerca.map(x=>x.a.id)]),srv:new Set(ss.map(x=>x.s.id)),label:'📍 Desde '+n}; draw(); $('#restx').textContent=R.label;
+  if(locLayer) map.removeLayer(locLayer);
+  locLayer=L.marker(ll,{interactive:false,icon:L.divIcon({className:'',iconSize:[0,0],html:`<div class="locmk">📍 ${esc(n)}</div>`})}).addTo(map);
+  map.flyTo(ll,Math.max(map.getZoom(),9),{duration:.8});
+  const t=ll[0].toFixed(5)+', '+ll[1].toFixed(5);
+  openDrawer(`<div class="det"><div class="prov">${esc(sub||'Ciudad')}</div><h2>${esc(n)}</h2>
+    <div class="spb" style="margin:6px 0 10px"><a href="${comoLlegar(ll)}" target="_blank" rel="noopener">🚗 Cómo llegar</a><button type="button" data-copycoord="${t}">📋 Coordenadas</button></div>
+    ${prin.length?`<h3>Se pesca desde acá</h3>${ra(prin)}`:''}
+    ${cerca.length?`<h3>${prin.length?'Otros ambientes cerca':'Ambientes cerca'} <small style="opacity:.6">(hasta ${KM_AMB} km)</small></h3>${ra(cerca)}`:''}
+    <h3>Guías, lodges y alojamiento <small style="opacity:.6">(hasta ${KM_SRV} km)</small></h3>${ss.length?ss.map(x=>`<div class="prow" data-srv="${x.s.id}"><div class="av t-${x.s.tipo}">${esc(initials(x.s.n))}</div><div class="pi"><div class="pn">${esc(x.s.n)} ${lvlBadge(x.s)}</div><div class="pm">${TIPO_SRV[x.s.tipo]} · ${esc(x.s.loc)}</div></div><span class="mono" style="font-size:.76rem;color:var(--dorado)">${kmf(x.d)}</span></div>`).join(''):'<p class="psub">Todavía no hay servicios cargados cerca. ¿Sos guía o tenés un lodge acá? <span class="chip link" data-go="contacto">Sumate</span></p>'}
+    <p class="psub" style="margin-top:10px">Distancias en línea recta.</p></div>`,n); }
+function irALocalidad(h){ const c=CIUD_REF.find(x=>norm(x.n)===norm(h.t())&&kmTo(x.ll,h.ll)<25); if(c) return go('mapa'),setTimeout(()=>fichaCiudad(c.n,c.ll,c.amb,'Ciudad de referencia para pescar'),60);
+  if(h.k==='loc'){ go('mapa'); return setTimeout(()=>fichaCiudad(h.t(),h.ll,[],h.s()),60); }
+  go('mapa'); setTimeout(()=>{ if(locLayer) map.removeLayer(locLayer);
   locLayer=L.marker(h.ll,{interactive:false,icon:L.divIcon({className:'',iconSize:[0,0],html:`<div class="locmk">📍 ${esc(h.t())}</div>`})}).addTo(map);
   map.flyTo(h.ll,h.cab?10:11,{duration:.8}); },60); }
 /* botones de región: solo mueven el mapa (no filtran) */
@@ -1944,6 +2144,7 @@ async function cargarDatos(){
     const E2=esp.map(x=>{ const l=legE[x.nombre]||legE[nzE(x.nombre)]||legE[{'Surubí pintado':'Surubí','Tiburón':'Tiburón escalandrún','Trucha marrón de mar':'Sea trout'}[x.nombre]]; const id=l?l.id:'e'+x.id; espId[x.id]=id; if(!FISH_P[id]) FISH_P[id]=FISH_P.dorado;
       return {id,dbid:x.id,agua:x.especie_tipo_agua.map(t=>t.tipo_agua.codigo).sort(),n:x.nombre,en:x.nombre_en||x.nombre,sci:x.nombre_cientifico,c:x.color||'#8FA3B8',d:x.descripcion||'',como:x.como_pescar||''}; });
     E2.forEach(e=>{ if(!e.agua.length) e.agua=['dulce']; });
+    try{ const pr=await sbGet('especie?select=id,orden_principal&principal=is.true'); const byDb={}; E2.forEach(e=>byDb[e.dbid]=e); pr.forEach(x=>{ if(byDb[x.id]) byDb[x.id].pri=x.orden_principal??99; }); }catch(_){ /* sin columna principal todavía: se usa PRINC_DEF */ }
     // --- ambientes ---
     const legA={}; AMBIENTES.forEach(a=>legA[a.n+'|'+a.tramo]=a);
     const ambId={}; amb.forEach(x=>{ const l=legA[x.nombre+'|'+(x.tramo||'')]; ambId[x.id]=l?l.id:'a'+x.id; });
@@ -1971,6 +2172,8 @@ async function cargarDatos(){
     ESPECIES=E2; AMBIENTES=A2; GUIAS=G; LODGES=Lo; ALOJAMIENTOS=Al; DATOS_ORIGEN='supabase';
     sbGet('ciudad_referencia?select=nombre,lat,lng,ambiente_ciudad(ambiente_id,orden)&order=nombre').then(rs=>setCiudadesRef(rs.map(c=>({n:c.nombre,ll:[c.lat,c.lng],
       amb:c.ambiente_ciudad.sort((p,q)=>p.orden-q.orden).map(r=>ambId[r.ambiente_id]).filter(Boolean)})))).catch(()=>{});   // si la tabla todavía no existe, el mapa sigue igual
+    cargarExtras(ambId,espId);   // 07-10: experiencias y videos
+    sbGet('spot?select=id,ambiente_id,nombre,tipo,lat,lng,descripcion,acceso,orden&estado=eq.publicado&order=orden,nombre').then(rs=>{ SPOTS=rs.map(x=>({id:'s'+x.id,amb:ambId[x.ambiente_id],n:x.nombre,tipo:x.tipo,ll:[x.lat,x.lng],d:x.descripcion||'',acc:x.acceso||''})).filter(x=>x.amb); try{ draw(); }catch(e){} }).catch(()=>{});   // 07-10 bloque C
     sbGet('ambiente?select=id,jerarquia,endorreico&estado=eq.publicado').then(rs=>{ rs.forEach(r=>{ const a=A2.find(x=>x.dbid===r.id); if(!a) return; if(r.jerarquia) a.jer=+r.jerarquia;
       if(r.endorreico&&a.geo){ const f=RIVERS.features.find(x=>x.properties.name===a.geo); if(f) setEndorreico(f,true); } }); try{ draw(); }catch(e){} }).catch(()=>{});   // columnas nuevas (05-10): si todavía no existen, se usa lo de la capa
     sbGet('ficha_vista?select=tipo,ref_id,vistas').then(rs=>{ VISTAS={}; rs.forEach(r=>VISTAS[r.tipo+':'+r.ref_id]=+r.vistas); if(cur==='servicios'||cur==='ambientes') try{ go(cur); }catch(e){} }).catch(()=>{});   // si la tabla todavía no existe, se sigue con el orden de siempre
