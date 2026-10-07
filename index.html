@@ -1761,6 +1761,7 @@ function render(v){
    Videos: se muestra solo la miniatura; el reproductor (youtube-nocookie.com) se carga recién al tocar: no pesa ni pone cookies antes. */
 let EXPERIENCIAS=[], VIDEOS=[];
 function cargarExtras(ambId,espId){
+    sbGet('spot?select=id,ambiente_id,nombre,tipo,lat,lng,descripcion,acceso,orden&estado=eq.publicado&order=orden,nombre').then(rs=>{ SPOTS=rs.map(x=>({id:'s'+x.id,amb:ambId[x.ambiente_id],n:x.nombre,tipo:x.tipo,ll:[x.lat,x.lng],d:x.descripcion||'',acc:x.acceso||''})).filter(x=>x.amb); try{ draw(); }catch(e){} }).catch(()=>{});   // 07-10 bloque C
   sbGet('experiencia?select=id,titulo,slug,bajada,cuerpo,foto_url,temporada,nivel,presupuesto,region,experiencia_ambiente(ambiente_id),experiencia_especie(especie_id)&estado=eq.publicado&order=orden').then(rs=>{
     EXPERIENCIAS=rs.map(x=>({dbid:x.id,slug:x.slug,t:x.titulo,b:x.bajada||'',c:x.cuerpo||'',foto:x.foto_url,temp:x.temporada,niv:x.nivel,pres:x.presupuesto,reg:x.region,
       amb:x.experiencia_ambiente.map(r=>ambId[r.ambiente_id]).filter(Boolean),esp:x.experiencia_especie.map(r=>espId[r.especie_id]).filter(Boolean)}));
@@ -2172,8 +2173,7 @@ async function cargarDatos(){
     ESPECIES=E2; AMBIENTES=A2; GUIAS=G; LODGES=Lo; ALOJAMIENTOS=Al; DATOS_ORIGEN='supabase';
     sbGet('ciudad_referencia?select=nombre,lat,lng,ambiente_ciudad(ambiente_id,orden)&order=nombre').then(rs=>setCiudadesRef(rs.map(c=>({n:c.nombre,ll:[c.lat,c.lng],
       amb:c.ambiente_ciudad.sort((p,q)=>p.orden-q.orden).map(r=>ambId[r.ambiente_id]).filter(Boolean)})))).catch(()=>{});   // si la tabla todavía no existe, el mapa sigue igual
-    cargarExtras(ambId,espId);   // 07-10: experiencias y videos
-    sbGet('spot?select=id,ambiente_id,nombre,tipo,lat,lng,descripcion,acceso,orden&estado=eq.publicado&order=orden,nombre').then(rs=>{ SPOTS=rs.map(x=>({id:'s'+x.id,amb:ambId[x.ambiente_id],n:x.nombre,tipo:x.tipo,ll:[x.lat,x.lng],d:x.descripcion||'',acc:x.acceso||''})).filter(x=>x.amb); try{ draw(); }catch(e){} }).catch(()=>{});   // 07-10 bloque C
+    window.__IDS={ambId,espId};   // 07-10: experiencias, videos y spots se cargan al arrancar la app (ver ARRANQUE)
     sbGet('ambiente?select=id,jerarquia,endorreico&estado=eq.publicado').then(rs=>{ rs.forEach(r=>{ const a=A2.find(x=>x.dbid===r.id); if(!a) return; if(r.jerarquia) a.jer=+r.jerarquia;
       if(r.endorreico&&a.geo){ const f=RIVERS.features.find(x=>x.properties.name===a.geo); if(f) setEndorreico(f,true); } }); try{ draw(); }catch(e){} }).catch(()=>{});   // columnas nuevas (05-10): si todavía no existen, se usa lo de la capa
     sbGet('ficha_vista?select=tipo,ref_id,vistas').then(rs=>{ VISTAS={}; rs.forEach(r=>VISTAS[r.tipo+':'+r.ref_id]=+r.vistas); if(cur==='servicios'||cur==='ambientes') try{ go(cur); }catch(e){} }).catch(()=>{});   // si la tabla todavía no existe, se sigue con el orden de siempre
@@ -2208,6 +2208,7 @@ document.addEventListener('click',e=>{ if(e.target.closest('[data-cookies]')){ e
 (async()=>{
   await cargarDatos();
   const s=document.createElement('script'); s.textContent=document.getElementById('app-main').textContent; document.body.appendChild(s);
+  try{ if(window.__IDS&&typeof cargarExtras==='function') cargarExtras(window.__IDS.ambId,window.__IDS.espId); }catch(e){ console.warn('[extras]',e); }
   if(SUPA.ambiente!=='PRODUCCION'){ const d=document.createElement('div'); d.id='envbadge'; d.textContent=SUPA.ambiente+' · datos: '+(DATOS_ORIGEN==='supabase'?'Supabase':'ejemplo local'); document.body.appendChild(d); }
   bannerCookies(false);
   if(typeof volverDePago==='function') volverDePago();
