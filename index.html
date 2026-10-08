@@ -1829,11 +1829,11 @@ const STOPW=new Set(['rio','lago','laguna','embalse','arroyo','dique','canal','b
 const palabrasClave=t=>norm(String(t||'').replace(/\(.*?\)/g,' ')).split(/[^a-z0-9ñ]+/).filter(w=>w.length>=3&&!STOPW.has(w));
 const ytBusqueda=q=>'https://www.youtube.com/results?search_query='+encodeURIComponent(q)+'&sp=CAM%253D';
 function videoBlock(list,q,must){ if(!q) return list.length?`<h3>Videos</h3>${vcards(list)}`:'';
-  return `<h3>Videos</h3>${list.length?vcards(list):''}<div class="vauto" data-q="${esc(q)}" data-must="${esc((must||[]).join(','))}" data-skip="${esc(list.map(v=>v.y).join(','))}"><p class="psub" style="margin:4px 0">${LANG==='en'?'Looking for the most watched videos…':'Buscando los videos más vistos…'}</p></div>
+  return `<h3>Videos</h3>${list.length?vcards(list):''}<div class="vauto" data-ytq="${esc(q)}" data-must="${esc((must||[]).join(','))}" data-skip="${esc(list.map(v=>v.y).join(','))}"><p class="psub" style="margin:4px 0">${LANG==='en'?'Looking for the most watched videos…':'Buscando los videos más vistos…'}</p></div>
     <a class="chip link" style="display:inline-block;margin:4px 0 8px;text-decoration:none" href="${ytBusqueda(q)}" target="_blank" rel="noopener">▶ ${LANG==='en'?'More on YouTube (most viewed)':'Ver más en YouTube (los más vistos)'}</a>`; }
 const YT_MEM={};
 function llenarVideos(){ document.querySelectorAll('#dbody .vauto:not([data-ok])').forEach(el=>{ el.dataset.ok='1';
-  const q=el.dataset.q, must=el.dataset.must, skip=new Set((el.dataset.skip||'').split(',').filter(Boolean)), k=q+'|'+must;
+  const q=el.dataset.ytq, must=el.dataset.must,   /* 08-10: data-ytq (no data-q: ese atributo lo captura el buscador global) */ skip=new Set((el.dataset.skip||'').split(',').filter(Boolean)), k=q+'|'+must;
   const pinta=vs=>{ vs=(vs||[]).filter(v=>!skip.has(v.y)); el.innerHTML=vs.length?vcards(vs):''; };   /* sin videos automáticos queda el link a YouTube */
   if(YT_MEM[k]) return pinta(YT_MEM[k]);
   if(DATOS_ORIGEN!=='supabase') return pinta([]);
