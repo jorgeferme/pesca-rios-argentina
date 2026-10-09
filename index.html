@@ -594,6 +594,31 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
 .cfp{position:relative;width:76px;height:76px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
 .cfp img{width:100%;height:100%;object-fit:cover}
 .cfp button{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:.7rem;cursor:pointer;padding:0}
+/* ===== 09-10 (PDF 8.0) ===== */
+#v-mapa>#filters{grid-column:1;grid-row:1}
+#v-mapa>.mapbox{grid-column:2;grid-row:1}
+/* PC: flechas y arrastre para la fila de especies */
+.qarr{display:none}
+@media(min-width:761px){
+  #qwrap{display:flex;flex-direction:row;align-items:center;gap:4px}
+  #qbar{flex:1 1 0;min-width:0!important;scrollbar-width:thin;scrollbar-color:var(--river) transparent;cursor:grab;scroll-behavior:smooth}
+  #qbar.drag{cursor:grabbing;scroll-behavior:auto;user-select:none}
+  #qbar::-webkit-scrollbar{display:block;height:6px}#qbar::-webkit-scrollbar-thumb{background:var(--river);border-radius:3px}
+  .qarr{display:flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px;margin-bottom:6px;border-radius:50%;border:1px solid var(--line);background:rgba(19,34,37,.95);color:var(--dorado);font-size:1.3rem;line-height:1;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.4)}
+  .qarr:hover{background:var(--panel-2)}
+  .qarr[disabled]{opacity:.25;cursor:default}
+  body.claro .qarr{background:rgba(255,255,255,.97)}
+}
+/* celular: Contacto sin cortes a la derecha */
+.two>*{min-width:0}
+@media(max-width:760px){ #plans{grid-template-columns:1fr!important} .ctabs{flex-wrap:wrap} #cform input,#cform select,#cform textarea{max-width:100%} }
+/* celular: alto real de la pantalla (sin el hueco negro abajo) */
+@supports(height:100dvh){ html,body{height:100dvh} }
+html,body{overscroll-behavior:none}
+/* descripción de provincia / localidad */
+.pdesc{font-size:.9rem;line-height:1.55;color:var(--ink-soft);margin:6px 0 4px}
+/* buscador: lo más buscado */
+.sgroup .tr{float:right;opacity:.6;text-transform:none;letter-spacing:0}
 </style>
 <!-- Microsoft Clarity: se carga SOLO si la persona acepta cookies (ver "AVISO DE COOKIES" al final) -->
 </head>
@@ -665,7 +690,7 @@ body.claro .thbtn,body.claro .lang,body.claro .burger{background:rgba(255,255,25
       <div id="resbar"><span id="restx"></span><button id="resx">✕ Limpiar</button></div>
     </div>
     <div id="refine"></div>
-    <div id="qwrap"><button id="qtog"></button><div id="qbar"></div></div>
+    <div id="qwrap"><button id="qtog"></button><button class="qarr" data-qarr="-1" title="Anterior" aria-label="Ver especies anteriores">‹</button><div id="qbar"></div><button class="qarr" data-qarr="1" title="Más especies" aria-label="Ver más especies">›</button></div>
     <button id="fbtn">⚙ Filtros <span class="n" id="fbtnn" style="display:none"></span></button>
     <div class="legend">
       <div class="row"><span class="sw" style="background:#1E90A8"></span> Río</div>
@@ -1067,8 +1092,8 @@ map.on('contextmenu',ev=>{ const la=ev.latlng.lat.toFixed(5), lo=ev.latlng.lng.t
   L.popup({className:'cmenu',maxWidth:260,autoPanPadding:[20,20]}).setLatLng(ev.latlng).setContent(
    `<div class="cmc"><div class="mono cmt">📍 ${t}</div>
     <button type="button" data-copycoord="${t}">📋 ${en?'Copy coordinates':'Copiar coordenadas'}</button>
-    <a href="https://www.google.com/maps/search/?api=1&query=${la},${lo}" target="_blank" rel="noopener">🗺️ ${en?'Open in Google Maps':'Abrir en Google Maps'}</a>
-    <a href="https://www.google.com/maps/dir/?api=1&destination=${la},${lo}" target="_blank" rel="noopener">🚗 ${en?'Directions':'Cómo llegar'}</a></div>`).openOn(map); });
+    <a href="https://www.google.com/maps/search/?api=1&query=${la},${lo}" ${mapsAttr('ver',[la,lo])} target="_blank" rel="noopener">🗺️ ${en?'Open in Maps':'Abrir en Maps'}</a>
+    <a href="https://www.google.com/maps/dir/?api=1&destination=${la},${lo}" ${mapsAttr('ir',[la,lo])} target="_blank" rel="noopener">🚗 ${en?'Directions':'Cómo llegar'}</a></div>`).openOn(map); });
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-spotgo]'); if(!b) return; const x=SPOTS.find(y=>y.id===b.dataset.spotgo); if(!x) return;
   if(cur!=='mapa') go('mapa'); if(!SEL||!ambsDeSel().has(x.amb)) selectAmb(x.amb,{fit:false}); setTimeout(()=>map.flyTo(x.ll,Math.max(map.getZoom(),13)),80); });
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-copycoord]'); if(!b) return; const t=b.dataset.copycoord, en=LANG==='en';
@@ -1192,6 +1217,20 @@ let R=null, SEL=null;
 let SPOTS=[];
 const SPOT_TIPO={pesquero:['🎣','Pesquero'],bajada:['⬇️','Bajada'],rampa:['🚤','Rampa'],puesto:['🏠','Puesto'],camping:['⛺','Camping'],otro:['📍','Lugar']};
 const comoLlegar=ll=>`https://www.google.com/maps/dir/?api=1&destination=${ll[0].toFixed(5)},${ll[1].toFixed(5)}`;
+/* 09-10 (PDF 8.0): "Abrir en Maps" y "Cómo llegar". En la PC: Google Maps (web). En el celular: la app de mapas del teléfono
+   (iPhone: Mapas de Apple o la app que el usuario eligió como predeterminada; Android: la app predeterminada o el selector de apps).
+   Si el teléfono no abre ninguna app, se abre Google Maps en la web. Los links llevan data-maps="ver|ir" y data-ll="lat,lng". */
+const ES_IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const ES_ANDROID=/Android/i.test(navigator.userAgent);
+function abrirMaps(modo,la,lo,web){
+  if(ES_IOS){ location.href=modo==='ir'?`https://maps.apple.com/?daddr=${la},${lo}`:`https://maps.apple.com/?ll=${la},${lo}&q=${la},${lo}`; return; }
+  if(ES_ANDROID){ let salio=false; const v=()=>{ if(document.hidden) salio=true; }; document.addEventListener('visibilitychange',v);
+    location.href=`geo:${la},${lo}?q=${la},${lo}`;
+    setTimeout(()=>{ document.removeEventListener('visibilitychange',v); if(!salio&&!document.hidden) window.open(web,'_blank','noopener'); },1600); return; }
+  window.open(web,'_blank','noopener'); }
+document.addEventListener('click',e=>{ const a=e.target.closest('a[data-maps]'); if(!a) return; const [la,lo]=a.dataset.ll.split(',');
+  e.preventDefault(); abrirMaps(a.dataset.maps,la.trim(),lo.trim(),a.href); });
+const mapsAttr=(modo,ll)=>`data-maps="${modo}" data-ll="${(+ll[0]).toFixed(5)},${(+ll[1]).toFixed(5)}"`;
 function ambsDeSel(){ const S=new Set(); if(!SEL) return S;
   if(SEL.type==='amb'){ S.add(SEL.id); AMBIENTES.forEach(a=>{ if(a.padre===SEL.id) S.add(a.id); }); }
   const st=selTramo(); if(st) AMBIENTES.forEach(a=>{ if(a.tramo&&tramoDeAmb(a)===st) S.add(a.id); });
@@ -1210,7 +1249,7 @@ function spotsMapa(){ const st=selTramo();
 /* 09-10 (tarde): en el globito del mapa "Ver" abre Google Maps en el spot; en la lista de la ficha centra nuestro mapa. */
 const verEnGoogle=ll=>`https://www.google.com/maps/search/?api=1&query=${ll[0].toFixed(5)},${ll[1].toFixed(5)}`;
 function spotRows(ss,enPopup){ return ss.map(x=>`<div class="spr"><span class="spi">${SPOT_TIPO[x.tipo]?.[0]||'📍'}</span><div><b>${esc(x.n)}</b> <small>${SPOT_TIPO[x.tipo]?.[1]||''}</small>${x.d?`<div class="spd">${esc(x.d)}</div>`:''}${x.acc?`<div class="spd">🚗 ${esc(x.acc)}</div>`:''}
-  <div class="spb"><a href="${comoLlegar(x.ll)}" target="_blank" rel="noopener">🚗 Cómo llegar</a><button type="button" data-copycoord="${x.ll[0].toFixed(5)}, ${x.ll[1].toFixed(5)}">📋 Coordenadas</button>${enPopup?`<a href="${verEnGoogle(x.ll)}" target="_blank" rel="noopener">🗺️ ${LANG==='en'?'View in Google Maps':'Ver en Google Maps'}</a>`:`<span class="chip link" data-spotgo="${x.id}">🗺 ${LANG==='en'?'View on map':'Ver en el mapa'}</span>`}</div></div></div>`).join(''); }
+  <div class="spb"><a href="${comoLlegar(x.ll)}" ${mapsAttr('ir',x.ll)} target="_blank" rel="noopener">🚗 Cómo llegar</a><button type="button" data-copycoord="${x.ll[0].toFixed(5)}, ${x.ll[1].toFixed(5)}">📋 Coordenadas</button>${enPopup?`<a href="${verEnGoogle(x.ll)}" ${mapsAttr('ver',x.ll)} target="_blank" rel="noopener">🗺️ ${LANG==='en'?'View in Maps':'Ver en Maps'}</a>`:`<span class="chip link" data-spotgo="${x.id}">🗺 ${LANG==='en'?'View on map':'Ver en el mapa'}</span>`}</div></div></div>`).join(''); }
 const C={sel:'#FF7A59',river:'#1E90A8',sea:'#4C8DFF'};
 const ST={r:{color:'#1E90A8',weight:2.4,opacity:.95},rF:{color:'#2BA7C2',weight:3.4,opacity:1},rSel:{color:C.sel,weight:6,opacity:1},
   l:{color:'#0B6E86',weight:2,fillColor:'#26C6DA',fillOpacity:.5,opacity:.95},
@@ -1400,6 +1439,17 @@ function selectGeo(f){
 }
 const top3=ss=>ss.filter(s=>s.nivel===3);
 function srvOfProv(p){ return SRV.filter(s=>s.prov===p||s.amb.some(id=>AMB_BY[id].prov.includes(p))).sort(byRank); }
+/* 09-10 (PDF 8.0): descripción breve de cada provincia (para la ficha que se abre al buscarla) */
+const PROV_DESC={"Buenos Aires": "Lagunas pampeanas famosas por el pejerrey (Chascomús, Lobos, Monte, Las Encadenadas), el Delta y el Río de la Plata con dorado, boga y tararira, y más de 1.000 km de costa atlántica con corvina, pescadilla y pesca de variada.", "Ciudad de Buenos Aires": "Pesca de costa sobre el Río de la Plata: pejerrey en invierno, bogas, bagres y algún dorado en verano, a minutos del centro.", "Catamarca": "Ríos y arroyos de montaña con truchas arcoíris, lagunas de la puna y diques como Las Pirquitas e Ipizca con pejerrey.", "Chaco": "Los ríos Paraná, Paraguay y Bermejo con dorado, surubí y pacú, y lagunas y esteros con tararira.", "Chubut": "Cordillera con ríos y lagos de truchas reconocidos en todo el mundo (Futaleufú, Rivadavia, Carrileufú, Corcovado) y una costa de golfos para pesca de mar: salmón de mar, róbalo y pejerrey.", "Córdoba": "Diques serranos con pejerrey y truchas (Río Tercero, Los Molinos, San Roque, Cerro Pelado), ríos de las sierras y la Laguna Mar Chiquita (Ansenuza), gran destino de pejerrey.", "Corrientes": "Uno de los grandes destinos de dorado y surubí del país, sobre el Paraná y el Uruguay (Paso de la Patria, Itá Ibaté, Esquina, Goya), y los Esteros del Iberá con tararira.", "Entre Ríos": "El Delta y las islas del Paraná y el río Uruguay, con dorado, surubí, boga y pejerrey, y ríos interiores como el Gualeguay y el Gualeguaychú.", "Formosa": "Los ríos Paraguay, Pilcomayo y Bermejo con dorado, surubí y pacú, y humedales como el Bañado La Estrella y la Laguna Oca.", "Jujuy": "Ríos de yungas como el San Francisco y el Lavayén, con dorado de río, truchas en los ríos de altura y diques con pejerrey.", "La Pampa": "Lagunas con pejerrey y el río Colorado con el embalse Casa de Piedra: perca, pejerrey y truchas.", "La Rioja": "Diques y embalses (Los Sauces, Olta, Anzulón) con pejerrey, y arroyos serranos con truchas.", "Mendoza": "Ríos de cordillera con truchas (Grande, Malargüe, Atuel, Diamante, Tunuyán) y embalses como Nihuil, Valle Grande, Agua del Toro y Potrerillos con truchas y pejerrey.", "Misiones": "El Alto Paraná, el Uruguay y el Iguazú, entre selva y arroyos: dorado, surubí, pacú y pirá pitá.", "Neuquén": "Uno de los destinos de pesca con mosca más reconocidos del mundo: ríos Chimehuín, Malleo, Aluminé y Collón Curá, y los lagos de los Parques Nacionales Lanín y Nahuel Huapi, con truchas marrón y arcoíris.", "Río Negro": "Lagos andinos (Nahuel Huapi, Mascardi, Gutiérrez) y ríos Limay, Manso y Negro con truchas y perca, y el Golfo San Matías para pesca de mar.", "Salta": "Ríos del norte con dorado (Juramento, Pescado, Lipeo, Dorado, Bermejo) y embalses como Cabra Corral y El Tunal.", "San Juan": "Diques como Ullum, Punta Negra y Cuesta del Viento con pejerrey y truchas, y ríos de cordillera.", "San Luis": "Diques serranos (Potrero de los Funes, La Florida, Nogolí, Paso de las Carretas) con pejerrey y truchas.", "Santa Cruz": "Grandes lagos (Strobel, Argentino, Cardiel, Viedma) y ríos como el Santa Cruz y el Gallegos: truchas de gran porte, steelhead y trucha marrón de mar.", "Santa Fe": "El río Paraná con sus riachos y lagunas (Setúbal, Coronda): dorado, surubí, boga y tararira; y lagunas del sur, como Melincué y La Picasa, con pejerrey.", "Santiago del Estero": "El embalse de Río Hondo y los ríos Dulce y Salado, con pejerrey, dorado y tararira.", "Tierra del Fuego": "El río Grande, reconocido en el mundo por la trucha marrón de mar (sea run), y lagos como el Fagnano y el Yehuin.", "Tucumán": "Ríos de yungas con truchas (Los Sosa, Vipos) y embalses como El Cadillal, La Angostura y Río Hondo con pejerrey."};
+/* descripción automática de una localidad: provincia, ambientes de pesca cercanos y sus especies */
+function descLocalidad(n,prov,lista,dest){ const en=LANG==='en', near=lista.slice(0,3), esp=[...new Set(near.flatMap(x=>x.a.esp||[]))].slice(0,5).map(id=>ESP_BY[id]?espName(ESP_BY[id]).toLowerCase():null).filter(Boolean);
+  const kmf=d=>d<10?d.toFixed(1)+' km':Math.round(d)+' km';
+  let t=esc(n)+(prov?' es una localidad de la provincia de '+esc(prov)+'.':' es una localidad de Argentina.');
+  if(dest) t+=' Es una de las ciudades destacadas para la pesca.';
+  if(near.length){ t+=' El ambiente de pesca más cercano es '+esc(near[0].a.n+(near[0].a.tramo?' ('+near[0].a.tramo+')':''))+', a '+kmf(near[0].d)+(near.length>1?'; cerca también: '+near.slice(1).map(x=>esc(x.a.n)).join(' y ')+'.':'.');
+    if(esp.length) t+=' Ahí se pescan '+esp.join(', ').replace(/, ([^,]*)$/,' y $1')+'.'; }
+  else t+=' No hay ambientes con ficha cerca todavía.';
+  return `<p class="pdesc">${t}</p>`; }
 function setResults(r){ // r = {kind:'esp'|'tipo'|'amb'|'srv'|'prov', id}. Toda búsqueda: mapa centrado + ficha/lista + servicios con reserva directa en el mapa
   SEL=null; hideRefine();
   if(r.kind==='esp'){ const e=ESP_BY[r.id]; const as=ambOfEsp(r.id); F.esp=r.id; renderFilters();   /* el buscador manda: el panel de filtros lo sigue */
@@ -1411,7 +1461,7 @@ function setResults(r){ // r = {kind:'esp'|'tipo'|'amb'|'srv'|'prov', id}. Toda 
   else if(r.kind==='prov'){ const p=r.id, np=norm(p), as=AMBIENTES.filter(a=>a.prov.includes(p)).sort((a,b)=>norm(b.n).includes(np)-norm(a.n).includes(np)), ss=srvOfProv(p), s3=top3(ss);
     R={prov:p,amb:new Set(as.map(a=>a.id)),srv:new Set(s3.map(s=>s.id)),label:`${p} — ${as.length} ambiente(s) · ${s3.length} con reserva directa`}; draw();
     const esps=[...new Set(as.flatMap(a=>a.esp))];
-    openDrawer(detList('Provincia',p,as,ss,esps.length?`<h3>Especies · ${esps.length}</h3>${espChips(esps)}`:''),p);
+    openDrawer(detList('Provincia',p,as,ss,esps.length?`<h3>Especies · ${esps.length}</h3>${espChips(esps)}`:'',PROV_DESC[p]?`<p class="pdesc">${esc(PROV_DESC[p])}</p>`:''),p);
     const f=PROV_BY[p]; if(f){ const b=L.geoJSON(f).getBounds(); fitLatLngs([b.getSouthWest(),b.getNorthEast()],8); } }
   $('#restx').textContent=R.label; $('#resbar').classList.add('on');
   if(r.kind==='esp'||r.kind==='tipo'||r.kind==='prov') setUrl(r.kind,r.id,r.kind==='esp'?espName(ESP_BY[r.id]):r.kind==='tipo'?GRUPOS[r.id]:r.id);
@@ -1489,6 +1539,16 @@ $('#qbar').addEventListener('wheel',e=>{ if(isMobile()||Math.abs(e.deltaY)<=Math
 /* 09-10 noche: en el celular la fila de especies va abajo, a la derecha del botón Filtros */
 function ubicarQwrap(){ const q=$('#qwrap'), b=$('#fbtn'); if(!q||!b) return; q.style.left=isMobile()?(b.offsetLeft+b.offsetWidth+8)+'px':''; }
 addEventListener('resize',ubicarQwrap); setTimeout(ubicarQwrap,0);
+/* 09-10 (PDF 8.0): en PC la fila de especies se desliza con las flechas ‹ › o arrastrándola con el mouse (como una barra) */
+(()=>{ const qb=$('#qbar'); let x0=0,s0=0,mov=false,down=false;
+  const flechas=()=>{ const max=qb.scrollWidth-qb.clientWidth-2; $$('.qarr').forEach(b=>b.disabled=+b.dataset.qarr<0?qb.scrollLeft<=2:qb.scrollLeft>=max); };
+  $$('.qarr').forEach(b=>b.addEventListener('click',e=>{ e.stopPropagation(); qb.scrollLeft+=(+b.dataset.qarr)*Math.max(200,qb.clientWidth*.7); }));
+  qb.addEventListener('scroll',flechas,{passive:true}); addEventListener('resize',flechas); setTimeout(flechas,300); new MutationObserver(()=>setTimeout(flechas,0)).observe(qb,{childList:true});
+  qb.addEventListener('pointerdown',e=>{ if(e.pointerType!=='mouse'||isMobile()) return; down=true; mov=false; x0=e.clientX; s0=qb.scrollLeft; });
+  addEventListener('pointermove',e=>{ if(!down) return; const dx=e.clientX-x0; if(Math.abs(dx)>4){ mov=true; qb.classList.add('drag'); } if(mov) qb.scrollLeft=s0-dx; });
+  addEventListener('pointerup',()=>{ if(!down) return; down=false; setTimeout(()=>qb.classList.remove('drag'),0); });
+  qb.addEventListener('click',e=>{ if(mov){ e.stopPropagation(); e.preventDefault(); mov=false; } },true);   // si arrastró, no elige especie
+})();
 $('#qtog').onclick=()=>$('#qwrap').classList.toggle('open');
 document.addEventListener('click',e=>{ if(!e.target.closest('#qwrap')) $('#qwrap').classList.remove('open'); });
 /* CERCA MÍO: usa la ubicación del teléfono/PC (el navegador pide permiso). Muestra lo más cercano y marca los de reserva directa. */
@@ -1605,9 +1665,9 @@ function detAmb(a){
   <button class="btn" data-mapamb="${a.id}">🗺 Ver mapa del ambiente</button>
   <div class="demo">🛈 Datos de ejemplo. Tocá una especie o un servicio para ir a su sección.</div></div>`;
 }
-function detList(eyebrow,title,as,ss,extra){
+function detList(eyebrow,title,as,ss,extra,intro){
   const n3=ss.filter(s=>s.nivel===3).length;
-  return `<div class="det"><div class="prov">${esc(eyebrow)}</div><h2>${esc(title)}</h2>
+  return `<div class="det"><div class="prov">${esc(eyebrow)}</div><h2>${esc(title)}</h2>${intro||''}
   <h3>Ambientes con ficha · ${as.length}</h3>${as.length?`<div class="chips">${as.map(a=>`<span class="chip link" data-amb="${a.id}">${esc(a.n)}${a.tramo?' · '+esc(a.tramo):''}</span>`).join('')}</div>`:'<p class="psub">Todavía no hay ambientes con ficha.</p>'}
   ${extra||''}
   <h3>Servicios · ${ss.length}</h3>${n3?`<p class="psub" style="margin:0 0 4px">✓ ${n3} con reserva directa: están marcados en el mapa.</p>`:''}${srvRows(ss)}
@@ -1935,7 +1995,7 @@ let SESP=null;
 function fillSel(id,label,opts){ const el=$(id); if(el.options.length) return; el.innerHTML=`<option value="">${label}</option>`+opts.map(([v,t])=>`<option value="${v}">${esc(t)}</option>`).join(''); el.onchange=()=>render(cur); }
 function render(v){
   if(v==='inicio'){
-    $('#qchips').innerHTML=['Dorado','Trucha','Paraná','Lodge','Pejerrey','Mar'].map(q=>`<span class="qchip" data-q="${q}">${q}</span>`).join('');
+    $('#qchips').innerHTML=TOP_BUSQ.slice(0,6).map(q=>`<span class="qchip" data-q="${esc(q)}">${esc(q.replace(/^Río /,''))}</span>`).join('');   // 09-10 (PDF 8.0): lo más buscado
     $('#h-srv').innerHTML=SRV.filter(s=>s.nivel===3).sort(byRank).map(cardSrv).join('');
     $('#h-esp').innerHTML=espPrincipales().slice(0,4).map(cardEsp).join('');
     if(!$('#h-map').firstChild) $('#h-map').innerHTML=miniMapaSVG();
@@ -2138,11 +2198,12 @@ function fichaCiudad(n,ll,ambs,sub){ ambs=(ambs||[]).filter(id=>AMB_BY[id]); let
   F=F0(); renderFilters(); SEL=null;
   R={amb:new Set([...ambs,...cerca.map(x=>x.a.id)]),srv:new Set(ss.map(x=>x.s.id)),label:'📍 Desde '+n}; draw(); $('#restx').textContent=R.label;
   if(locLayer){ map.removeLayer(locLayer); locLayer=null; } const dc=esDest(n,ll); CIUD_SEL=dc?dc.n:null;
-  if(dc){ prov=dc.prov; syncRefs(); } else locLayer=L.marker(ll,{interactive:false,icon:L.divIcon({className:'',iconSize:[0,0],html:`<div class="locmk">📍 ${esc(n)}</div>`})}).addTo(map);   // 09-10: destacada = su punto rojo
+  if(dc){ prov=dc.prov; syncRefs(); } else { try{ prov=provDe(ll); }catch(e){} locLayer=L.marker(ll,{interactive:false,icon:L.divIcon({className:'',iconSize:[0,0],html:`<div class="locmk">📍 ${esc(n)}</div>`})}).addTo(map); }   // 09-10: destacada = su punto rojo
   map.flyTo(ll,Math.max(map.getZoom(),9),{duration:.8});
   const t=ll[0].toFixed(5)+', '+ll[1].toFixed(5);
   openDrawer(`<div class="det"><div class="prov">${CIUD_SEL?'📍 '+esc('Localidad'+(prov?' · '+prov:''))+' · <b style="color:#E53935">Ciudad destacada para la pesca</b>':esc(sub||'Ciudad')}</div><h2>${esc(n)}</h2>
-    <div class="spb" style="margin:6px 0 10px"><a href="${comoLlegar(ll)}" target="_blank" rel="noopener">🚗 Cómo llegar</a><button type="button" data-copycoord="${t}">📋 Coordenadas</button></div>
+    ${descLocalidad(n,prov,[...prin,...cerca].sort((x,y)=>x.d-y.d),!!CIUD_SEL)}
+    <div class="spb" style="margin:6px 0 10px"><a href="${comoLlegar(ll)}" ${mapsAttr('ir',ll)} target="_blank" rel="noopener">🚗 Cómo llegar</a><button type="button" data-copycoord="${t}">📋 Coordenadas</button></div>
     ${prin.length?`<h3>Se pesca desde acá</h3>${ra(prin)}`:''}
     ${cerca.length?`<h3>${prin.length?'Otros ambientes cerca':'Ambientes cerca'} <small style="opacity:.6">(hasta ${KM_AMB} km)</small></h3>${ra(cerca)}`:''}
     <h3>Guías, lodges y alojamiento <small style="opacity:.6">(hasta ${KM_SRV} km)</small></h3>${ss.length?ss.map(x=>`<div class="prow" data-srv="${x.s.id}"><div class="av t-${x.s.tipo}">${esc(initials(x.s.n))}</div><div class="pi"><div class="pn">${esc(x.s.n)} ${lvlBadge(x.s)}</div><div class="pm">${TIPO_SRV[x.s.tipo]} · ${esc(x.s.loc)}</div></div><span class="mono" style="font-size:.76rem;color:var(--dorado)">${kmf(x.d)}</span></div>`).join(''):'<p class="psub">Todavía no hay servicios cargados cerca. ¿Sos guía o tenés un lodge acá? <span class="chip link" data-go="contacto">Sumate</span></p>'}
@@ -2155,8 +2216,8 @@ function irALocalidad(h){ const c=esDest(h.t(),h.ll); if(c) return go('mapa'),se
 /* botones de región: solo mueven el mapa (no filtran) */
 /* 08-10: orden pedido: Cerca mío · Todo el país · Patagonia · Litoral · Norte · Mar (sin Buenos Aires ni Sierras y Cuyo).
    Cajas más ajustadas y zoom fraccionario: cada botón acerca más la región. */
-const REGIONES=[['Todo el país',[[-55.0,-73.3],[-21.9,-53.7]]],['Patagonia',[[-51.6,-72.6],[-37.6,-63.6]]],['Litoral',[[-34.1,-61.0],[-26.3,-55.0]]],
-  ['Norte',[[-28.6,-67.6],[-22.0,-59.2]]],['Mar',[[-45.6,-66.4],[-36.1,-56.7]]]];
+const REGIONES=[['Todo el país',[[-55.0,-73.3],[-21.9,-53.7]]],['Patagonia',[[-55.1,-73.6],[-36.2,-62.2]]],['Litoral',[[-34.1,-61.0],[-26.3,-55.0]]],
+  ['Norte',[[-28.6,-67.6],[-22.0,-59.2]]]];   // 09-10 (PDF 8.0): sin "Mar"; Patagonia = del río Colorado a Tierra del Fuego
 function irRegion(bb){ const pad=isMobile()?{paddingTopLeft:[8,96],paddingBottomRight:[8,8]}:{paddingTopLeft:[10,70],paddingBottomRight:[($('#drawer').classList.contains('open')?430:10),10]};
   const z0=map.options.zoomSnap; map.options.zoomSnap=.25; map.flyToBounds(L.latLngBounds(bb),{...pad,maxZoom:12,duration:.7}); map.once('moveend',()=>{ map.options.zoomSnap=z0; }); }
 if($('#regbar')){ $('#regbar').innerHTML=`<button class="near" data-r="cerca">📍 Cerca mío</button>`+REGIONES.map((r,i)=>`<button data-r="${i}">${r[0]}</button>`).join('');
@@ -2185,8 +2246,8 @@ function irACoordenadas(ll){ go('mapa'); setTimeout(()=>{ const la=ll[0].toFixed
   map.flyTo(ll,Math.max(map.getZoom(),12),{duration:.8});
   L.popup({className:'cmenu',maxWidth:260,autoPanPadding:[20,20],offset:[0,-18]}).setLatLng(ll).setContent(`<div class="cmc"><div class="mono cmt">🧭 ${t}</div>
     <button type="button" data-copycoord="${t}">📋 ${en?'Copy coordinates':'Copiar coordenadas'}</button>
-    <a href="https://www.google.com/maps/search/?api=1&query=${la},${lo}" target="_blank" rel="noopener">🗺️ ${en?'Open in Google Maps':'Abrir en Google Maps'}</a>
-    <a href="https://www.google.com/maps/dir/?api=1&destination=${la},${lo}" target="_blank" rel="noopener">🚗 ${en?'Directions':'Cómo llegar'}</a></div>`).openOn(map); },60); }
+    <a href="https://www.google.com/maps/search/?api=1&query=${la},${lo}" ${mapsAttr('ver',[la,lo])} target="_blank" rel="noopener">🗺️ ${en?'Open in Maps':'Abrir en Maps'}</a>
+    <a href="https://www.google.com/maps/dir/?api=1&destination=${la},${lo}" ${mapsAttr('ir',[la,lo])} target="_blank" rel="noopener">🚗 ${en?'Directions':'Cómo llegar'}</a></div>`).openOn(map); },60); }
 function searchIdx(q){
   const cc=parseCoords(q); if(cc){ const t=cc[0].toFixed(5)+', '+cc[1].toFixed(5); return [{k:'coord',id:t,ll:cc,t:()=>t,s:()=>(LANG==='en'?'Go to this point on the map':'Ir a este punto del mapa'),ic:'🧭'}]; }
   const w=norm(q).split(/\s+/).filter(Boolean); if(!w.length) return [];
@@ -2206,19 +2267,32 @@ function pick(h){
   else if(h.k==='coord') irACoordenadas(h.ll);
   else if(h.k==='exp'){ const x=EXPERIENCIAS.find(y=>y.slug===h.id); if(x){ go('experiencias'); setTimeout(()=>abrirExp(x),60); } }
 }
+/* 09-10 (PDF 8.0): LO MÁS BUSCADO. Al tocar el buscador vacío (y en los atajos de la portada) se sugiere lo más buscado.
+   Arranca con una lista inicial de las búsquedas de pesca más comunes en Argentina; a medida que la página tiene visitas,
+   pasa a usar lo que más buscan los propios usuarios (tabla busqueda: solo el texto elegido, sin datos personales). */
+const TOP_BASE=['Dorado','Pejerrey','Trucha arcoíris','Tararira','Surubí pintado','Río Paraná','Esteros del Iberá','Río Limay'];
+let TOP_BUSQ=TOP_BASE.slice();
+function cargarTop(){ if(DATOS_ORIGEN!=='supabase') return;
+  fetch(SUPA.url+'/rest/v1/rpc/mas_buscado',{method:'POST',headers:{...SBH,'Content-Type':'application/json'},body:JSON.stringify({dias:60,n:8})})
+   .then(r=>r.ok?r.json():[]).then(rs=>{ const l=(rs||[]).map(x=>x.texto).filter(t=>searchIdx(t).length); if(l.length>=4) TOP_BUSQ=[...l,...TOP_BASE.filter(t=>!l.includes(t))].slice(0,8); if(cur==='inicio') render('inicio'); }).catch(()=>{}); }
+function registrarBusqueda(h){ try{ if(DATOS_ORIGEN!=='supabase'||!h||h.k==='coord') return; const t=h.t(); if(!t||t.length>120) return;
+  fetch(SUPA.url+'/rest/v1/busqueda',{method:'POST',headers:{...SBH,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({texto:t,tipo:h.k})}).catch(()=>{}); }catch(e){} }
 function attachSearch(box){
   const inp=box.querySelector('input'),drop=box.querySelector('.sdrop'),x=box.querySelector('.sx'); let hits=[],act=0;
   const show=()=>{
     x.style.display=inp.value?'block':'none';
     const res=searchIdx(inp.value); hits=[]; let html='';
-    if(!inp.value.trim()){ drop.classList.remove('open'); return; }
+    if(!inp.value.trim()){   /* 09-10 (PDF 8.0): vacío -> lo más buscado */
+      const hs=TOP_BUSQ.map(q=>searchIdx(q)[0]).filter(Boolean); if(!hs.length||document.activeElement!==inp){ drop.classList.remove('open'); return; }
+      html=`<div class="sgroup">${LANG==='en'?'Most searched':'Lo más buscado'}</div>`+hs.map(h=>{hits.push(h);return `<div class="sitem" data-i="${hits.length-1}"><span class="ic">🔥</span><span class="tx"><b>${esc(h.t())}</b><small>${esc(h.s())}</small></span></div>`;}).join('');
+      drop.innerHTML=html; act=-1; mark(); drop.classList.add('open'); return; }
     GROUPS.forEach(([k,lab])=>{   /* 08-10: orden fijo (ver GROUPS) */ const g=res.filter(r=>r.k===k).slice(0,k==='geo'?3:k==='loc'?4:5); if(!g.length) return;
       html+=`<div class="sgroup">${lab}</div>`+g.map(h=>{hits.push(h);return `<div class="sitem" data-i="${hits.length-1}"><span class="ic">${h.ic}</span><span class="tx"><b>${esc(h.t())}</b><small>${h.dest?esc(h.s().replace(/ · Ciudad destacada para la pesca$/,''))+' · <b class="sdest">Ciudad destacada para la pesca</b>':esc(h.s())}</small></span></div>`;}).join(''); });
     drop.innerHTML=html||`<div class="snone">Sin resultados para “${esc(inp.value)}”.</div>`; act=0; mark(); drop.classList.add('open');
   };
   const mark=()=>drop.querySelectorAll('.sitem').forEach((el,i)=>el.classList.toggle('act',i===act));
-  const choose=i=>{ const h=hits[i]; if(!h) return; drop.classList.remove('open'); inp.blur(); pick(h); };
-  inp.addEventListener('input',show); inp.addEventListener('focus',()=>inp.value&&show());
+  const choose=i=>{ const h=hits[i]; if(!h) return; drop.classList.remove('open'); inp.blur(); registrarBusqueda(h); pick(h); };
+  inp.addEventListener('input',show); inp.addEventListener('focus',show);
   inp.addEventListener('keydown',e=>{ if(e.key==='ArrowDown'){act=Math.min(act+1,hits.length-1);mark();e.preventDefault();} else if(e.key==='ArrowUp'){act=Math.max(act-1,0);mark();e.preventDefault();} else if(e.key==='Enter'){choose(act);} else if(e.key==='Escape'){drop.classList.remove('open');} });
   drop.addEventListener('mousedown',e=>{ const it=e.target.closest('.sitem'); if(it){ e.preventDefault(); choose(+it.dataset.i); } });
   x.onclick=()=>{ inp.value=''; show(); inp.focus(); };
@@ -2510,11 +2584,20 @@ function bannerCookies(forzar){
 }
 document.addEventListener('click',e=>{ if(e.target.closest('[data-cookies]')){ e.preventDefault(); bannerCookies(true); } });
 
+/* 09-10 (PDF 8.0): en el celular (sobre todo iPhone) la ventana a veces queda corrida hacia arriba después de usar el teclado
+   o una animación, y abajo queda un hueco negro. La página no se desplaza nunca como un todo: si eso pasa, se vuelve a su lugar. */
+(()=>{ const editando=()=>{ const a=document.activeElement; return a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName); };
+  const fijar=()=>{ if(editando()) return; if(window.scrollY||document.documentElement.scrollTop||document.body.scrollTop){ window.scrollTo(0,0); document.body.scrollTop=0; } };
+  addEventListener('scroll',()=>{ if(!editando()) requestAnimationFrame(fijar); },{passive:true});
+  document.addEventListener('focusout',()=>setTimeout(fijar,120));
+  if(window.visualViewport) visualViewport.addEventListener('resize',()=>setTimeout(fijar,120));
+  addEventListener('orientationchange',()=>setTimeout(fijar,300)); })();
 /* ---------- ARRANQUE: primero los datos, después la aplicación ---------- */
 (async()=>{
   await cargarDatos();
   const s=document.createElement('script'); s.textContent=document.getElementById('app-main').textContent; document.body.appendChild(s);
   try{ if(window.__IDS&&typeof cargarExtras==='function') cargarExtras(window.__IDS.ambId,window.__IDS.espId); }catch(e){ console.warn('[extras]',e); }
+  try{ cargarTop(); }catch(e){}
   if(SUPA.ambiente!=='PRODUCCION'){ const d=document.createElement('div'); d.id='envbadge'; d.textContent=SUPA.ambiente+' · datos: '+(DATOS_ORIGEN==='supabase'?'Supabase':'ejemplo local'); document.body.appendChild(d); }
   bannerCookies(false);
   if(typeof volverDePago==='function') volverDePago();
