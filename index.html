@@ -1128,8 +1128,10 @@ function spotsMapa(){ const st=selTramo();
     return res; }
   const g=geoElegido(); if(g&&TRAMOS_DE(g).length) return [];
   return spotsDe(ambsDeSel()); }
-function spotRows(ss){ return ss.map(x=>`<div class="spr"><span class="spi">${SPOT_TIPO[x.tipo]?.[0]||'📍'}</span><div><b>${esc(x.n)}</b> <small>${SPOT_TIPO[x.tipo]?.[1]||''}</small>${x.d?`<div class="spd">${esc(x.d)}</div>`:''}${x.acc?`<div class="spd">🚗 ${esc(x.acc)}</div>`:''}
-  <div class="spb"><a href="${comoLlegar(x.ll)}" target="_blank" rel="noopener">🚗 Cómo llegar</a><button type="button" data-copycoord="${x.ll[0].toFixed(5)}, ${x.ll[1].toFixed(5)}">📋 Coordenadas</button><span class="chip link" data-spotgo="${x.id}">🗺 Ver</span></div></div></div>`).join(''); }
+/* 09-10 (tarde): en el globito del mapa "Ver" abre Google Maps en el spot; en la lista de la ficha centra nuestro mapa. */
+const verEnGoogle=ll=>`https://www.google.com/maps/search/?api=1&query=${ll[0].toFixed(5)},${ll[1].toFixed(5)}`;
+function spotRows(ss,enPopup){ return ss.map(x=>`<div class="spr"><span class="spi">${SPOT_TIPO[x.tipo]?.[0]||'📍'}</span><div><b>${esc(x.n)}</b> <small>${SPOT_TIPO[x.tipo]?.[1]||''}</small>${x.d?`<div class="spd">${esc(x.d)}</div>`:''}${x.acc?`<div class="spd">🚗 ${esc(x.acc)}</div>`:''}
+  <div class="spb"><a href="${comoLlegar(x.ll)}" target="_blank" rel="noopener">🚗 Cómo llegar</a><button type="button" data-copycoord="${x.ll[0].toFixed(5)}, ${x.ll[1].toFixed(5)}">📋 Coordenadas</button>${enPopup?`<a href="${verEnGoogle(x.ll)}" target="_blank" rel="noopener">🗺️ ${LANG==='en'?'View in Google Maps':'Ver en Google Maps'}</a>`:`<span class="chip link" data-spotgo="${x.id}">🗺 ${LANG==='en'?'View on map':'Ver en el mapa'}</span>`}</div></div></div>`).join(''); }
 const C={sel:'#FF7A59',river:'#1E90A8',sea:'#4C8DFF'};
 const ST={r:{color:'#1E90A8',weight:2.4,opacity:.95},rF:{color:'#2BA7C2',weight:3.4,opacity:1},rSel:{color:C.sel,weight:6,opacity:1},
   l:{color:'#0B6E86',weight:2,fillColor:'#26C6DA',fillOpacity:.5,opacity:.95},
@@ -1243,7 +1245,7 @@ function draw(){ try{ syncRefs(); }catch(e){}
   // 07-10 (bloque C): spots del ambiente elegido
   spotsMapa().forEach(x=>{ const m=L.marker(x.ll,{zIndexOffset:800,icon:L.divIcon({className:'ico',html:`<div class="mk spot">${SPOT_TIPO[x.tipo]?.[0]||'📍'}</div>`,iconSize:[30,30],iconAnchor:[15,15]})});
     m.bindTooltip(esc(x.n),{className:'rtip',direction:'top',offset:[0,-14]});
-    m.bindPopup(`<div class="cmc">${spotRows([x])}</div>`,{className:'cmenu',maxWidth:280}); geoLayer.addLayer(m); });
+    m.bindPopup(`<div class="cmc">${spotRows([x],true)}</div>`,{className:'cmenu',maxWidth:280}); geoLayer.addLayer(m); });
   // ambientes sin geometría (spots de mar y ríos no incluidos en la capa): puntos
   AMBIENTES.filter(a=>!a.geo&&!a.sinUbic&&ambVisible(a)).forEach(a=>{
     const s=isSelAmb(a);
